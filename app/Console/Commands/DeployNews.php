@@ -43,11 +43,9 @@ class DeployNews extends Command
         DB::unprepared('truncate table `snarkpit-new`.news');
         $posts = DB::select('select * from snark3_snarkpit.news_revamped where plan = 0');
         foreach ($posts as $post) {
-            $sub = $post->subject;
-            $text = $post->text;
             $news = new News();
             $news->id = $post->id;
-            $news->user_id = 1; // $post->user_id; // todo
+            $news->user_id = max(1, $post->user_id);
             $news->subject = $post->subject;
             $news->content_text = reverse_snarkpit_format($post->text);
             $news->content_html = bbcode($news->content_text);

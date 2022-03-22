@@ -34,7 +34,7 @@ class CreateUsersTable extends Migration
             $table->boolean('show_signature');
             $table->boolean('subscribe_topics');
             $table->boolean('notify_messages');
-            $table->boolean('show_snarks');
+            $table->boolean('snow_snarks');
             $table->boolean('has_pit');
 
             // Avatar
