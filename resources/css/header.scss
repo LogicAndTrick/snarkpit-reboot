@@ -1,0 +1,66 @@
+@import "variables";
+
+.site-header {
+    background: rgb(252,252,252);
+    background: linear-gradient(180deg, rgba(252,252,252,1) 0%, rgba(0,0,0,1) 100%);
+
+    .quick-links-container {
+        padding: 0 0.2rem 0.2rem;
+        border-radius: 0 0 1rem 1rem;
+        background: rgb(183,183,183);
+        background: linear-gradient(218deg, rgba(183,183,183,1) 0%, rgba(194,194,194,1) 100%);
+        margin: 0 1.5rem;
+    }
+    .quick-links {
+        border-radius: 0 0 1rem 1rem;
+        background: rgb(100,100,100);
+        background: linear-gradient(180deg, rgba(100,100,100,1) 0%, rgba(3,3,3,1) 100%);
+        padding: 0.125rem 1rem 0.25rem;
+
+        > :not(:first-child)::before {
+            content: '|';
+            color: $red-border;
+            padding: 0 0.25rem;
+        }
+        form {
+            display: inline;
+            button {
+                padding: 0;
+                border: 0;
+                background: none;
+                color: $link-color;
+
+                &:hover {
+                    color: $link-hover-color;
+                }
+            }
+        }
+    }
+    .member-info {
+        padding: 0.125rem 1.5rem 0 0;
+    }
+    .main-links {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 1.2rem;
+        position: relative;
+
+        &::before {
+            content: '';
+            pointer-events: none;
+            z-index: 1;
+            position: absolute;
+            background-image: url("/images/header_logo_tail.png");
+            height: 100%;
+            width: 80px;
+            left: 0;
+        }
+
+        > a:not(:hover) {
+            color: #F1F0A0;
+        }
+    }
+}
