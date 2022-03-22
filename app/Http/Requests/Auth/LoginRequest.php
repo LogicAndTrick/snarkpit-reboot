@@ -29,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -45,15 +45,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $user_creds = $this->only('name', 'password');
-        $email_creds = [ 'email' => $this->input('name'), 'password' => $this->input('password') ];
-        $rem = $this->boolean('remember');
-
-        if (!Auth::attempt($user_creds, $rem) && !Auth::attempt($email_creds, $rem)) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'name' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 

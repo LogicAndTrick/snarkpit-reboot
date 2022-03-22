@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\ConvertAccountController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -53,4 +54,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     Route::post('account/logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::get('account/convert', [ConvertAccountController::class, 'create'])->name('convert');
+    Route::post('account/convert', [ConvertAccountController::class, 'store']);
 });

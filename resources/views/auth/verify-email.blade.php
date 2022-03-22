@@ -1,32 +1,30 @@
 @extends('layouts.default')
+
 @section('content')
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+    <h1>Account activation</h1>
+    <section>
+        <div class="row">
+            <div class="col-md-4 offset-4">
+                <p>Your account has not yet been activated!</p>
+                <p>You must activate your account before you can log in. To do so, use the activation link in your account confirmation email.</p>
+                <p>If you did not receive such an email, use the "retrieve password" link on the login page to receive a new activation code.</p>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
+                <form method="POST" action="{{ route('verification.send') }}" class="text-center">
+                    @csrf
+                    <button type="submit">Resend Verification Email</button>
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+                    @if (session('status') == 'verification-link-sent')
+                        <p class="text-success">A new verification link has been sent to your email address.</p>
+                    @endif
+                </form>
 
-            <div>
-                <button>
-                    {{ __('Resend Verification Email') }}
-                </button>
+                <form method="POST" action="{{ route('logout') }}" class="text-center">
+                    @csrf
+                    <button type="submit">Log Out</button>
+                </form>
+
+                <p>If you continue to experience difficulties, please <a href="#">contact</a> a site admin for further assistance.</p>
             </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
+        </div>
+    </section>
 @endsection

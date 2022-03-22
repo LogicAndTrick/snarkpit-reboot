@@ -3,11 +3,15 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckForBan;
+use App\Http\Middleware\ConvertLegacyAccount;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnsureVerified;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\UpdateUserAccessDetails;
 use App\Http\Middleware\VerifyCsrfToken;
 use Fruitcake\Cors\HandleCors;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
@@ -41,7 +45,8 @@ class Kernel extends HttpKernel
         PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
         TrimStrings::class,
-        ConvertEmptyStringsToNull::class
+        ConvertEmptyStringsToNull::class,
+        CheckForBan::class
     ];
 
     /**
@@ -58,6 +63,9 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
+            UpdateUserAccessDetails::class,
+            ConvertLegacyAccount::class,
+            EnsureVerified::class
         ],
 
         'api' => [

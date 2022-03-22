@@ -10472,9 +10472,13 @@ footer {
   margin: 1rem auto;
 }
 
+.form-group {
+  display: block;
+}
 .form-group label, .form-group input, .form-group select {
   display: block;
   margin: 0.25rem 0;
+  width: 100%;
 }
 .form-group input[type=checkbox] {
   display: inline-block;
@@ -10488,7 +10492,8 @@ button[type=submit] {
   line-height: 1rem;
   text-align: center;
   border: 0;
-  margin: 0.5rem;
+  margin: 0.5rem auto;
+  display: block;
 }
 
 audio[controls] {
