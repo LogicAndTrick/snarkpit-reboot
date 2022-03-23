@@ -19,4 +19,22 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+$controllers = [
+    //'ban' => 'Auth\BanController',
+
+    //'forum' => 'Forum\ForumController',
+    //'thread' => 'Forum\ThreadController',
+    //'post' => 'Forum\PostController',
+
+    //'panel' => 'User\PanelController',
+    //'message' => 'User\MessageController',
+    //'user' => 'User\UserController',
+
+    'news' => \App\Http\Controllers\NewsController::class,
+
+    //'api' => 'Api\ApiController',
+    //'search' => 'Search\SearchController'
+];
+App\Helpers\Routing::controllers($controllers);
+
 require __DIR__.'/auth.php';

@@ -42,6 +42,7 @@ class DeployUsers extends Command
     public function handle()
     {
         DB::unprepared('delete from `snarkpit-new`.users');
+        $count = DB::selectOne('select COUNT(*) as c from snark3_snarkpit.accounts')->c;
         $accounts = DB::select('select * from snark3_snarkpit.accounts');
 
         $duplicate_emails = [
@@ -49,10 +50,8 @@ class DeployUsers extends Command
         ];
         $found_duplicates = [];
 
-        // todo: permissions/admin levels
-
-        foreach ($accounts as $acc) {
-            if ($acc->id < 0) continue;
+        $this->withProgressBar($accounts, function($acc) use (&$duplicate_emails, &$found_duplicates) {
+            if ($acc->id < 0) return;
 
             $custom_avatar = false;
             $avatar = $acc->avatar;
@@ -74,6 +73,9 @@ class DeployUsers extends Command
                 $found_duplicates[] = $acc->email;
             }
 
+            $level = $acc->level;
+            if ($level == 0) $level = 1;
+
             $user = new User();
             $user->id = $acc->id;
             $user->name = $acc->username;
@@ -81,6 +83,7 @@ class DeployUsers extends Command
             $user->email_verified_at = $acc->joined;
             $user->password = '';
             $user->legacy_password = $acc->password;
+            $user->level = $level;
             $user->remember_token = '';
             $user->last_login_time = $acc->last_seen ? Carbon::createFromTimestamp($acc->last_seen) : Carbon::now();
             $user->last_access_time = $acc->last_seen ? Carbon::createFromTimestamp($acc->last_seen) : Carbon::now();
@@ -120,7 +123,7 @@ class DeployUsers extends Command
             $user->updated_at = Carbon::createFromTimestamp($acc->joined);
             $user->deleted_at = null;
             $user->save();
-        }
+        });
         return 0;
     }
 

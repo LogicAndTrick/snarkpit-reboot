@@ -25,9 +25,10 @@
                 <section>
                     <h2>{{ $n->subject }}</h2>
                     <h3 class="small">
-                        {{ $n->created_at->format("D M jS Y \a\\t g:ia") }}
-                        by
-                        <a href="#">{{ $n->user->name }}</a> | <a href="#">edit</a>
+                        {{ $n->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="#">{{ $n->user->name }}</a>
+                        @can('moderator')
+                            | <a href="#">edit</a>
+                        @endcan
                     </h3>
                     <div class="bbcode">{!! $n->content_html !!}</div>
                 </section>
@@ -37,6 +38,9 @@
             <h1>
                 <a href="#">Latest Maps</a>
             </h1>
+            <section>
+                ...
+            </section>
         </div>
     </div>
 

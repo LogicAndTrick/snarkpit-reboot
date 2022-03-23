@@ -42,7 +42,7 @@ class DeployNews extends Command
     {
         DB::unprepared('truncate table `snarkpit-new`.news');
         $posts = DB::select('select * from snark3_snarkpit.news_revamped where plan = 0');
-        foreach ($posts as $post) {
+        $this->withProgressBar($posts, function($post) {
             $news = new News();
             $news->id = $post->id;
             $news->user_id = max(1, $post->user_id);
@@ -53,12 +53,7 @@ class DeployNews extends Command
             $news->updated_at = Carbon::createFromTimestamp($post->date);
             $news->timestamps = false;
             $news->save();
-        }
+        });
         return 0;
-    }
-
-    private function bbcode($content_text)
-    {
-        return $content_text;
     }
 }

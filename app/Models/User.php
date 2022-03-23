@@ -12,6 +12,11 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
 
+    public const LEVEL_MEMBER = 1;
+    public const LEVEL_MODERATOR = 2;
+    public const LEVEL_ADMIN = 3;
+    public const LEVEL_SUPER_ADMIN = 4;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'legacy_password',
+        'level',
         'timezone',
         'show_email',
         'show_signature',
@@ -67,6 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $attributes = [
         'legacy_password' => '',
+        'level' => 1,
         'timezone' => 0,
         'show_email' => false,
         'show_signature' => false,
