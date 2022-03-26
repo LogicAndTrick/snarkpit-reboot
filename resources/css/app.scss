@@ -3,8 +3,14 @@
 @import "~bootstrap/scss/bootstrap-grid";
 @import "~bootstrap/scss/bootstrap-utilities";
 @import "~bootstrap/scss/helpers/ratio";
+@import "~bootstrap/scss/pagination";
+@import "~bootstrap/scss/breadcrumb";
+@import "bootstrap-lite";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
 @import "globals";
 @import "bbcode";
+@import "customisations";
 
 body {
     background-color: #001;

@@ -5,9 +5,30 @@ $link-color: #ead30f;
 $link-decoration: none;
 $link-hover-color: #fff;
 
+$border-radius: 0;
+$border-radius-lg: 0;
+$border-radius-sm: 0;
+
+$pagination-bg: #ead30f;
+$pagination-active-bg: #000;
+$pagination-hover-bg: #fff;
+$pagination-disabled-bg: #333;
+$pagination-focus-bg: #ea920f;
+
+$pagination-border-color: #ead30f;
+$pagination-active-border-color: #ead30f;
+$pagination-hover-border-color: #fff;
+$pagination-disabled-border-color: #aaa;
+
+$pagination-color: #000;
+$pagination-active-color: #ead30f;
+$pagination-hover-color: #000;
+$pagination-disabled-color: #aaa;
+$pagination-focus-color: #000;
+
 
 // Site specific
-$red-border: #990000;
+$red-border: #900;
 $section-background: #333;
 $section-background-alt: #222;
 $section-foreground: #ccc;

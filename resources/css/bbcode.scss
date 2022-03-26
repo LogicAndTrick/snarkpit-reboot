@@ -348,8 +348,21 @@ span.bbcode {
   margin-bottom: 5px;
 }
 
-.smiley-dropdown {
-  .btn-link:hover {
-      background: rgba(0, 0, 0, 0.2);
-  }
+.editor-smilies {
+    section {
+        div {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-around;
+            align-items: start;
+        }
+        a {
+            padding: 0.25rem;
+            margin-bottom: 0.25rem;
+            &:hover {
+                background: rgba(255, 255, 255, 0.125);
+            }
+        }
+    }
+
 }

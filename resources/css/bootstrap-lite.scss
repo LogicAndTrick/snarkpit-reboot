@@ -1,0 +1,29 @@
+
+.btn-toolbar {
+    display: flex;
+    flex-flow: row;
+
+    .btn-group {
+        margin-right: 0.25rem;
+        display: flex;
+        flex-flow: row nowrap;
+        button {
+            margin-right: 0.25rem;
+            white-space: nowrap;
+        }
+    }
+
+    .btn-group-xs {
+        button {
+            height: 1.5rem;
+            line-height: 1.5rem;
+            padding: 0 0.5rem;
+        }
+    }
+}
+
+.well {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #999;
+}

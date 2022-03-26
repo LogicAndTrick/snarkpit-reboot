@@ -1,0 +1,35 @@
+@import "variables";
+
+.pagination {
+    line-height: 1rem;
+    justify-content: end;
+    background: darken($section-background, 5%);
+    padding: 0.25rem;
+    margin-bottom: 0.125rem;
+
+    .page-link {
+        padding: 0.125rem 0.3rem;
+        margin: 0 0.25rem;
+    }
+}
+
+.breadcrumb {
+    background: darken($section-background, 5%);
+    padding: 0.25rem;
+    margin-bottom: 0.125rem;
+}
+
+.nav-header {
+    background: darken($section-background, 5%);
+    padding: 0.25rem;
+    margin-bottom: 0.125rem;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: start;
+
+    .pagination, .breadcrumb {
+        padding: 0;
+        margin-bottom: 0;
+    }
+}

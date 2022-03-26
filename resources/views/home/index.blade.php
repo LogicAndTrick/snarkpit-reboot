@@ -20,14 +20,15 @@
             </section>
         </div>
         <div class="col-md-6">
-            <h1>Community News</h1>
+            <h1><a href="{{ url('news') }}">Community News</a></h1>
             @foreach($news as $n)
                 <section>
                     <h2>{{ $n->subject }}</h2>
                     <h3 class="small">
                         {{ $n->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="#">{{ $n->user->name }}</a>
                         @can('moderator')
-                            | <a href="#">edit</a>
+                            | <a href="{{ url('news/edit', [$n->id]) }}">edit</a>
+                            | <a href="{{ url('news/delete', [$n->id]) }}">delete</a>
                         @endcan
                     </h3>
                     <div class="bbcode">{!! $n->content_html !!}</div>
