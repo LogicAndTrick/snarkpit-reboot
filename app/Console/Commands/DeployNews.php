@@ -40,7 +40,8 @@ class DeployNews extends Command
      */
     public function handle()
     {
-        DB::unprepared('truncate table `snarkpit-new`.news');
+        $dbname = env('DB_DATABASE');
+        DB::unprepared("truncate table `$dbname`.news");
         $posts = DB::select('select * from snark3_snarkpit.news_revamped where plan = 0');
         $this->withProgressBar($posts, function($post) {
             $news = new News();
