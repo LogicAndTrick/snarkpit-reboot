@@ -41,13 +41,14 @@ class DeployUsers extends Command
      */
     public function handle()
     {
-        DB::unprepared('delete from `snarkpit-new`.users');
+        $dbname = env('DB_DATABASE');
+        DB::unprepared("delete from `$dbname`.users");
         $count = DB::selectOne('select COUNT(*) as c from snark3_snarkpit.accounts')->c;
-        $accounts = DB::select('select * from snark3_snarkpit.accounts');
 
-        $duplicate_emails = [
-            // todo
-        ];
+        // Use descending order so that the most recent email address is kept unchanged
+        $accounts = DB::select('select * from snark3_snarkpit.accounts order by id desc');
+
+        $duplicate_emails = [];
         $found_duplicates = [];
 
         $this->withProgressBar($accounts, function($acc) use (&$duplicate_emails, &$found_duplicates) {
@@ -63,15 +64,13 @@ class DeployUsers extends Command
             }
 
             $email = $acc->email;
-            if (array_search($email, $duplicate_emails) !== false) {
-                $found = count(array_filter($found_duplicates, function ($i) use ($email) {
-                    return strtolower($email) === strtolower($i);
+            if (in_array(strtolower($email), $duplicate_emails)) {
+                $found = count(array_filter($duplicate_emails, function ($i) use ($email) {
+                    return strtolower($email) === $i;
                 })) + 1;
-                if ($found > 1) {
-                    $email = 'duplicate' . $found . '_' . $email;
-                }
-                $found_duplicates[] = $acc->email;
+                $email = 'duplicate' . $found . '_' . $email;
             }
+            $duplicate_emails[] = strtolower($acc->email);
 
             $level = $acc->level;
             if ($level == 0) $level = 1;
