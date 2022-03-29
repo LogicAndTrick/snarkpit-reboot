@@ -5594,16 +5594,16 @@ progress {
   color: #1a1e21;
 }
 
-.ratio, .bbcode .video-content .uninitialised, .bbcode .video-content {
+.ratio, .bbcode .video-content {
   position: relative;
   width: 100%;
 }
-.ratio::before, .bbcode .video-content .uninitialised::before, .bbcode .video-content::before {
+.ratio::before, .bbcode .video-content::before {
   display: block;
   padding-top: var(--bs-aspect-ratio);
   content: "";
 }
-.ratio > *, .bbcode .video-content .uninitialised > *, .bbcode .video-content > * {
+.ratio > *, .bbcode .video-content > * {
   position: absolute;
   top: 0;
   left: 0;
@@ -10388,16 +10388,16 @@ progress {
     display: none !important;
   }
 }
-.ratio, .bbcode .video-content .uninitialised, .bbcode .video-content {
+.ratio, .bbcode .video-content {
   position: relative;
   width: 100%;
 }
-.ratio::before, .bbcode .video-content .uninitialised::before, .bbcode .video-content::before {
+.ratio::before, .bbcode .video-content::before {
   display: block;
   padding-top: var(--bs-aspect-ratio);
   content: "";
 }
-.ratio > *, .bbcode .video-content .uninitialised > *, .bbcode .video-content > * {
+.ratio > *, .bbcode .video-content > * {
   position: absolute;
   top: 0;
   left: 0;
@@ -10528,6 +10528,177 @@ progress {
 }
 .breadcrumb-item.active {
   color: #6c757d;
+}
+
+.card, .bbcode .embed-container, .bbcode .caption-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #444;
+  background-clip: border-box;
+  border: 1px solid #666;
+  border-radius: 0;
+}
+.card > hr, .bbcode .embed-container > hr, .bbcode .caption-panel > hr {
+  margin-right: 0;
+  margin-left: 0;
+}
+.card > .list-group, .bbcode .embed-container > .list-group, .bbcode .caption-panel > .list-group {
+  border-top: inherit;
+  border-bottom: inherit;
+}
+.card > .list-group:first-child, .bbcode .embed-container > .list-group:first-child, .bbcode .caption-panel > .list-group:first-child {
+  border-top-width: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.card > .list-group:last-child, .bbcode .embed-container > .list-group:last-child, .bbcode .caption-panel > .list-group:last-child {
+  border-bottom-width: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.card > .card-header + .list-group, .bbcode .embed-container > .card-header + .list-group, .bbcode .caption-panel > .card-header + .list-group,
+.card > .list-group + .card-footer,
+.bbcode .embed-container > .list-group + .card-footer,
+.bbcode .caption-panel > .list-group + .card-footer {
+  border-top: 0;
+}
+
+.card-body, .bbcode .embed-container, .bbcode .card-block, .bbcode .caption-panel {
+  flex: 1 1 auto;
+  padding: 1rem 1rem;
+}
+
+.card-title {
+  margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+  margin-top: -0.25rem;
+  margin-bottom: 0;
+}
+
+.card-text:last-child {
+  margin-bottom: 0;
+}
+
+.card-link + .card-link {
+  margin-left: 1rem;
+}
+
+.card-header {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid #666;
+}
+.card-header:first-child {
+  border-radius: 0 0 0 0;
+}
+
+.card-footer {
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-top: 1px solid #666;
+}
+.card-footer:last-child {
+  border-radius: 0 0 0 0;
+}
+
+.card-header-tabs {
+  margin-right: -0.5rem;
+  margin-bottom: -0.5rem;
+  margin-left: -0.5rem;
+  border-bottom: 0;
+}
+.card-header-tabs .nav-link.active {
+  background-color: #444;
+  border-bottom-color: #444;
+}
+
+.card-header-pills {
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  border-radius: 0;
+}
+
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: 100%;
+}
+
+.card-img,
+.card-img-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.card-img,
+.card-img-bottom {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.card-group > .card, .bbcode .card-group > .embed-container, .bbcode .card-group > .caption-panel {
+  margin-bottom: 0.75rem;
+}
+@media (min-width: 576px) {
+  .card-group {
+    display: flex;
+    flex-flow: row wrap;
+  }
+  .card-group > .card, .bbcode .card-group > .embed-container, .bbcode .card-group > .caption-panel {
+    flex: 1 0 0%;
+    margin-bottom: 0;
+  }
+  .card-group > .card + .card, .bbcode .card-group > .embed-container + .card, .bbcode .card-group > .card + .embed-container, .bbcode .card-group > .embed-container + .embed-container, .bbcode .card-group > .caption-panel + .card, .bbcode .card-group > .caption-panel + .embed-container, .bbcode .card-group > .card + .caption-panel, .bbcode .card-group > .embed-container + .caption-panel, .bbcode .card-group > .caption-panel + .caption-panel {
+    margin-left: 0;
+    border-left: 0;
+  }
+  .card-group > .card:not(:last-child), .bbcode .card-group > .embed-container:not(:last-child), .bbcode .card-group > .caption-panel:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .card-group > .card:not(:last-child) .card-img-top, .bbcode .card-group > .embed-container:not(:last-child) .card-img-top, .bbcode .card-group > .caption-panel:not(:last-child) .card-img-top,
+.card-group > .card:not(:last-child) .card-header,
+.bbcode .card-group > .embed-container:not(:last-child) .card-header,
+.bbcode .card-group > .caption-panel:not(:last-child) .card-header {
+    border-top-right-radius: 0;
+  }
+  .card-group > .card:not(:last-child) .card-img-bottom, .bbcode .card-group > .embed-container:not(:last-child) .card-img-bottom, .bbcode .card-group > .caption-panel:not(:last-child) .card-img-bottom,
+.card-group > .card:not(:last-child) .card-footer,
+.bbcode .card-group > .embed-container:not(:last-child) .card-footer,
+.bbcode .card-group > .caption-panel:not(:last-child) .card-footer {
+    border-bottom-right-radius: 0;
+  }
+  .card-group > .card:not(:first-child), .bbcode .card-group > .embed-container:not(:first-child), .bbcode .card-group > .caption-panel:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .card-group > .card:not(:first-child) .card-img-top, .bbcode .card-group > .embed-container:not(:first-child) .card-img-top, .bbcode .card-group > .caption-panel:not(:first-child) .card-img-top,
+.card-group > .card:not(:first-child) .card-header,
+.bbcode .card-group > .embed-container:not(:first-child) .card-header,
+.bbcode .card-group > .caption-panel:not(:first-child) .card-header {
+    border-top-left-radius: 0;
+  }
+  .card-group > .card:not(:first-child) .card-img-bottom, .bbcode .card-group > .embed-container:not(:first-child) .card-img-bottom, .bbcode .card-group > .caption-panel:not(:first-child) .card-img-bottom,
+.card-group > .card:not(:first-child) .card-footer,
+.bbcode .card-group > .embed-container:not(:first-child) .card-footer,
+.bbcode .card-group > .caption-panel:not(:first-child) .card-footer {
+    border-bottom-left-radius: 0;
+  }
 }
 
 .btn-toolbar {
@@ -19005,13 +19176,17 @@ audio[controls] {
 }
 
 pre {
-  tab-size: 4;
-  -moz-tab-size: 4;
   -o-tab-size: 4;
-  border: 1px solid #ced4da;
-  background-color: #f8f9fa;
-  padding: 1rem;
+     tab-size: 4;
+  -moz-tab-size: 4;
+  background: #222222;
+  border: 1px solid #666;
   position: relative;
+  padding: 0;
+  margin: 0;
+}
+pre code {
+  padding: 1rem !important;
   line-height: 1.15rem;
 }
 pre .line-highlight {
@@ -19077,20 +19252,20 @@ pre .line-highlight {
 }
 .bbcode span.spoiler {
   color: transparent;
-  background-color: #333;
-  border: 1px solid #333;
-  padding-right: 3px;
+  background-color: #eee;
+  border: 1px solid #eee;
+  padding-right: 0.25rem;
 }
 .bbcode span.spoiler::before {
   display: inline;
-  color: black;
-  background-color: white;
+  color: white;
+  background-color: black;
   content: attr(title);
   padding: 0 3px;
   margin-right: 3px;
 }
 .bbcode span.spoiler:hover, .bbcode span.spoiler.on {
-  color: white;
+  color: black;
 }
 .bbcode .row {
   margin-top: 15px;
@@ -19294,6 +19469,125 @@ span.bbcode {
 }
 .editor-smilies section a:hover {
   background: rgba(255, 255, 255, 0.125);
+}
+
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+code.hljs {
+  padding: 3px 5px;
+}
+
+/*!
+   Theme: Agate
+   Author: (c) Taufik Nurrohman <hi@taufik-nurrohman.com>
+   Maintainer: @taufik-nurrohman
+   Updated: 2021-04-24
+
+   #333
+   #62c8f3
+   #7bd694
+   #888
+   #a2fca2
+   #ade5fc
+   #b8d8a2
+   #c6b4f0
+   #d36363
+   #fc9b9b
+   #fcc28c
+   #ffa
+   #fff
+*/
+.hljs {
+  background: #333;
+  color: #fff;
+}
+
+.hljs-doctag, .hljs-meta-keyword, .hljs-name, .hljs-strong {
+  font-weight: 700;
+}
+
+.hljs-code, .hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-section, .hljs-tag {
+  color: #62c8f3;
+}
+
+.hljs-selector-class, .hljs-selector-id, .hljs-template-variable, .hljs-variable {
+  color: #ade5fc;
+}
+
+.hljs-meta-string, .hljs-string {
+  color: #a2fca2;
+}
+
+.hljs-attr, .hljs-quote, .hljs-selector-attr {
+  color: #7bd694;
+}
+
+.hljs-tag .hljs-attr {
+  color: inherit;
+}
+
+.hljs-attribute, .hljs-title, .hljs-type {
+  color: #ffa;
+}
+
+.hljs-number, .hljs-symbol {
+  color: #d36363;
+}
+
+.hljs-bullet, .hljs-template-tag {
+  color: #b8d8a2;
+}
+
+.hljs-built_in, .hljs-keyword, .hljs-literal, .hljs-selector-tag {
+  color: #fcc28c;
+}
+
+.hljs-code, .hljs-comment, .hljs-formula {
+  color: #888;
+}
+
+.hljs-link, .hljs-regexp, .hljs-selector-pseudo {
+  color: #c6b4f0;
+}
+
+.hljs-meta {
+  color: #fc9b9b;
+}
+
+.hljs-deletion {
+  background: #fc9b9b;
+  color: #333;
+}
+
+.hljs-addition {
+  background: #a2fca2;
+  color: #333;
+}
+
+.hljs-subst {
+  color: #fff;
+}
+
+.hljs a {
+  color: inherit;
+}
+
+.hljs a:focus, .hljs a:hover {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.hljs mark {
+  background: #555;
+  color: inherit;
 }
 
 .pagination {

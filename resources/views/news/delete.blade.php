@@ -1,4 +1,4 @@
-@title('Delete news post: '.$news->subject)
+@section('title', 'Delete news post: '.$news->subject)
 @extends('layouts.default')
 
 @section('content')

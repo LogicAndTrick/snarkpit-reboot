@@ -1,6 +1,6 @@
 <?php
 
-// todo this is not configured for snarkpit's bbcode or smilies
+// todo this is not fully configured for snarkpit's bbcode - it still needs list items and thumbnail embeds
 return [
     'tags' => [
         // Standard inline
@@ -9,23 +9,15 @@ return [
         [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'u',      'element' => 'span', 'element_class' => 'underline'     ],
         [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 's',      'element' => 'span', 'element_class' => 'strikethrough' ],
 
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'green',  'element' => 'span', 'element_class' => 'green'         ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'blue',   'element' => 'span', 'element_class' => 'blue'          ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'red',    'element' => 'span', 'element_class' => 'red'           ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'purple', 'element' => 'span', 'element_class' => 'purple'        ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ 'inline', 'excerpt' ], 'token' => 'yellow', 'element' => 'span', 'element_class' => 'yellow'        ],
-
         // Standard block
         [ 'class' => 'App\Helpers\BBCode\Tags\PreTag',   'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [                     ], 'token' => 'h',      'element' => 'h3',                                      ],
         [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ ], 'token' => 'center', 'element' => 'div', 'element_class' => 'text-center'],
+        [ 'class' => 'App\Helpers\BBCode\Tags\AlignTag', 'scopes' => [ ] ],
 
         // Links
         [ 'class' => 'App\Helpers\BBCode\Tags\LinkTag',      'scopes' => [ 'excerpt' ], 'token' => 'url' ],
         [ 'class' => 'App\Helpers\BBCode\Tags\LinkTag',      'scopes' => [ 'excerpt' ], 'token' => 'email' ],
         [ 'class' => 'App\Helpers\BBCode\Tags\QuickLinkTag', 'scopes' => [ 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiLinkTag',  'scopes' => [ 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiFileTag',  'scopes' => [ 'excerpt' ] ],
 
         // Embedded
         [ 'class' => 'App\Helpers\BBCode\Tags\ImageTag',     'scopes' => [ ], 'token' => 'img' ],
@@ -39,27 +31,18 @@ return [
 
         // Custom
         [ 'class' => 'App\Helpers\BBCode\Tags\QuoteTag',         'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\FontTag',          'scopes' => [ 'inline', 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiCategoryTag',  'scopes' => [ 'inline', 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiBookTag',      'scopes' => [ 'inline', 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiCreditTag',    'scopes' => [ 'inline', 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\WikiArchiveTag',   'scopes' => [ 'inline', 'excerpt' ] ],
+        [ 'class' => 'App\Helpers\BBCode\Tags\ColorTag',         'scopes' => [ 'inline', 'excerpt' ] ],
+        [ 'class' => 'App\Helpers\BBCode\Tags\SizeTag',          'scopes' => [ 'inline', 'excerpt' ] ],
         [ 'class' => 'App\Helpers\BBCode\Tags\SpoilerTag',       'scopes' => [ 'inline', 'excerpt' ] ],
-        [ 'class' => 'App\Helpers\BBCode\Tags\CodeTag',          'scopes' => [ 'excerpt' ] ],
     ],
     'elements' => [
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdCodeElement',    'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\PreElement',       'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdHeadingElement', 'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\MdLineElement',    'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\MdQuoteElement',   'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\MdListElement',    'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdTableElement',   'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdPanelElement',   'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdColumnsElement', 'scopes' => [ ] ],
     ],
     'text_processors' => [
-        [ 'class' => 'App\Helpers\BBCode\Processors\MarkdownTextProcessor', 'scopes' => [ 'inline', 'excerpt' ] ],
+        //[ 'class' => 'App\Helpers\BBCode\Processors\MarkdownTextProcessor', 'scopes' => [ 'inline', 'excerpt' ] ],
     ],
     'post_processors' => [
         [ 'class' => 'App\Helpers\BBCode\Processors\AutoLinkingProcessor', 'scopes' => [ 'excerpt' ] ],

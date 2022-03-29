@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Helpers\BBCode\Elements;
- 
-use App\Helpers\BBCode\Tags\FontTag;
+
+use App\Helpers\BBCode\Tags\ColorTag;
 
 class PreElement extends Element {
 
@@ -21,7 +21,7 @@ class PreElement extends Element {
     function Matches($lines)
     {
         $value = $lines->Value();
-        return substr(trim($value), 0, 4) == '[pre' && preg_match('/\[pre(=[a-z ]+)?\]/si', $value);
+        return substr(trim($value), 0, 5) == '[code' && preg_match('/\[code(=[a-z ]+)?\]/si', $value);
     }
 
     function Consume($parser, $lines)
@@ -31,7 +31,7 @@ class PreElement extends Element {
         $arr = array();
 
         $line = trim($lines->Value());
-        preg_match('/\[pre(?:=([a-z ]+))?\]/si', $line, $res);
+        preg_match('/\[code(?:=([a-z ]+))?\]/si', $line, $res);
         $line = substr($line, strlen($res[0]));
         $lang = null;
         $hl = false;
@@ -42,17 +42,17 @@ class PreElement extends Element {
             $lang = count($spl) > 0 ? $spl[0] : null;
         }
 
-        if (substr(trim($line), -6) == '[/pre]') {
+        if (substr(trim($line), -7) == '[/code]') {
             $lines->Next();
-            $arr[] = substr(trim($line), 0, -6);
+            $arr[] = substr(trim($line), 0, -7);
         } else {
             if (strlen($line) > 0) $arr[] = $line;
             $found = false;
             while ($lines->Next()) {
                 $value = $lines->Value();
-                if (substr(trim($value), -6) == '[/pre]') {
+                if (substr(trim($value), -7) == '[/code]') {
                     $found = true;
-                    $value = substr(trim($value), 0, -6);
+                    $value = substr(trim($value), 0, -7);
                 }
                 $value = rtrim($value);
                 if (count($arr) > 0 || strlen($value) > 0) $arr[] = $value;
@@ -77,7 +77,7 @@ class PreElement extends Element {
                         $color = '#FF8000';
                         for ($i = 1; $i < count($params); $i++) {
                             $p = $params[$i];
-                            if (FontTag::IsValidColor($p)) $color = $p;
+                            if (ColorTag::IsValidColor($p)) $color = $p;
                             else if (is_numeric($p)) $num_lines = intval($p);
                         }
                     	$highlight[] = [$first_line, $num_lines, $color];
@@ -114,6 +114,6 @@ class PreElement extends Element {
             return "<div class=\"line-highlight\" style=\"top: {$h[0]}em; height: {$h[1]}em; background: {$h[2]};\"></div>";
         }, $this->highlight));
         $text = $this->parser->CleanString($this->text);
-        return '<pre' . ($this->lang ? ' class="lang-' . $this->lang . '"' : '') . '><code>' . $highlights . $text . '</code></pre>';
+        return '<pre' . ($this->lang ? ' class="lang-' . $this->lang . '"' : '') . '>' . $highlights . '<code>' . $text . '</code></pre>';
     }
 }

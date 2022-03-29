@@ -1,4 +1,4 @@
-@title('News posts')
+@section('title', 'News posts')
 @extends('layouts.default')
 
 @section('content')

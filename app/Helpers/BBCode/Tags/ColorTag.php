@@ -1,26 +1,26 @@
 <?php
 
 namespace App\Helpers\BBCode\Tags;
- 
-class FontTag extends Tag {
+
+class ColorTag extends Tag {
 
     function __construct()
     {
-        $this->token = 'font';
+        $this->token = 'color';
         $this->element = 'span';
         $this->main_option = 'color';
-        $this->options = array('color', 'size');
+        $this->options = array('color');
+        $this->all_options_in_main = true;
     }
 
     public function FormatResult($result, $parser, $state, $scope, $options, $text)
     {
         $str = '<' . $this->element;
         if ($this->element_class) $str .= ' class="' . $this->element_class . '"';
-        if (array_key_exists('color', $options) || array_key_exists('colour', $options) || array_key_exists('size', $options)) {
+        if (array_key_exists('color', $options) || array_key_exists('colour', $options)) {
             $str .= ' style="';
-            if (array_key_exists('color', $options) && FontTag::IsValidColor($options['color'])) $str .= 'color: ' . $options['color'] . ';';
-            else if (array_key_exists('colour', $options) && FontTag::IsValidColor($options['colour'])) $str .= 'color: ' . $options['colour'] . ';';
-            if (array_key_exists('size', $options) && FontTag::IsValidSize($options['size'])) $str .= 'font-size: ' . $options['size'] . 'px;';
+            if (array_key_exists('color', $options) && ColorTag::IsValidColor($options['color'])) $str .= 'color: ' . $options['color'] . ';';
+            else if (array_key_exists('colour', $options) && ColorTag::IsValidColor($options['colour'])) $str .= 'color: ' . $options['colour'] . ';';
             $str .= '"';
         }
         $str .= '>';
@@ -56,11 +56,6 @@ class FontTag extends Tag {
         if (preg_match('/^#(?:[0-9A-F]{3}){1,2}$/i', $text)) {
             return true;
         }
-        return array_search($text, FontTag::$color_names) !== false;
-    }
-
-    public static function IsValidSize($text)
-    {
-        return is_numeric($text) && $text >= 6 && $text <= 40;
+        return array_search($text, ColorTag::$color_names) !== false;
     }
 }

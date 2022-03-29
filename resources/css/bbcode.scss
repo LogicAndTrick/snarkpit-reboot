@@ -6,12 +6,16 @@ audio[controls] {
 pre {
   tab-size: 4;
   -moz-tab-size: 4;
-  -o-tab-size: 4;
-  border: 1px solid $gray-400;
-  background-color: $gray-100;
-  padding: 1rem;
+  background: #222222;
+  border: 1px solid #666;
   position: relative;
-  line-height: 1.15rem;
+  padding: 0;
+  margin: 0;
+
+  code {
+    padding: 1rem !important;
+    line-height: 1.15rem;
+  }
 
   .line-highlight {
     position: absolute;
@@ -91,21 +95,21 @@ pre {
   }
   span.spoiler {
     color: transparent;
-    background-color: #333;
-    border: 1px solid #333;
-    padding-right: 3px;
+    background-color: #eee;
+    border: 1px solid #eee;
+    padding-right: 0.25rem;
 
     &::before {
       display: inline;
-      color: black;
-      background-color: white;
+      color: white;
+      background-color: black;
       content: attr(title);
       padding: 0 3px;
       margin-right: 3px;
     }
 
     &:hover, &.on {
-      color: white;
+      color: black;
     }
   }
 
@@ -241,7 +245,7 @@ pre {
     @extend .ratio-16x9;
 
     .uninitialised {
-      @extend .ratio;
+      //@extend .ratio;
 
       cursor: pointer;
       background-size: cover;

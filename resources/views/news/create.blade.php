@@ -1,4 +1,5 @@
-@title('Create news post')
+@section('title', 'Create news post')
+
 @extends('layouts.default')
 
 @section('content')
