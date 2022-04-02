@@ -2731,11 +2731,6 @@ hljs.registerLanguage('xml', __webpack_require__(/*! highlight.js/lib/languages/
 hljs.registerLanguage('angelscript', __webpack_require__(/*! highlight.js/lib/languages/angelscript */ "./node_modules/highlight.js/lib/languages/angelscript.js"));
 hljs.registerLanguage('javascript', __webpack_require__(/*! highlight.js/lib/languages/javascript */ "./node_modules/highlight.js/lib/languages/javascript.js"));
 hljs.highlightAll();
-$(function () {
-  $('.embed-content .uninitialised').appear(); // Force already-visible stuff to appear
-
-  setTimeout($.force_appear, 10);
-});
 $(document).on('click', '.video-content .uninitialised', function (event) {
   var $t = $(this),
       ytid = $t.data('youtube-id'),

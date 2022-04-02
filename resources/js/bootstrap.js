@@ -19,12 +19,6 @@ hljs.registerLanguage('angelscript', require('highlight.js/lib/languages/angelsc
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
 hljs.highlightAll();
 
-$(function() {
-    $('.embed-content .uninitialised').appear();
-    // Force already-visible stuff to appear
-    setTimeout($.force_appear, 10);
-});
-
 $(document).on('click', '.video-content .uninitialised', function(event) {
     var $t = $(this),
         ytid = $t.data('youtube-id'),
