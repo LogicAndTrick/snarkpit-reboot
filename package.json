@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@picocss/pico": "^1.5.0",
-        "axios": "^0.21",
+        "axios": "^0.26.1",
         "highlight.js": "^11.5.0",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",

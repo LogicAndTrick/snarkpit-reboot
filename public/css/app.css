@@ -19077,8 +19077,8 @@ readers do not read off random characters that represent icons */
 h1 {
   border-top: 1px solid #900;
   border-bottom: 1px solid #900;
-  background: black;
-  background: linear-gradient(180deg, black 0%, #313131 100%);
+  background: rgb(0, 0, 0);
+  background: linear-gradient(180deg, rgb(0, 0, 0) 0%, rgb(49, 49, 49) 100%);
   font-weight: normal;
   padding: 0.25rem;
   color: #fff;
@@ -19150,8 +19150,8 @@ button {
   width: auto !important;
   color: #FFD659;
   padding: 4px;
-  background: black;
-  background: linear-gradient(180deg, black 0%, #646464 100%);
+  background: rgb(0, 0, 0);
+  background: linear-gradient(180deg, rgb(0, 0, 0) 0%, rgb(100, 100, 100) 100%);
   border: 1px solid #666666;
 }
 button:hover {
@@ -19627,20 +19627,20 @@ body {
 }
 
 .site-header {
-  background: #fcfcfc;
-  background: linear-gradient(180deg, #fcfcfc 0%, black 100%);
+  background: rgb(252, 252, 252);
+  background: linear-gradient(180deg, rgb(252, 252, 252) 0%, rgb(0, 0, 0) 100%);
 }
 .site-header .quick-links-container {
   padding: 0 0.2rem 0.2rem;
   border-radius: 0 0 1rem 1rem;
-  background: #b7b7b7;
-  background: linear-gradient(218deg, #b7b7b7 0%, #c2c2c2 100%);
+  background: rgb(183, 183, 183);
+  background: linear-gradient(218deg, rgb(183, 183, 183) 0%, rgb(194, 194, 194) 100%);
   margin: 0 1.5rem;
 }
 .site-header .quick-links {
   border-radius: 0 0 1rem 1rem;
-  background: #646464;
-  background: linear-gradient(180deg, #646464 0%, #030303 100%);
+  background: rgb(100, 100, 100);
+  background: linear-gradient(180deg, rgb(100, 100, 100) 0%, rgb(3, 3, 3) 100%);
   padding: 0.125rem 1rem 0.25rem;
 }
 .site-header .quick-links > :not(:first-child)::before {
