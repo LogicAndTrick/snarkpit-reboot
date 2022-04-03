@@ -73,25 +73,32 @@ footer {
 }
 
 button {
-    width: auto !important;
-    color: #FFD659;
-    padding: 4px;
-    background: rgb(0,0,0);
-    background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(100,100,100,1) 100%);
-    border: 1px solid #666666;
-    &:hover {
-        color: white;
-    }
+  width: auto !important;
+  color: #FFD659;
+  padding: 4px;
+  background: rgb(0,0,0);
+  background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(100,100,100,1) 100%);
+  border: 1px solid #666666;
+  &:hover {
+    color: white;
+  }
+  &:disabled {
+    color: #666;
+  }
 }
 
 button[type="submit"] {
-    font-size: 1rem;
-    color: #000;
-    background: #ead30f;
-    padding: 0.25rem 0.5rem;
-    line-height: 1rem;
-    text-align: center;
-    border: 0;
-    margin: 0.5rem auto;
-    display: block;
+  font-size: 1rem;
+  color: #000;
+  background: #ead30f;
+  padding: 0.25rem 0.5rem;
+  line-height: 1rem;
+  text-align: center;
+  border: 0;
+  margin: 0.5rem auto;
+  display: block;
+  &:disabled {
+    background: #70630a;
+    color: #a1a1a1;
+  }
 }

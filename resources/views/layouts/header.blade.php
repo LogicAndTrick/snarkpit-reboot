@@ -11,6 +11,9 @@
                         <a href="#">control panel</a>
                         <a href="#">messages</a>
                         <a href="#">updates</a>
+                        @can('admin')
+                            <a href="{{ url('admin') }}">admin</a>
+                        @endcan
                         <form method="post" action="{{ route('logout') }}">
                             @csrf
                             <button>logout</button>

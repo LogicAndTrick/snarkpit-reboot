@@ -21,6 +21,6 @@ class Controller extends BaseController
     }
 
     public function superAdmin() {
-        if (!Gate::allows('superAdmin')) abort(403);
+        if (!Gate::allows('super-admin')) abort(403);
     }
 }

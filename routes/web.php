@@ -33,7 +33,8 @@ $controllers = [
     'news' => \App\Http\Controllers\NewsController::class,
 
     //'api' => 'Api\ApiController',
-    //'search' => 'Search\SearchController'
+    //'search' => 'Search\SearchController',
+    'admin' => \App\Http\Controllers\AdminController::class
 ];
 App\Helpers\Routing::controllers($controllers);
 
