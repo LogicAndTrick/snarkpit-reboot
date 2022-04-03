@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean('is_open');
             $table->boolean('is_sticky');
             $table->boolean('is_poll');
-            $table->char('answered')->nullable();
+            $table->string('answered', 1)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -35,6 +35,8 @@ return new class extends Migration
             $table->index('last_post_id');
             $table->index('last_post_at');
         });
+
+        \Illuminate\Support\Facades\DB::unprepared("ALTER TABLE forum_threads ADD FULLTEXT forum_threads_title_fulltext (title);");
     }
 
     /**

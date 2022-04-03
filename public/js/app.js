@@ -2631,7 +2631,7 @@ function addSmilies(container, textarea) {
 
   for (var i = 0; i < smilies.length; i++) {
     var s = smilies[i];
-    var sma = $('<a href="#" class="btn btn-link btn-xs" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
+    var sma = $('<a href="#" class="" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
     visDiv.append(sma);
     sma.on('click', function (event) {
       event.preventDefault();

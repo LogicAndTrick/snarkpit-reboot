@@ -3,22 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Forum;
+use App\Models\ForumThread;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 class ForumController extends Controller
 {
     public function getIndex()
     {
-        $forums = Forum::with(['last_post'])->orderBy('order_index')->get();
+        $forums = Forum::with(['last_post', 'last_post.thread', 'last_post.user'])->orderBy('order_index')->get();
         return view('forum/index', [
             'forums' => $forums
         ]);
     }
 
-    public function getView($id) {
+    public function getView(Request $request, $id) {
         $forum = Forum::findOrFail($id);
-        return view('forum/view', [
+        $page = intval($request->input('page')) ?: 1;
+        $thread_query = ForumThread::where('forum_id', '=', $forum->id)
+            ->with(['last_post', 'last_post.user', 'user'])
+            ->orderBy('is_sticky', 'desc')
+            ->orderBy('last_post_at', 'desc')
+            ->orderBy('updated_at', 'desc');
+        $count = $thread_query->getQuery()->getCountForPagination();
+        $threads = $thread_query->skip(($page - 1) * 50)->take(50)->get();
+        $pag = new LengthAwarePaginator($threads, $count, 50, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
+        return view('forum.view', [
+            'threads' => $pag,
             'forum' => $forum
         ]);
     }

@@ -19,8 +19,8 @@
         </ol>
     </nav>
 
-    <section class="px-0">
-        <table class="table table-striped">
+    <section class="p-0">
+        <table class="table table-striped table-hover m-0">
             <thead>
                 <tr class="text-center">
                     <th>Forum name</th>
@@ -36,9 +36,19 @@
                             <a href="{{ url('forum/view', [$forum->id]) }}">{{ $forum->name }}</a>
                             <span class="d-block">{{ $forum->description }}</span>
                         </td>
-                        <td class="text-muted">{{ $forum->stat_threads }}</td>
-                        <td class="text-muted">{{ $forum->stat_posts }}</td>
-                        <td>?</td>
+                        <td class="text-center text-muted">{{ $forum->stat_threads }}</td>
+                        <td class="text-center text-muted">{{ $forum->stat_posts }}</td>
+                        <td class="text-end">
+                            @if ($forum->last_post)
+                                <span class="d-block">in <a href="#">{{ $forum->last_post->thread->title }}</a></span>
+                                <span class="d-block">
+                                    {{ $forum->last_post->created_at->format("D M jS Y \a\\t g:ia") }}
+                                    by <a href="">{{ $forum->last_post->user->name }}</a>
+                                </span>
+                            @else
+                                No posts yet!
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

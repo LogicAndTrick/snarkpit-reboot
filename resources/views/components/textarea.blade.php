@@ -12,10 +12,9 @@
     <div class="{{ $cls }}">
         <textarea
                name="{{ $name }}"
-               value="{{ $value ?? old($name) }}"
                id="{{ $id }}"
                {{ $disabled ? 'disabled' : '' }}
-            {!! $attributes->merge(['class' => 'form-control']) !!}>{{$value ?? ''}}</textarea>
+            {!! $attributes->merge(['class' => 'form-control']) !!}>{{$value ?? old($name)}}</textarea>
         @if ($errors->has($name))
             <span class="text-danger">{{$errors->first($name)}}</span>
         @endif

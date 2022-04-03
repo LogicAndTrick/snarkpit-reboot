@@ -23,7 +23,7 @@ $controllers = [
     //'ban' => 'Auth\BanController',
 
     'forum' => \App\Http\Controllers\ForumController::class,
-    //'thread' => 'Forum\ThreadController',
+    'thread' => \App\Http\Controllers\ThreadController::class,
     //'post' => 'Forum\PostController',
 
     //'panel' => 'User\PanelController',

@@ -1,0 +1,24 @@
+@import "variables";
+
+section {
+    background: $section-background;
+    color: $section-foreground;
+    padding: 0.5rem;
+    margin-bottom: 0.125rem;
+}
+section:nth-child(2n) {
+    background: $section-background-alt;
+}
+
+footer {
+    text-align: center;
+    font-size: 0.6rem;
+    color: #666;
+    margin: 1rem auto;
+}
+
+.well {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #999;
+}

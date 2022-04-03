@@ -1,0 +1,21 @@
+// Forums
+
+.thread-listing {
+  .col-stat {
+    width: 130px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .col-last-post {
+    width: 200px;
+    text-align: end;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .col-created-by {
+    width: 160px;
+  }
+}
