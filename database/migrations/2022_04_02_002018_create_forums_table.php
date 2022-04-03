@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->integer('stat_threads');
             $table->integer('stat_posts');
-            $table->unsignedInteger('last_post_id');
+            $table->unsignedInteger('last_post_id')->nullable();
             $table->integer('order_index');
             $table->timestamps();
             $table->softDeletes();

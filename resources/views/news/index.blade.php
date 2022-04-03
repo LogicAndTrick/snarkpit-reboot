@@ -3,7 +3,7 @@
 
 @section('content')
     <h1>
-        <span class="fa fa-newspaper-o"></span>
+        <span class="fa fa-newspaper"></span>
         News posts
         @can('admin')
             <small>

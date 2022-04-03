@@ -42,11 +42,11 @@
         </div>
     </div>
     <div class="main-links">
-        <a href=" {{ url('/')  }} ">Home</a>
+        <a href="{{ url('/') }}">Home</a>
         <a href="#">Maps</a>
         <a href="#">Articles</a>
         <a href="#">Downloads</a>
-        <a href="#">Forums</a>
+        <a href="{{ url('forum') }}">Forums</a>
         <a href="#">Links</a>
     </div>
 </header>

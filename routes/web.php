@@ -22,7 +22,7 @@ Route::get('/dashboard', function () {
 $controllers = [
     //'ban' => 'Auth\BanController',
 
-    //'forum' => 'Forum\ForumController',
+    'forum' => \App\Http\Controllers\ForumController::class,
     //'thread' => 'Forum\ThreadController',
     //'post' => 'Forum\PostController',
 

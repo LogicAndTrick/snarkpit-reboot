@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class NewsController extends Controller
 {
-
     public function getIndex()
     {
         $newses = News::with(['user'])->orderBy('created_at', 'desc')->paginate(10);

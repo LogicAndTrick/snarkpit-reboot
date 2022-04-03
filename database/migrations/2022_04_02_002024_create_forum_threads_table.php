@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('description', 200);
             $table->integer('stat_views');
             $table->integer('stat_posts');
-            $table->integer('last_post_id');
+            $table->integer('last_post_id')->nullable();
             $table->timestamp('last_post_at')->nullable();
             $table->boolean('is_open');
             $table->boolean('is_sticky');
