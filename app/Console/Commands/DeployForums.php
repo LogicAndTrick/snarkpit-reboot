@@ -110,7 +110,7 @@ class DeployForums extends Command
             where u.id > 0
             and u2.id > 0
         ')->c;
-        $post_chunk_size = 100;
+        $post_chunk_size = 1000;
         $num_chunks = ceil($post_count / $post_chunk_size);
 
         DB::unprepared("DROP TRIGGER IF EXISTS forum_posts_update_statistics_on_update");
