@@ -47,27 +47,9 @@ class DeployForums extends Command
         DB::unprepared("delete from `snark3_reboot`.forum_threads");
         DB::unprepared("delete from `snark3_reboot`.forums");
 
-        $forums = DB::select('select * from snark3_snarkpit.forums');
-        $topics = DB::select('
-            select t.*
-            from snark3_snarkpit.topics t
-            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
-            where u.id > 0
-            order by t.topic_id asc
-        ');
-        $posts = DB::select('
-            select p.*
-            from snark3_snarkpit.posts p
-            inner join snark3_snarkpit.topics t on p.topic_id = t.topic_id
-            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
-            inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
-            inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
-            where u.id > 0
-            and u2.id > 0
-            order by p.post_id asc
-        ');
-
         // forums
+        $forums = DB::select('select * from snark3_snarkpit.forums');
+
         // forum_id forum_name forum_desc forum_topics forum_posts support
         $this->withProgressBar($forums, function ($forum) {
             $f = new Forum();
@@ -85,6 +67,14 @@ class DeployForums extends Command
         // todo forum_polls
 
         // topics
+        $topics = DB::select('
+            select t.*
+            from snark3_snarkpit.topics t
+            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
+            where u.id > 0
+            order by t.topic_id asc
+        ');
+
         // topic_id title topic_poster topic_time topic_replies first_post_id last_post_id forum_id topic_status topic_notify description section sticky map answered chapters topic_competition poll views
         $this->withProgressBar($topics, function ($topic) {
             $t = new ForumThread();
@@ -110,30 +100,62 @@ class DeployForums extends Command
         $this->output->writeln("\nThreads done.");
 
         // posts
+        $post_count = DB::selectOne('
+            select count(*) as c
+            from snark3_snarkpit.posts p
+            inner join snark3_snarkpit.topics t on p.topic_id = t.topic_id
+            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
+            inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
+            inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
+            where u.id > 0
+            and u2.id > 0
+        ')->c;
+        $post_chunk_size = 100;
+        $num_chunks = ceil($post_count / $post_chunk_size);
+
         DB::unprepared("DROP TRIGGER IF EXISTS forum_posts_update_statistics_on_update");
         DB::unprepared("DROP TRIGGER IF EXISTS forum_posts_update_statistics_on_insert");
 
-        // post_id topic_id forum_id poster_id sig post_time type post_text notify answer
-        $i = 0;
-        $this->withProgressBar($posts, function ($post) use ($i) {
-            $p = new ForumPost();
-            if ($post->post_time == 0) $post->post_time = 946684800; // 2000-01-01
-            $p->timestamps = false;
-            $p->id = $post->post_id;
-            $p->forum_id = $post->forum_id;
-            $p->thread_id = $post->topic_id;
-            $p->user_id = $post->poster_id;
-            $p->content_text = reverse_snarkpit_format($post->post_text);
-            if (strlen($p->content_text) > 10000) $p->content_text = substr($p->content_text, 0, 10000);
-            $p->content_html = bbcode($p->content_text);
-            $p->add_signature = $post->sig == 1 || str_contains($p->content_text, '[addsig]');
-            $p->answer = $post->answer;
-            $p->created_at = Carbon::createFromTimestamp($post->post_time);
-            $p->updated_at = Carbon::createFromTimestamp($post->post_time);
-            $p->save();
-            $i++;
-            if ($i % 100 === 0) sleep(1);
-        });
+        $bar = $this->output->createProgressBar($num_chunks);
+        $bar->start();
+        for ($offs = 0; $offs < $post_count; $offs += $post_chunk_size) {
+
+            // post_id topic_id forum_id poster_id sig post_time type post_text notify answer
+            $posts = DB::select("
+                select p.*
+                from snark3_snarkpit.posts p
+                inner join snark3_snarkpit.topics t on p.topic_id = t.topic_id
+                inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
+                inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
+                inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
+                where u.id > 0
+                and u2.id > 0
+                order by p.post_id asc
+                limit {$post_chunk_size} offset {$offs}
+            ");
+
+            foreach ($posts as $post) {
+                $p = new ForumPost();
+                if ($post->post_time == 0) $post->post_time = 946684800; // 2000-01-01
+                $p->timestamps = false;
+                $p->id = $post->post_id;
+                $p->forum_id = $post->forum_id;
+                $p->thread_id = $post->topic_id;
+                $p->user_id = $post->poster_id;
+                $p->content_text = reverse_snarkpit_format($post->post_text);
+                if (strlen($p->content_text) > 10000) $p->content_text = substr($p->content_text, 0, 10000);
+                $p->content_html = bbcode($p->content_text);
+                $p->add_signature = $post->sig == 1 || str_contains($p->content_text, '[addsig]');
+                $p->answer = $post->answer;
+                $p->created_at = Carbon::createFromTimestamp($post->post_time);
+                $p->updated_at = Carbon::createFromTimestamp($post->post_time);
+                $p->save();
+            }
+
+            $bar->advance();
+            sleep(1);
+        }
+        $bar->finish();
 
         // update last post in forums and threads
         DB::unprepared("
