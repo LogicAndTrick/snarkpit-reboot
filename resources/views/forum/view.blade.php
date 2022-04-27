@@ -51,10 +51,21 @@
             </thead>
             <tbody>
             @foreach ($threads as $thread)
-                <tr>
+                <?php
+                    $cls = '';
+                    $next = $threads->get($loop->index + 1);
+                    if ($thread->is_sticky && $next && !$next->is_sticky) {
+                        $cls = 'border-bottom';
+                    }
+                ?>
+                <tr class="{{$cls}}">
                     <td class="col-title">
                         <div class="d-flex flex-row">
-                            <!-- icons -->
+                            <div class="text-nowrap">
+                                @foreach($thread->getIcons() as $icon)
+                                    <img src="{{ asset('/images/topic/'.$icon.'.gif') }}" alt="{{$icon}}" class="me-2" />
+                                @endforeach
+                            </div>
                             <div>
                                 <span class="d-block"><a href="{{ url('thread/view', [ $thread->id ]) }}">{{ $thread->title }}</a></span>
                                 @if($thread->description)
@@ -70,8 +81,8 @@
                     <td class="col-stat text-muted">{{ $thread->stat_views }}</td>
                     <td class="col-last-post">
                         @if ($thread->last_post)
-                            <span class="d-block">{{ $forum->last_post->created_at->format("D M jS Y \a\\t g:ia") }}</span>
-                            <span>by <a href="">{{ $forum->last_post->user->name }}</a></span>
+                            <span class="d-block">{{ $thread->last_post->created_at->format("D M jS Y \a\\t g:ia") }}</span>
+                            <span>by <a href="">{{ $thread->last_post->user->name }}</a></span>
                         @endif
                     </td>
                 </tr>

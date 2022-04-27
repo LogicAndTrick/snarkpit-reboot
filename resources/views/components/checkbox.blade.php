@@ -1,4 +1,4 @@
-@props(['name', 'type' => 'checkbox', 'label', 'disabled' => false, 'value' => null])
+@props(['name', 'type' => 'checkbox', 'label' => '', 'disabled' => false, 'value' => null, 'checked' => false])
 
 <?php
     $id = $name . '_' . rand(10000, 99999);
@@ -8,8 +8,9 @@
         <input type="{{ $type }}"
                name="{{ $name }}"
                id="{{ $id }}"
-                {{ $disabled ? 'disabled' : '' }}
-                {!! $attributes->merge(['class' => 'form-check-input']) !!} />
+               {{ $checked ? 'checked' : '' }}
+               {{ $disabled ? 'disabled' : '' }}
+               {!! $attributes->merge(['class' => 'form-check-input']) !!} />
 
         {{ $label }}
     </label>

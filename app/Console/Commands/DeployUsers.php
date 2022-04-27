@@ -63,6 +63,11 @@ class DeployUsers extends Command
                 $avatar = 'avatar' . $acc->id . '.' . $avatar;
             }
 
+            $custom_title = $acc->custom_title;
+            if ($custom_title) {
+                $custom_title = html_entity_decode(explode('|', $custom_title)[0]);
+            }
+
             $email = $acc->email;
             if (in_array(strtolower($email), $duplicate_emails)) {
                 $found = count(array_filter($duplicate_emails, function ($i) use ($email) {
@@ -77,7 +82,7 @@ class DeployUsers extends Command
 
             $user = new User();
             $user->id = $acc->id;
-            $user->name = $acc->username;
+            $user->name = html_entity_decode($acc->username);
             $user->email = $email;
             $user->email_verified_at = $acc->joined;
             $user->password = '';
@@ -97,18 +102,18 @@ class DeployUsers extends Command
             $user->has_pit = $acc->pit;
             $user->avatar_custom = $custom_avatar;
             $user->avatar_file = $avatar;
-            $user->title_custom = $acc->custom_title != '';
-            $user->title_text = $acc->custom_title;
+            $user->title_custom = $custom_title != '';
+            $user->title_text = $custom_title;
             $user->info_name = '';
-            $user->info_website = $acc->website ? 'http://'.$acc->website : '';
-            $user->info_occupation = $acc->occupation;
+            $user->info_website = $acc->website ? 'http://'.html_entity_decode($acc->website) : '';
+            $user->info_occupation = html_entity_decode($acc->occupation);
             $user->info_interests = '';
-            $user->info_location = $acc->location;
+            $user->info_location = html_entity_decode($acc->location);
             $user->info_languages = '';
-            $user->info_steam_profile = $acc->steam;
+            $user->info_steam_profile = html_entity_decode($acc->steam);
             $user->info_birthday = 0;
             $user->info_biography_text = reverse_snarkpit_format($acc->profile);
-            $user->info_biography_html = $this->bbcode($user->info_biography_text);
+            $user->info_biography_html = bbcode($user->info_biography_text);
             $user->info_signature_text = reverse_snarkpit_format($acc->sig);
             $user->info_signature_html = bbcode($user->info_signature_text);
             $user->stat_logins = 1;
@@ -124,10 +129,5 @@ class DeployUsers extends Command
             $user->save();
         });
         return 0;
-    }
-
-    private function bbcode($content_text)
-    {
-        return $content_text;
     }
 }

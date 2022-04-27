@@ -28,13 +28,6 @@ class ThreadController extends Controller
         $count = $post_query->getQuery()->getCountForPagination();
         if ($request->input('page') == 'last') $page = ceil($count / 50);
         $posts = $post_query->skip(($page - 1) * 50)->take(50)->get();
-        foreach ($posts as $p) {
-            if ($p->content_html == '' && $p->content_text != '') {
-                $p->content_html = bbcode($p->content_text);
-                $p->timestamps = false;
-                $p->save();
-            }
-        }
         $pag = new LengthAwarePaginator($posts, $count, 50, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
 
         return view('thread.view', [
@@ -81,42 +74,42 @@ class ThreadController extends Controller
 
     public function getEdit($id) {
         $this->admin();
-        $forum = Forum::findOrFail($id);
-        return view('forum/edit', [
-            'forum' => $forum
+        $thread = ForumThread::with(['forum'])->findOrFail($id);
+        return view('thread.edit', [
+            'thread' => $thread
         ]);
     }
 
     public function postEdit(Request $request) {
         $this->admin();
         $id = intval($request->input('id'));
-        $forum = Forum::findOrFail($id);
+        $thread = ForumThread::findOrFail($id);
         $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'required|max:10000',
-            'order_index' => 'numeric'
+            'title' => 'required|max:200',
+            'description' => 'max:200'
         ]);
-        $forum->update([
-            'name' => $request->input('name'),
+        $thread->update([
+            'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'order_index' => $request->input('order_index')
+            'is_open' => $request->boolean('is_open'),
+            'is_sticky' => $request->boolean('is_sticky')
         ]);
-        return redirect('/forum/view/' . $forum->id);
+        return redirect('/thread/view/' . $thread->id);
     }
 
     public function getDelete($id) {
         $this->admin();
-        $forum = Forum::findOrFail($id);
-        return view('forum/delete', [
-            'forum' => $forum
+        $thread = ForumThread::with(['forum'])->findOrFail($id);
+        return view('thread.delete', [
+            'thread' => $thread
         ]);
     }
 
     public function postDelete(Request $request) {
         $this->admin();
         $id = intval($request->input('id'));
-        $forum = Forum::findOrFail($id);
-        $forum->delete();
-        return redirect('forum/');
+        $thread = ForumThread::findOrFail($id);
+        $thread->delete();
+        return redirect('forum/view/'.$thread->forum_id);
     }
 }

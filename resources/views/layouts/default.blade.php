@@ -11,7 +11,7 @@
                     smiley_folder: '{{ asset('images/smilies') }}'
                 },
                 api: {
-                    format: '{{ url("api/posts/format") }}'
+                    format: '{{ url("api/format") }}'
                 }
             };
         </script>
@@ -24,5 +24,6 @@
             @yield('content')
         </main>
         @include('layouts.footer')
+        @yield('scripts', false)
     </body>
 </html>

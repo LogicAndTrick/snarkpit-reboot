@@ -140,7 +140,7 @@ return [
                 'emot-cowjump' => [ ':cowjump:' ],
                 'emot-eng101' => [ ':teach:' ],
                 'uncertain' => [ ':uncertain:' ],
-                '1sm071potstir' => [ ':stirring:,' ],
+                '1sm071potstir' => [ ':stirring:' ],
                 'thumbs_up' => [ ':thumbsup:' ],
                 'happy_open' => [ ':happy:' ],
                 'snark_topic_icon' => [ ':snark:' ],

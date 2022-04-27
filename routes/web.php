@@ -24,7 +24,7 @@ $controllers = [
 
     'forum' => \App\Http\Controllers\ForumController::class,
     'thread' => \App\Http\Controllers\ThreadController::class,
-    //'post' => 'Forum\PostController',
+    'post' => \App\Http\Controllers\PostController::class,
 
     //'panel' => 'User\PanelController',
     //'message' => 'User\MessageController',
@@ -32,7 +32,7 @@ $controllers = [
 
     'news' => \App\Http\Controllers\NewsController::class,
 
-    //'api' => 'Api\ApiController',
+    'api' => \App\Http\Controllers\ApiController::class,
     //'search' => 'Search\SearchController',
     'admin' => \App\Http\Controllers\AdminController::class
 ];

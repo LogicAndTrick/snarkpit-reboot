@@ -2,20 +2,57 @@
 
 .thread-listing {
   .col-stat {
-    width: 130px;
+    max-width: 130px;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .col-last-post {
-    width: 200px;
+    max-width: 200px;
     text-align: end;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .col-created-by {
-    width: 160px;
+    max-width: 160px;
+  }
+  table td {
+    vertical-align: middle;
+  }
+}
+
+.forum-post {
+  padding: 0;
+
+  header {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 0 0.5rem 0.5rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(#ccc, 0.125);
+    small {
+      display: block;
+    }
+  }
+
+  .user-avatar-details {
+    width: 10rem;
+    flex: 0 0 10rem;
+    border-right: 1px solid rgba(#ccc, 0.25);
+  }
+}
+
+.user-avatar-details {
+  font-size: 90%;
+  padding: 0.5rem;
+  img {
+    display: block;
+    margin: 0 auto 0.5rem;
+    max-width: 100%;
+  }
+  > * {
+    display: block;
   }
 }

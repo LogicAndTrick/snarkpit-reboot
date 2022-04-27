@@ -26,7 +26,7 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    align-items: start;
+    align-items: flex-start;
 
     .pagination, .breadcrumb {
         padding: 0;

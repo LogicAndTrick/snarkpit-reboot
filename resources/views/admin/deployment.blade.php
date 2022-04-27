@@ -9,21 +9,32 @@
         <li class="breadcrumb-item active">Deploy updates</li>
     </ol>
     <section>
+<?php
+    $operations = [
+        'update' => 'Update code (no database)',
+        'migrate' => 'Update database (no code)',
+        'update-migrate' => 'Update code + database',
+        'refresh' => 'Wipe database + deploy users',
+        'deploy-news' => 'Deploy news',
+        'deploy-forums' => 'Deploy forums (takes ages!)',
+    ];
+?>
         <p>The current version is: <code>{{ $version }}</code></p>
         <div class="row">
-            <div class="col">
-                <form action="{{ url('admin/deployment-execute') }}" method="post" target="update-frame" id="update-form">
-                    @csrf
-                    <input type="hidden" name="operation" value="update" />
-                    <button type="submit" class="mb-2" id="update-button">Update to latest</button>
-                </form>
+            <div class="col-auto">
+                @foreach($operations as $name => $desc)
+                    <div class="mb-2">
+                        <form action="{{ url('admin/deployment-execute') }}" method="post" target="update-frame" id="update-form">
+                            @csrf
+                            <input type="hidden" name="operation" value="{{ $name }}" />
+                            <button type="submit" class="d-block w-100" id="update-button">{{ $desc }}</button>
+                        </form>
+                    </div>
+                @endforeach
             </div>
-            <div class="col">
-                <form action="{{ url('admin/deployment-execute') }}" method="post" target="update-frame" id="update-form">
-                    @csrf
-                    <input type="hidden" name="operation" value="other" />
-                    <button type="submit" class="mb-2" id="update-button">Do something else...</button>
-                </form>
+            <div class="col mt-2">
+                <iframe name="update-frame" src="" id="update-frame" onload="disableButtons(false)" style="width: 100%; height: 10rem; border: 1px #900 solid; background: #111;">
+                </iframe>
             </div>
         </div>
         <script>
@@ -45,7 +56,5 @@
                 disableButtons(true);
             });
         </script>
-        <iframe name="update-frame" src="" id="update-frame" onload="disableButtons(false)" style="width: 100%; height: 10rem; border: 1px #900 solid; background: #111;">
-        </iframe>
     </section>
 @endsection

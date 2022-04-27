@@ -19516,10 +19516,11 @@ pre .line-highlight {
   padding: 10px 20px;
   border-left: 5px solid #eee;
   margin: 15px 0;
-  color: #666;
+  color: #999999;
 }
 .bbcode blockquote .quote-name {
   display: block;
+  color: #e6e6e6;
 }
 .bbcode .embedded, .bbcode table .embedded {
   display: block;
@@ -19534,9 +19535,11 @@ pre .line-highlight {
 }
 .bbcode .embedded.inline .caption-panel, .bbcode table .embedded .caption-panel {
   border: 0;
+  background: none;
 }
 .bbcode .embedded.inline .caption-body, .bbcode table .embedded .caption-body {
   padding: 0;
+  background: none;
 }
 .bbcode .embedded.left, .bbcode .embedded.right {
   width: 50%;
@@ -19682,7 +19685,7 @@ span.bbcode {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
-  align-items: start;
+  align-items: flex-start;
 }
 .editor-smilies section a {
   padding: 0.25rem;
@@ -19717,7 +19720,7 @@ span.bbcode {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
 }
 .nav-header .pagination, .nav-header .breadcrumb {
   padding: 0;
@@ -19903,21 +19906,56 @@ button[type=submit]:disabled {
 }
 
 .thread-listing .col-stat {
-  width: 130px;
+  max-width: 130px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .thread-listing .col-last-post {
-  width: 200px;
+  max-width: 200px;
   text-align: end;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .thread-listing .col-created-by {
-  width: 160px;
+  max-width: 160px;
+}
+.thread-listing table td {
+  vertical-align: middle;
+}
+
+.forum-post {
+  padding: 0;
+}
+.forum-post header {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0 0.5rem 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(204, 204, 204, 0.125);
+}
+.forum-post header small {
+  display: block;
+}
+.forum-post .user-avatar-details {
+  width: 10rem;
+  flex: 0 0 10rem;
+  border-right: 1px solid rgba(204, 204, 204, 0.25);
+}
+
+.user-avatar-details {
+  font-size: 90%;
+  padding: 0.5rem;
+}
+.user-avatar-details img {
+  display: block;
+  margin: 0 auto 0.5rem;
+  max-width: 100%;
+}
+.user-avatar-details > * {
+  display: block;
 }
 
 .bg-body {

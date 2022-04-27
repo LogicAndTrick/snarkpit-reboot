@@ -116,11 +116,27 @@ update("Update complete.");
             case 'update':
                 $commands[] = 'git pull';
                 $commands[] = 'COMPOSER_HOME=~/.composer-home php composer.phar install';
+                $commands[] = 'php artisan optimize';
+                break;
+            case 'migrate':
+                $commands[] = 'php artisan migrate';
+                break;
+            case 'update-migrate':
+                $commands[] = 'git pull';
+                $commands[] = 'COMPOSER_HOME=~/.composer-home php composer.phar install';
                 $commands[] = 'php artisan migrate';
                 $commands[] = 'php artisan optimize';
                 break;
-            case 'deploy':
+            case 'refresh';
+                $commands[] = 'php artisan migrate:refresh';
+                $commands[] = 'php artisan deploy:users';
+                $commands[] = 'php artisan deploy:bans';
+                break;
+            case 'deploy-news':
                 $commands[] = 'php artisan deploy:news';
+                break;
+            case 'deploy-forums':
+                $commands[] = 'php artisan deploy:forums';
                 break;
         }
 

@@ -151,10 +151,11 @@ pre {
     border-left: 5px solid #eee;
 
     margin: 15px 0;
-    color: #666;
+    color: darken($body-color, 20%);
 
     .quote-name {
       display: block;
+      color: lighten($body-color, 10%);
     }
   }
 
@@ -169,8 +170,8 @@ pre {
       max-width: 200px;
       vertical-align: middle;
       margin: 0;
-      .caption-panel { border : 0; }
-      .caption-body { padding: 0; }
+      .caption-panel { border : 0; background: none; }
+      .caption-body { padding: 0; background: none; }
     }
 
     &.left, &.right {
@@ -358,7 +359,7 @@ span.bbcode {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-around;
-            align-items: start;
+            align-items: flex-start;
         }
         a {
             padding: 0.25rem;

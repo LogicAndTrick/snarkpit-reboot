@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\ForumPost;
+use App\Models\ForumThread;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -44,5 +46,13 @@ class AuthServiceProvider extends ServiceProvider
         // Gate::define('update-post', function (User $user, Post $post) {
         //     return $user->id === $post->user_id;
         // });
+
+        Gate::define('create-post', function (User $user, ForumThread $thread) {
+            return $thread->isPostable();
+        });
+
+        Gate::define('edit-post', function (User $user, ForumPost $post, ForumThread $thread = null) {
+            return $user->level >= User::LEVEL_MODERATOR || $post->isEditable($thread);
+        });
     }
 }

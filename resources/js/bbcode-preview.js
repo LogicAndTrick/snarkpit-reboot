@@ -87,7 +87,7 @@ const smilies = [
     { img: 'emot-cowjump', code: ':cowjump:' },
     { img: 'emot-eng101', code: ':teach:' },
     { img: 'uncertain', code: ':uncertain:' },
-    { img: '1sm071potstir', code: ':stirring:,' },
+    { img: '1sm071potstir', code: ':stirring:' },
     { img: 'thumbs_up', code: ':thumbsup:' },
     { img: 'happy_open', code: ':happy:' },
 ];
@@ -176,7 +176,7 @@ function addSmilies(container, textarea) {
 
     for (let i = 0; i < smilies.length; i++) {
         const s = smilies[i];
-        const sma = $('<a href="#" class="" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
+        const sma = $('<a href="#" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
         visDiv.append(sma);
 
         sma.on('click', function(event) {
@@ -191,7 +191,7 @@ function addSmilies(container, textarea) {
 
     for (let i = 0; i < more_smilies.length; i++) {
         const s = more_smilies[i];
-        const sma = $('<a href="#" class="btn btn-link btn-xs" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
+        const sma = $('<a href="#" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
         moreDiv.append(sma);
 
         sma.on('click', function(event) {

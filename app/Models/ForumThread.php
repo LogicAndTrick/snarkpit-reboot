@@ -145,16 +145,17 @@ class ForumThread extends Model
         session(['thread_persistance_data' => $thread_read]);
     }
 
-    public function getIconClasses()
+    public function getIcons()
     {
-        $str = ['thread'];
+        $icons = [];
 
-        if ($this->hasNewPosts()) $str[] = 'thread_active';
-        else $str[] = 'thread_inactive';
+        if (!$this->is_open) $icons[] = 'locked';
+        else if ($this->hasNewPosts()) $icons[] = 'unread';
+        else $icons[] = 'read';
 
-        if (!$this->is_open) $str[] = 'locked';
-        if ($this->is_sticky) $str[] = 'sticky';
+        if ($this->is_sticky) $icons[] = 'sticky';
+        if ($this->is_poll) $icons[] = 'poll';
 
-        return implode(' ', $str);
+        return $icons;
     }
 }
