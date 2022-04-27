@@ -26,7 +26,8 @@
     <div class="text-center">
         <a href="#">
             @if($user->avatar_custom)
-                <img src="{{ asset('uploads/avatars/'.$user->avatar_file) }}" />
+                <!-- TODO: src="{{ asset('uploads/avatars/'.$user->avatar_file) }}" />-->
+                <img src="{{ ('https://snarkpit.net/images/avatars/'.$user->avatar_file) }}" />
             @endif
             {{ $user->name }}
         </a>
