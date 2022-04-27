@@ -43,10 +43,9 @@ class DeployForums extends Command
      */
     public function handle()
     {
-        $dbname = env('DB_DATABASE');
-        DB::unprepared("delete from `$dbname`.forum_posts");
-        DB::unprepared("delete from `$dbname`.forum_threads");
-        DB::unprepared("delete from `$dbname`.forums");
+        DB::unprepared("delete from `snark3_reboot`.forum_posts");
+        DB::unprepared("delete from `snark3_reboot`.forum_threads");
+        DB::unprepared("delete from `snark3_reboot`.forums");
 
         $forums = DB::select('select * from snark3_snarkpit.forums');
         $topics = DB::select('

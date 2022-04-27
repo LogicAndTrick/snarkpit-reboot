@@ -39,8 +39,7 @@ class DeployBans extends Command
      */
     public function handle()
     {
-        $dbname = env('DB_DATABASE');
-        DB::unprepared("truncate table `$dbname`.bans");
+        DB::unprepared("truncate table `snark3_reboot`.bans");
         $bans = DB::select('select * from snark3_snarkpit.banned where expires = 0');
         $this->withProgressBar($bans, function($ban) {
             $b = new Ban();

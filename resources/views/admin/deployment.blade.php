@@ -24,7 +24,7 @@
             <div class="col-auto">
                 @foreach($operations as $name => $desc)
                     <div class="mb-2">
-                        <form action="{{ url('admin/deployment-execute') }}" method="post" target="update-frame" id="update-form">
+                        <form action="{{ url('admin/deployment-execute') }}" method="post" target="update-frame" class="update-form">
                             @csrf
                             <input type="hidden" name="operation" value="{{ $name }}" />
                             <button type="submit" class="d-block w-100" id="update-button">{{ $desc }}</button>
@@ -40,7 +40,7 @@
         <script>
             let operation = null;
             function disableButtons(disabled) {
-                document.querySelectorAll('form button').forEach(x => {
+                document.querySelectorAll('.update-form button').forEach(x => {
                     x.disabled = disabled;
                     if (disabled) {
                         x._cachedText = x.innerText;

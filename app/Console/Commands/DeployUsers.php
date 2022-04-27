@@ -41,8 +41,7 @@ class DeployUsers extends Command
      */
     public function handle()
     {
-        $dbname = env('DB_DATABASE');
-        DB::unprepared("delete from `$dbname`.users");
+        DB::unprepared("delete from `snark3_reboot`.users");
         $count = DB::selectOne('select COUNT(*) as c from snark3_snarkpit.accounts')->c;
 
         // Use descending order so that the most recent email address is kept unchanged
