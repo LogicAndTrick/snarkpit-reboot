@@ -13,6 +13,7 @@ return [
         [ 'class' => 'App\Helpers\BBCode\Tags\PreTag',   'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Tags\Tag',      'scopes' => [ ], 'token' => 'center', 'element' => 'div', 'element_class' => 'text-center'],
         [ 'class' => 'App\Helpers\BBCode\Tags\AlignTag', 'scopes' => [ ] ],
+        [ 'class' => 'App\Helpers\BBCode\Tags\ListTag',  'scopes' => [ ] ],
 
         // Links
         [ 'class' => 'App\Helpers\BBCode\Tags\LinkTag',      'scopes' => [ 'excerpt' ], 'token' => 'url' ],
@@ -39,7 +40,6 @@ return [
         [ 'class' => 'App\Helpers\BBCode\Elements\PreElement',       'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\MdLineElement',    'scopes' => [ ] ],
         [ 'class' => 'App\Helpers\BBCode\Elements\MdQuoteElement',   'scopes' => [ ] ],
-        [ 'class' => 'App\Helpers\BBCode\Elements\MdListElement',    'scopes' => [ ] ],
     ],
     'text_processors' => [
         //[ 'class' => 'App\Helpers\BBCode\Processors\MarkdownTextProcessor', 'scopes' => [ 'inline', 'excerpt' ] ],
