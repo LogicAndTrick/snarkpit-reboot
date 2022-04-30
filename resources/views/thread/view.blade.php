@@ -43,6 +43,64 @@
         {{ $thread->title }}
     </h2>
 
+    @if ($thread->is_poll && $poll)
+<?php
+    $can_vote = Auth::user() && $poll->isOpen() && !$poll_vote;
+    $total_votes = $poll->items->map(fn($x) => $x->stat_votes)->sum();
+    $total_votes = max(1, $total_votes); // if we have no votes, just change this to 1
+    $colours = ['danger', 'success', 'primary', 'light', 'info', 'warning', 'secondary' ];
+?>
+        <section>
+            <div class="text-center mb-2">
+                <h4 class="mb-0">{{$poll->title}}</h4>
+                @if ($poll->isClosed())
+                    <small>(poll ended on {{$poll->close_date->format('D M jS Y \a\\t g:ia')}})</small>
+                @else
+                    <small>(poll open until {{$poll->close_date->format('D M jS Y \a\\t g:ia')}})</small>
+                @endif
+            </div>
+            <form method="POST" action="{{ url('thread/vote') }}">
+                @csrf
+                <x-hidden name="id" :value="$poll->id" />
+                @foreach($poll->items as $item)
+<?php
+                    $pct = round(($item->stat_votes / $total_votes) * 100, 1);
+                    $col = $colours[$loop->index % count($colours)];
+?>
+                    <div class="mb-2 text-{{$col}}">
+                        @if ($can_vote)
+                            <label class="form-check">
+                                <input type="radio" name="vote" class="form-check-input" value="{{ $item->id }}" />
+                                {{ $item->text }}
+                            </label>
+                        @else
+                            @if ($poll_vote && $poll_vote->forum_poll_item_id === $item->id)
+                                <span class="fas fa-check"></span>
+                            @endif
+                            {{ $item->text }}
+                        @endif
+                        @if ($item->stat_votes === 1)
+                            (1 vote)
+                        @else
+                            ({{ $item->stat_votes }} votes)
+                        @endif
+                        <div class="d-flex flex-row align-items-baseline">
+                            <div class="progress bg-transparent" style="height: 8px; width: {{max($pct, 0.25)}}%;">
+                                <div class="progress-bar bg-{{$col}}" style="width: 100%;"></div>
+                            </div>
+                            <div style="width: 50px;" class="ms-2">
+                                {{$pct}}%
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                @if ($can_vote)
+                    <button type="submit">Vote</button>
+                @endif
+            </form>
+        </section>
+    @endif
+
     <nav class="nav-header bg-body">
         <div class="btn-group">
             @auth

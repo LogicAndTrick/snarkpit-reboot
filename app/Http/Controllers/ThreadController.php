@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Forum;
+use App\Models\ForumPoll;
+use App\Models\ForumPollItem;
+use App\Models\ForumPollItemVote;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ThreadController extends Controller
 {
@@ -30,12 +35,57 @@ class ThreadController extends Controller
         $posts = $post_query->skip(($page - 1) * 50)->take(50)->get();
         $pag = new LengthAwarePaginator($posts, $count, 50, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
 
+        $poll = null;
+        $poll_vote = null;
+        if ($thread->is_poll) {
+            $poll = ForumPoll::with(['items'])->where('thread_id', '=', $id)->first();
+            if ($poll && Auth::user()) {
+                $poll_vote = ForumPollItemVote::where('forum_poll_id', '=', $poll->id)->where('user_id', '=', Auth::user()->id)->first();
+            }
+        }
+
         return view('thread.view', [
             'forum' => $forum,
             'thread' => $thread,
             'posts' => $pag,
+            'poll' => $poll,
+            'poll_vote' => $poll_vote
             //'subscription' => UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id, true)
         ]);
+    }
+
+    public function postVote(Request $request) {
+        $this->loggedIn();
+        $id = intval($request->input('id'));
+        $poll = ForumPoll::findOrFail($id);
+        $thread = ForumThread::findOrFail($poll->thread_id);
+        if (!$thread->is_poll) abort(403);
+
+        $request->validate([
+            'vote' => [
+                'required',
+                'numeric',
+                'integer',
+                Rule::in($poll->items->map(fn($x) => $x->id))
+            ]
+        ]);
+
+        $poll_vote = ForumPollItemVote::where('forum_poll_id', '=', $poll->id)->where('user_id', '=', Auth::user()->id)->first();
+        if ($poll_vote) {
+            // change the vote
+            $poll_vote->update([
+                'forum_poll_item_id' => intval($request->input('vote'))
+            ]);
+        } else {
+            // cast the vote
+            $poll_vote = ForumPollItemVote::create([
+                'forum_poll_id' => $poll->id,
+                'forum_poll_item_id' => intval($request->input('vote')),
+                'user_id' => Auth::user()->id
+            ]);
+        }
+
+        return redirect('thread/view/'.$thread->id.'?page=last');
     }
 
     public function getCreate($id)
@@ -46,27 +96,58 @@ class ThreadController extends Controller
         ]);
     }
 
+    private static function validate_poll_options(string $attribute, string $value, callable $fail) {
+        $options = array_map(fn($x) => trim($x), explode("\n", trim($value)));
+        if (count($options) < 2) $fail('At least 2 options must be provided.');
+        if (count($options) > 8) $fail('No more than 8 options can be provided.');
+        foreach ($options as $opt) {
+            if (strlen($opt) > 255) $fail('An option cannot be longer than 255 characters.');
+        }
+    }
+
     public function postCreate(Request $request) {
         $id = intval($request->input('forum_id'));
         $forum = Forum::findOrFail($id);
         $request->validate([
-            'title' => 'required|max:200',
-            'description' => 'max:200',
-            'text' => 'required|max:10000'
+            'title' => ['required', 'max:200' ],
+            'description' => ['max:200'],
+            'text' => ['required', 'max:10000' ],
+            'poll_question' => ['exclude_without:is_poll', 'required', 'max:255'],
+            'poll_expiry' => ['exclude_without:is_poll', 'required', 'integer', 'numeric', 'between:1,60'],
+            'poll_options' => ['exclude_without:is_poll', 'required', 'string', self::validate_poll_options(...)],
         ]);
-        $thread = ForumThread::Create([
+        $is_poll = $request->boolean('is_poll');
+        $thread = ForumThread::create([
             'forum_id' => $id,
             'user_id' => Auth::id(),
             'title' => $request->input('title'),
             'description' => $request->input('description'),
+            'is_poll' => $is_poll
         ]);
-        $post = ForumPost::Create([
+        $post = ForumPost::create([
             'thread_id' => $thread->id,
             'forum_id' => $id,
             'user_id' => Auth::user()->id,
             'content_text' => $request->input('text'),
             'content_html' => bbcode($request->input('text')),
         ]);
+
+        if ($is_poll) {
+            $poll = ForumPoll::create([
+                'thread_id' => $thread->id,
+                'title' => $request->input('poll_question'),
+                'close_date' => Carbon::now()->addDays(intval($request->input('poll_expiry')))
+            ]);
+            $options = array_map(fn($x) => trim($x), explode("\n", trim($request->input('poll_options'))));
+            foreach ($options as $opt) {
+                ForumPollItem::create([
+                    'forum_poll_id' => $poll->id,
+                    'text' => $opt,
+                    'stat_votes' => 0
+                ]);
+            }
+        }
+
         return redirect('thread/view/'.$thread->id.'?page=last');
     }
 

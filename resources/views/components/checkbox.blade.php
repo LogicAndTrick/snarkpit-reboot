@@ -8,7 +8,7 @@
         <input type="{{ $type }}"
                name="{{ $name }}"
                id="{{ $id }}"
-               {{ $checked ? 'checked' : '' }}
+               {{ $checked || old($name) ? 'checked' : '' }}
                {{ $disabled ? 'disabled' : '' }}
                {!! $attributes->merge(['class' => 'form-check-input']) !!} />
 
