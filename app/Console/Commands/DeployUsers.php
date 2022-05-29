@@ -50,7 +50,8 @@ class DeployUsers extends Command
         $found_duplicates = [];
 
         $this->withProgressBar($accounts, function($acc) use (&$duplicate_emails, &$found_duplicates) {
-            if ($acc->id === -1) $acc->id = 100;
+            $id = $acc->id;
+            if ($id < 0) $id = 100;
 
             $custom_avatar = false;
             $avatar = $acc->avatar;
@@ -58,7 +59,7 @@ class DeployUsers extends Command
                 $avatar = $avatar . '.png';
             } else if ($avatar === 'jpg' || $avatar === 'gif' || $avatar === 'png') {
                 $custom_avatar = true;
-                $avatar = 'avatar' . $acc->id . '.' . $avatar;
+                $avatar = 'avatar' . $id . '.' . $avatar;
             }
 
             $custom_title = $acc->custom_title;
@@ -79,7 +80,7 @@ class DeployUsers extends Command
             if ($level == 0) $level = 1;
 
             $user = new User();
-            $user->id = $acc->id;
+            $user->id = $id;
             $user->name = html_entity_decode($acc->username);
             $user->email = $email;
             $user->email_verified_at = $acc->joined;
