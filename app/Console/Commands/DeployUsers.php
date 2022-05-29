@@ -42,7 +42,6 @@ class DeployUsers extends Command
     public function handle()
     {
         DB::unprepared("delete from `snark3_reboot`.users");
-        $count = DB::selectOne('select COUNT(*) as c from snark3_snarkpit.accounts')->c;
 
         // Use descending order so that the most recent email address is kept unchanged
         $accounts = DB::select('select * from snark3_snarkpit.accounts order by id desc');
@@ -51,7 +50,7 @@ class DeployUsers extends Command
         $found_duplicates = [];
 
         $this->withProgressBar($accounts, function($acc) use (&$duplicate_emails, &$found_duplicates) {
-            if ($acc->id < 0) return;
+            if ($acc->id === -1) $acc->id = 100;
 
             $custom_avatar = false;
             $avatar = $acc->avatar;

@@ -137,6 +137,13 @@ update("Update complete.");
                 break;
             case 'deploy-forums':
                 $commands[] = 'php artisan deploy:forums';
+                $commands[] = 'php artisan deploy:forum-polls';
+                break;
+            case 'deploy-games':
+                $commands[] = 'php artisan deploy:games';
+                break;
+            case 'deploy-downloads':
+                $commands[] = 'php artisan deploy:downloads';
                 break;
         }
 

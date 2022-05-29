@@ -31,6 +31,7 @@ $controllers = [
     //'user' => 'User\UserController',
 
     'news' => \App\Http\Controllers\NewsController::class,
+    'download' => \App\Http\Controllers\DownloadController::class,
 
     'api' => \App\Http\Controllers\ApiController::class,
     //'search' => 'Search\SearchController',

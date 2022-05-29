@@ -17,6 +17,8 @@
         'refresh' => 'Wipe database + deploy users',
         'deploy-news' => 'Deploy news',
         'deploy-forums' => 'Deploy forums (takes ages!)',
+        'deploy-games' => 'Deploy games',
+        'deploy-downloads' => 'Deploy downloads',
     ];
 ?>
         <p>The current version is: <code>{{ $version }}</code></p>

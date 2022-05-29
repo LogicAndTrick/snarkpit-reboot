@@ -71,7 +71,6 @@ class DeployForums extends Command
             select t.*
             from snark3_snarkpit.topics t
             inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
-            where u.id > 0
             order by t.topic_id asc
         ');
 
@@ -82,7 +81,7 @@ class DeployForums extends Command
             $t->timestamps = false;
             $t->id = $topic->topic_id;
             $t->forum_id = $topic->forum_id;
-            $t->user_id = $topic->topic_poster;
+            $t->user_id = $topic->topic_poster < 0 ? 100 : $topic->topic_poster;
             $t->title = stripslashes(html_entity_decode($topic->title));
             $t->description = stripslashes(html_entity_decode($topic->description));
             $t->stat_views = $topic->views;
@@ -107,8 +106,6 @@ class DeployForums extends Command
             inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
             inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
             inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
-            where u.id > 0
-            and u2.id > 0
         ')->c;
         $post_chunk_size = 1000;
         $num_chunks = ceil($post_count / $post_chunk_size);
@@ -128,8 +125,6 @@ class DeployForums extends Command
                 inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
                 inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
                 inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
-                where u.id > 0
-                and u2.id > 0
                 order by p.post_id asc
                 limit {$post_chunk_size} offset {$offs}
             ");
@@ -141,7 +136,7 @@ class DeployForums extends Command
                 $p->id = $post->post_id;
                 $p->forum_id = $post->forum_id;
                 $p->thread_id = $post->topic_id;
-                $p->user_id = $post->poster_id;
+                $p->user_id = $post->poster_id < 0 ? 100 : $post->poster_id;
                 $p->content_text = reverse_snarkpit_format($post->post_text);
                 if (strlen($p->content_text) > 10000) $p->content_text = substr($p->content_text, 0, 10000);
                 $p->content_html = bbcode($p->content_text);
@@ -153,7 +148,7 @@ class DeployForums extends Command
             }
 
             $bar->advance();
-            sleep(1);
+            usleep(333333); // one third of a second
         }
         $bar->finish();
 

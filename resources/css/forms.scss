@@ -1,6 +1,6 @@
 @import "variables";
 
-input, textarea {
+input, textarea, select {
   border: 1px solid $red-border;
   background: black;
   color: #ccc;
@@ -31,13 +31,15 @@ button, .btn {
   background: rgb(0,0,0);
   background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(100,100,100,1) 100%);
   border: 1px solid #666666;
+  display: inline-block;
+
   &:hover {
     color: white;
   }
   &:disabled {
     color: #666;
   }
-  
+
   &.btn-sm {
     padding: 0 0.25rem;
   }
