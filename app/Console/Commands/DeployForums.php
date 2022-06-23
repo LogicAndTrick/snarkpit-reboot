@@ -155,25 +155,14 @@ class DeployForums extends Command
         // update last post in forums and threads
         DB::unprepared("
             update forum_threads t
-            inner join (
-                select id, thread_id, created_at from (
-                    select id, thread_id, created_at, row_number() over (partition by thread_id order by created_at desc, id desc) as rn
-                    from forum_posts p
-                ) q
-                where q.rn = 1
-            ) p on p.thread_id = t.id
-            set t.last_post_id = p.id, t.last_post_at = p.created_at
+            set last_post_id = (select id from forum_posts where thread_id = t.id order by created_at desc, id desc limit 1),
+            last_post_at = (select created_at from forum_posts where thread_id = t.id order by created_at desc, id desc limit 1)
+            where 1 = 1
         ");
         DB::unprepared("
             update forums f
-            inner join (
-                select id, forum_id from (
-                    select id, forum_id, row_number() over (partition by forum_id order by created_at desc, id desc) as rn
-                    from forum_posts p
-                ) q
-                where q.rn = 1
-            ) p on p.forum_id = f.id
-            set f.last_post_id = p.id
+            set last_post_id = (select id from forum_posts where forum_id = f.id order by created_at desc, id desc limit 1)
+            where 1 = 1
         ");
 
         DB::unprepared("

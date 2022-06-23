@@ -47,6 +47,6 @@
         <a href="#">Articles</a>
         <a href="{{ url('download') }}">Downloads</a>
         <a href="{{ url('forum') }}">Forums</a>
-        <a href="#">Links</a>
+        <a href="{{ url('links') }}">Links</a>
     </div>
 </header>
