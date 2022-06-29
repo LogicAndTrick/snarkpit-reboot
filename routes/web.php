@@ -33,6 +33,7 @@ $controllers = [
     'news' => \App\Http\Controllers\NewsController::class,
     'download' => \App\Http\Controllers\DownloadController::class,
     'links' => \App\Http\Controllers\LinksController::class,
+    'articles' => \App\Http\Controllers\ArticlesController::class,
 
     'api' => \App\Http\Controllers\ApiController::class,
     //'search' => 'Search\SearchController',

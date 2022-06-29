@@ -30,7 +30,7 @@ return new class extends Migration
             $table->text('thumbnail_file', 200);
             $table->text('content_text');
             $table->text('content_html');
-            $table->foreignIdFor(\App\Models\User::class, 'review_user_id')->references('id')->on('users');
+            $table->foreignIdFor(\App\Models\User::class, 'review_user_id')->nullable()->references('id')->on('users');
             $table->text('review_text');
             $table->text('review_html');
             $table->timestamps();

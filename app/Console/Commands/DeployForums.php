@@ -43,6 +43,9 @@ class DeployForums extends Command
      */
     public function handle()
     {
+        DB::unprepared("delete from `snark3_reboot`.forum_poll_item_votes");
+        DB::unprepared("delete from `snark3_reboot`.forum_poll_items");
+        DB::unprepared("delete from `snark3_reboot`.forum_polls");
         DB::unprepared("delete from `snark3_reboot`.forum_posts");
         DB::unprepared("delete from `snark3_reboot`.forum_threads");
         DB::unprepared("delete from `snark3_reboot`.forums");
@@ -70,18 +73,18 @@ class DeployForums extends Command
         $topics = DB::select('
             select t.*
             from snark3_snarkpit.topics t
-            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
+            inner join snark3_snarkpit.accounts u on u.id = if(t.topic_poster = 0, -1, t.topic_poster)
             order by t.topic_id asc
         ');
 
         // topic_id title topic_poster topic_time topic_replies first_post_id last_post_id forum_id topic_status topic_notify description section sticky map answered chapters topic_competition poll views
         $this->withProgressBar($topics, function ($topic) {
             $t = new ForumThread();
-            if ($topic->topic_time == 0) $topic->topic_time = 946684800; // 2000-01-01
+            if (!$topic->topic_time) $topic->topic_time = 946684800; // 2000-01-01
             $t->timestamps = false;
             $t->id = $topic->topic_id;
             $t->forum_id = $topic->forum_id;
-            $t->user_id = $topic->topic_poster < 0 ? 100 : $topic->topic_poster;
+            $t->user_id = $topic->topic_poster <= 0 ? 100 : $topic->topic_poster;
             $t->title = stripslashes(html_entity_decode($topic->title));
             $t->description = stripslashes(html_entity_decode($topic->description));
             $t->stat_views = $topic->views;
@@ -103,8 +106,8 @@ class DeployForums extends Command
             select count(*) as c
             from snark3_snarkpit.posts p
             inner join snark3_snarkpit.topics t on p.topic_id = t.topic_id
-            inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
-            inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
+            inner join snark3_snarkpit.accounts u on u.id = if(t.topic_poster = 0, -1, t.topic_poster)
+            inner join snark3_snarkpit.accounts u2 on u2.id = if(p.poster_id = 0, -1, p.poster_id)
             inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
         ')->c;
         $post_chunk_size = 1000;
@@ -122,8 +125,8 @@ class DeployForums extends Command
                 select p.*
                 from snark3_snarkpit.posts p
                 inner join snark3_snarkpit.topics t on p.topic_id = t.topic_id
-                inner join snark3_snarkpit.accounts u on u.id = t.topic_poster
-                inner join snark3_snarkpit.accounts u2 on u2.id = p.poster_id
+                inner join snark3_snarkpit.accounts u on u.id = if(t.topic_poster = 0, -1, t.topic_poster)
+                inner join snark3_snarkpit.accounts u2 on u2.id = if(p.poster_id = 0, -1, p.poster_id)
                 inner join snark3_snarkpit.forums f on p.forum_id = f.forum_id
                 order by p.post_id asc
                 limit {$post_chunk_size} offset {$offs}
@@ -131,12 +134,12 @@ class DeployForums extends Command
 
             foreach ($posts as $post) {
                 $p = new ForumPost();
-                if ($post->post_time == 0) $post->post_time = 946684800; // 2000-01-01
+                if (!$post->post_time) $post->post_time = 946684800; // 2000-01-01
                 $p->timestamps = false;
                 $p->id = $post->post_id;
                 $p->forum_id = $post->forum_id;
                 $p->thread_id = $post->topic_id;
-                $p->user_id = $post->poster_id < 0 ? 100 : $post->poster_id;
+                $p->user_id = $post->poster_id <= 0 ? 100 : $post->poster_id;
                 $p->content_text = reverse_snarkpit_format($post->post_text);
                 if (strlen($p->content_text) > 10000) $p->content_text = substr($p->content_text, 0, 10000);
                 $p->content_html = bbcode($p->content_text);

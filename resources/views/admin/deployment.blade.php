@@ -19,6 +19,8 @@
         'deploy-forums' => 'Deploy forums (takes ages!)',
         'deploy-games' => 'Deploy games',
         'deploy-downloads' => 'Deploy downloads',
+        'deploy-links' => 'Deploy links',
+        'deploy-articles' => 'Deploy articles',
     ];
 ?>
         <p>The current version is: <code>{{ $version }}</code></p>

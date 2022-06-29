@@ -46,7 +46,7 @@ class DeployNews extends Command
 
             $news = new News();
             $news->id = $post->id;
-            $news->user_id = $post->user_id < 0 ? 100 : $post->user_id;
+            $news->user_id = $post->user_id <= 0 ? 100 : $post->user_id;
             $news->subject = $post->subject;
             $news->content_text = reverse_snarkpit_format($post->text);
             $news->content_html = bbcode($news->content_text);

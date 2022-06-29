@@ -15,6 +15,17 @@ class DeployGames extends Command
     {
         DB::unprepared("delete from `snark3_reboot`.games");
         $games = DB::select('select * from snark3_snarkpit.games');
+
+        // Create blank game
+        $g = new Game();
+        $g->id = 1;
+        $g->name = 'General';
+        $g->description = 'Generic entry for things that don\'t apply to a specific game';
+        $g->url = '';
+        $g->abbreviation = '';
+        $g->order_index = 1;
+        $g->save();
+
         $this->withProgressBar($games, function($game) {
             $g = new Game();
             $g->id = $game->id;

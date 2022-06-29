@@ -15,11 +15,7 @@ class DeployDownloads extends Command
     public function handle()
     {
         DB::unprepared("delete from `snark3_reboot`.downloads");
-        $downloads = DB::select('
-            select f.*
-            from snark3_snarkpit.download_files f
-            inner join snark3_snarkpit.games g on g.id = f.game
-        ');
+        $downloads = DB::select('select * from snark3_snarkpit.download_files f');
         $this->withProgressBar($downloads, function($download) {
             $image = '';
             $file = '';
@@ -30,8 +26,8 @@ class DeployDownloads extends Command
             $d = new Download();
             $d->id = $download->id;
             $d->download_category_id = $download->cat;
-            $d->user_id = $download->user < 0 ? 100 : $download->user;
-            $d->game_id = $download->game;
+            $d->user_id = $download->user <= 0 ? 100 : $download->user;
+            $d->game_id = $download->game == 0 ? 1 : $download->game;
             $d->thread_id = $download->topic;
             $d->name = reverse_snarkpit_format($download->name);
             $d->content_text = reverse_snarkpit_format($download->description);

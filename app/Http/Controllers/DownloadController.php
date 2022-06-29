@@ -28,7 +28,7 @@ class DownloadController extends Controller
         else $sort_field = 'created_at';
         $downloads = $downloads->orderBy($sort_field, $sort_dir);
 
-        $downloads = $downloads->paginate(12);
+        $downloads = $downloads->paginate(12)->withQueryString();
         $cats = DB::select('
             select c.id, c.name, count(d.id) as count
             from downloads d
