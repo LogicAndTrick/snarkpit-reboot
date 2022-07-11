@@ -37,6 +37,7 @@ return new class extends Migration
             $table->text('content_html');
             $table->integer('stat_views');
             $table->integer('stat_downloads');
+            $table->float('stat_rating');
             $table->string('download_file', 100);
             $table->string('mirrors', 1000);
             $table->timestamps();
@@ -48,6 +49,13 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Map::class)->references('id')->on('maps');
             $table->string('image_file', 100);
             $table->integer('order_index');
+        });
+
+        Schema::create('map_ratings', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Map::class)->references('id')->on('maps');
+            $table->foreignIdFor(\App\Models\User::class)->references('id')->on('users');
+            $table->integer('rating', false, true);
         });
     }
 

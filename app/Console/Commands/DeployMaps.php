@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Map;
 use App\Models\MapImage;
+use App\Models\MapRating;
 use App\Models\MapStatus;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -56,6 +57,7 @@ class DeployMaps extends Command
             $m->stat_views = $map->views;
             $m->stat_downloads = $map->downloads;
             $m->download_file = $file;
+            $m->stat_rating = $map->rating_calc;
             $m->mirrors = $map->mirrors;
             $m->created_at = Carbon::createFromTimestamp($map->added ? $map->added : 1062184897);
             $m->updated_at = Carbon::createFromTimestamp($map->updated ? $map->updated : 1062184897);
@@ -69,6 +71,19 @@ class DeployMaps extends Command
                 $mi->image_file = 'uploads/maps/images/' . $map->id . '_' . $i . '.jpg';
                 $mi->order_index = $i - 1;
                 $mi->save();
+            }
+
+            $ratings = explode("-", $map->ratings);
+            for ($i = 0; $i < count($ratings); $i += 2) {
+                try {
+                    MapRating::Create([
+                        'user_id' => intval($ratings[$i]),
+                        'map_id' => $map->id,
+                        'rating' => intval($ratings[$i + 1]),
+                    ]);
+                } catch (\Exception $e) {
+                    // user doesn't exist, probably
+                }
             }
         });
         return 0;
