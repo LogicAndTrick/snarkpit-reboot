@@ -18,7 +18,7 @@
             </div>
             <div class="col-6">
                 <h2>
-                    <a href="{{ url('articles/view', [$version->slug]) }}">{{ $version->title }}</a>
+                    <a href="{{ url('article/view', [$version->slug]) }}">{{ $version->title }}</a>
                 </h2>
                 <h3 class="small">
 
@@ -32,7 +32,7 @@
             <div class="col-3">
                 <ul class="list-unstyled">
                     <li>by <a href="#">{{ $version->article->user->name }}</a></li>
-                    <li>in <a href="{{ url("articles?game={$version->article->game_id}&cat={$version->article->article_category_id}") }}">{{ $version->article->game->name }} &raquo; {{ $version->article->category->name }}</a></li>
+                    <li>in <a href="{{ url("article?game={$version->article->game_id}&cat={$version->article->article_category_id}") }}">{{ $version->article->game->name }} &raquo; {{ $version->article->category->name }}</a></li>
                     <li>updated {{ $version->article->created_at->format("D M jS Y") }}</li>
                     <li>viewed {{ $version->article->stat_views }} time{{ $version->article->stat_views == 1 ? '' : 's' }}</li>
                     <li><a href="{{ url('thread/view', $version->article->forum_thread_id) }}">Discussion topic &raquo;</a></li>

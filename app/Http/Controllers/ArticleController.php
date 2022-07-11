@@ -7,7 +7,7 @@ use App\Models\ArticleVersion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ArticlesController extends Controller
+class ArticleController extends Controller
 {
     public function getIndex(Request $request)
     {
@@ -46,7 +46,7 @@ class ArticlesController extends Controller
             group by g.id, g.name
             order by g.name
         ');
-        return view('articles.index', [
+        return view('article.index', [
             'articles' => $articles,
             'cats' => $cats,
             'games' => $games
@@ -75,7 +75,7 @@ class ArticlesController extends Controller
             return $match[0];
         }, $html);
 
-        return view('articles.view', [
+        return view('article.view', [
             'version' => $version,
             'html' => $html
         ]);

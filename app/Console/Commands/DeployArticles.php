@@ -78,6 +78,8 @@ class DeployArticles extends Command
                 if ($do_file_move) {
                     copy($thumb_loc, "$articles_new_file_dir/images/article_${aid}_${vid}_thumb.jpg");
                 }
+            } else {
+                $thumb = "uploads/articles/images/article_${aid}_${vid}_thumb.jpg";
             }
             if ($version->hosted) {
                 // zip or jpg

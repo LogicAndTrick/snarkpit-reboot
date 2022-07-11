@@ -10,7 +10,7 @@ class LinksController extends Controller
     public function getIndex()
     {
         $links = Link::orderBy('name')->get();
-        return view('links/index', [
+        return view('link/index', [
             'links' => $links
         ]);
     }

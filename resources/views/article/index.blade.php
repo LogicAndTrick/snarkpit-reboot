@@ -15,7 +15,7 @@
 ?>
 
     <nav class="nav-header">
-        <form action="{{ url('articles') }}" method="get" id="articles-filter-form">
+        <form action="{{ url('article') }}" method="get" id="articles-filter-form">
             <select name="game">
                 <option value="" {{request()->get('game') == '' ? 'selected' : ''}}>All games ({{$total_game}})</option>
                 @foreach($games as $game)
@@ -62,7 +62,7 @@
                 </div>
                 <div class="col-6">
                     <h2>
-                        <a href="{{ url('articles/view', [$article->current_version->slug]) }}">{{ $article->current_version->title }}</a>
+                        <a href="{{ url('article/view', [$article->current_version->slug]) }}">{{ $article->current_version->title }}</a>
                     </h2>
                     <h3 class="small">
 
@@ -76,7 +76,7 @@
                 <div class="col-3">
                     <ul class="list-unstyled">
                         <li>by <a href="#">{{ $article->user->name }}</a></li>
-                        <li>in <a href="{{ url("articles?game=$article->game_id&cat=$article->article_category_id") }}">{{ $article->game->name }} &raquo; {{ $article->category->name }}</a></li>
+                        <li>in <a href="{{ url("article?game=$article->game_id&cat=$article->article_category_id") }}">{{ $article->game->name }} &raquo; {{ $article->category->name }}</a></li>
                         <li>updated {{ $article->created_at->format("D M jS Y") }}</li>
                         <li>viewed {{ $article->stat_views }} time{{ $article->stat_views == 1 ? '' : 's' }}</li>
                         <li><a href="{{ url('thread/view', $article->forum_thread_id) }}">Discussion topic &raquo;</a></li>
