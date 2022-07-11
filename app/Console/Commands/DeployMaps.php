@@ -23,6 +23,7 @@ class DeployMaps extends Command
 
     public function handle()
     {
+        DB::unprepared("delete from `snark3_reboot`.map_ratings");
         DB::unprepared("delete from `snark3_reboot`.map_images");
         DB::unprepared("delete from `snark3_reboot`.maps");
 
@@ -73,16 +74,18 @@ class DeployMaps extends Command
                 $mi->save();
             }
 
-            $ratings = explode("-", $map->ratings);
-            for ($i = 0; $i < count($ratings); $i += 2) {
-                try {
-                    MapRating::Create([
-                        'user_id' => intval($ratings[$i]),
-                        'map_id' => $map->id,
-                        'rating' => intval($ratings[$i + 1]),
-                    ]);
-                } catch (\Exception $e) {
-                    // user doesn't exist, probably
+            if ($map->ratings && strlen($map->ratings) > 0) {
+                $ratings = explode('-', trim($map->ratings, '-'));
+                for ($i = 0; $i < count($ratings); $i += 2) {
+                    try {
+                        MapRating::Create([
+                            'user_id' => intval($ratings[$i]),
+                            'map_id' => $map->id,
+                            'rating' => intval($ratings[$i + 1]),
+                        ]);
+                    } catch (\Exception $e) {
+                        // user doesn't exist, probably
+                    }
                 }
             }
         });
