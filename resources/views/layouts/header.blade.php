@@ -43,7 +43,7 @@
     </div>
     <div class="main-links">
         <a href="{{ url('/') }}">Home</a>
-        <a href="#">Maps</a>
+        <a href="{{ url('map') }}">Maps</a>
         <a href="{{ url('article') }}">Articles</a>
         <a href="{{ url('download') }}">Downloads</a>
         <a href="{{ url('forum') }}">Forums</a>

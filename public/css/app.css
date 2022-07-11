@@ -18427,6 +18427,66 @@ button[type=submit]:disabled {
   display: block;
 }
 
+.map-list {
+  padding: 0 calc((var(--bs-gutter-x) - 0.25rem) / 2);
+}
+.map-list > * {
+  padding: 0.125rem;
+}
+.map-list .game-image-filler {
+  width: 20px;
+  visibility: hidden;
+}
+.map-list section {
+  padding: 0;
+}
+.map-list section .info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+}
+.map-list section .image {
+  border: 1px solid #666;
+  position: relative;
+  margin-top: 0.25rem;
+}
+.map-list section .image .overlay {
+  pointer-events: none;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.map-list section .image .description {
+  display: none;
+  position: absolute;
+  top: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  overflow: hidden;
+  margin: 0;
+  padding: 0.25rem;
+  background: black;
+  border-top: 1px solid #666;
+  pointer-events: none;
+}
+.map-list section .image:hover .description {
+  display: block;
+}
+.map-list section .image .bbcode {
+  line-height: 1rem;
+}
+.map-list section .image .bbcode br {
+  content: "";
+}
+.map-list section .image .bbcode br:after {
+  content: " ";
+}
+
 .bg-body {
   background: #001;
 }

@@ -163,3 +163,14 @@ function bbcode_excerpt($text, $length = 200, $scope = 'excerpt') {
     $parser = app('bbcode');
     return $parser->ParseExcerpt($text, $length, $scope);
 }
+
+/**
+ * @param $num float
+ * @return string
+ */
+function rating_image($num) {
+    $num = round($num);
+    if ($num < 0) $num = 0;
+    if ($num > 5) $num = 5;
+    return asset('images/ratings/'.$num.'.gif');
+}

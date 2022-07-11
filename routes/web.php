@@ -34,7 +34,7 @@ $controllers = [
     'download' => \App\Http\Controllers\DownloadController::class,
     'link' => \App\Http\Controllers\LinksController::class,
     'article' => \App\Http\Controllers\ArticleController::class,
-    'maps' => \App\Http\Controllers\MapController::class,
+    'map' => \App\Http\Controllers\MapController::class,
 
     'api' => \App\Http\Controllers\ApiController::class,
     //'search' => 'Search\SearchController',

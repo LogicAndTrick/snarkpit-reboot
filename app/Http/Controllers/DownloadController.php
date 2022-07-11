@@ -45,7 +45,7 @@ class DownloadController extends Controller
             group by g.id, g.name
             order by g.name
         ');
-        return view('downloads.index', [
+        return view('download.index', [
             'downloads' => $downloads,
             'cats' => $cats,
             'games' => $games

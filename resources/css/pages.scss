@@ -56,3 +56,72 @@
     display: block;
   }
 }
+
+
+// Maps
+.map-list {
+  padding: 0 calc((var(--bs-gutter-x) - 0.25rem) / 2);
+
+  & > * {
+    padding: 0.125rem;
+  }
+
+  .game-image-filler {
+    width: 20px;
+    visibility: hidden;
+  }
+
+  section {
+    padding: 0;
+
+    .info {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.125rem 0.5rem;
+    }
+
+    .image {
+      border: 1px solid #666;
+      position: relative;
+      margin-top: 0.25rem;
+
+      .overlay {
+        pointer-events: none;
+        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .description {
+        display: none;
+        position: absolute;
+        top: 50%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        overflow: hidden;
+        margin: 0;
+        padding: 0.25rem;
+        background: black;
+        border-top: 1px solid #666;
+        pointer-events: none;
+      }
+
+      &:hover .description {
+        display: block;
+      }
+
+      .bbcode {
+        line-height: 1rem;
+        br {
+          content: '';
+          &:after { content: ' '; }
+        }
+      }
+    }
+  }
+}

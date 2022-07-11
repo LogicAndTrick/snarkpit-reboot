@@ -25,6 +25,10 @@ class Map extends Model
         return $this->belongsTo(ForumThread::class, 'thread_id');
     }
 
+    public function images() {
+        return $this->hasMany(MapImage::class, 'map_id');
+    }
+
     public function getMirrors() {
         $files = [];
         if ($this->download_file) {

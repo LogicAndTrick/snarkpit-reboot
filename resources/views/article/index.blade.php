@@ -31,8 +31,8 @@
             <select name="sort">
                 <option value="date.desc" {{request()->get('sort') == 'date.desc' ? 'selected' : ''}}>Newest first</option>
                 <option value="date.asc" {{request()->get('sort') == 'date.asc' ? 'selected' : ''}}>Oldest first</option>
-                <option value="articles.desc" {{request()->get('sort') == 'views.desc' ? 'selected' : ''}}>Most views</option>
-                <option value="articles.asc" {{request()->get('sort') == 'views.asc' ? 'selected' : ''}}>Fewest views</option>
+                <option value="views.desc" {{request()->get('sort') == 'views.desc' ? 'selected' : ''}}>Most views</option>
+                <option value="views.asc" {{request()->get('sort') == 'views.asc' ? 'selected' : ''}}>Fewest views</option>
                 <option value="name.asc" {{request()->get('sort') == 'name.asc' ? 'selected' : ''}}>Name A-Z</option>
                 <option value="name.desc" {{request()->get('sort') == 'name.desc' ? 'selected' : ''}}>Name Z-A</option>
             </select>
