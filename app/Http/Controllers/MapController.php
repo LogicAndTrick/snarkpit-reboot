@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ForumPost;
 use App\Models\Map;
 use App\Models\MapImage;
+use App\Models\MapRating;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MapController extends Controller
@@ -57,29 +62,48 @@ class MapController extends Controller
 
     public function getView(Request $request, $id)
     {
-        $version = MapVersion::with(['map', 'map.user', 'map.category', 'map.game'])
-            ->where('slug', '=', $id)
-            ->firstOrFail();
+        $map = Map::with(['user', 'status', 'game', 'images', 'ratings'])
+            ->findOrFail($id);
 
-        $html = $version->content_html;
-        $aid = $version->map_id;
-        $vid = $version->id;
-        $html = preg_replace_callback('/\[image(\d+)\]/sim', function($match) use ($aid, $vid) {
-            $num = $match[1];
-            $path = "uploads/maps/images/map_${aid}_${vid}_${num}.jpg";
-            $location = public_path($path);
-            if (file_exists($location)) {
-                $url = asset($path);
-                return ' <div class="embedded image"><span class="caption-panel">'
-                    . '<img class="caption-body" src="' . $url . '" alt="Map image" />'
-                    . '</span></div> ';
-            }
-            return $match[0];
-        }, $html);
+        $map->stat_views++;
+        $map->save();
+
+        $page = intval($request->input('page')) ?: 1;
+        $post_query = ForumPost::with('user')->where('thread_id', '=', $map->thread_id)->whereNull('deleted_at')->orderByDesc('created_at')->orderByDesc('id');
+        $count = $post_query->getQuery()->getCountForPagination();
+        $posts = $post_query->skip(($page - 1) * 10)->take(10)->get();
+        $pag = new LengthAwarePaginator($posts, $count, 10, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
 
         return view('map.view', [
-            'version' => $version,
-            'html' => $html
+            'map' => $map,
+            'posts' => $pag
         ]);
+    }
+
+    public function getDownload($id, Request $request) {
+        $map = Map::findOrFail($id);
+        $map->stat_downloads++;
+        $map->save();
+        $mirror = $request->get('mirror', asset($map->download_file));
+        return redirect($mirror);
+    }
+
+    public function postRate(Request $request) {
+        $this->loggedIn();
+        $id = $request->input('id');
+        $r = $request->input('rating');
+        $rating = MapRating::where('map_id', '=', $id)->where('user_id', '=', Auth::id())->first();
+        if ($r == 0) {
+            if ($rating) $rating->delete();
+        } else {
+            if (!$rating) {
+                $rating = new MapRating();
+                $rating->map_id = $id;
+                $rating->user_id = Auth::id();
+            }
+            $rating->rating = $r;
+            $rating->save();
+        }
+        return redirect('map/view/'.$id);
     }
 }

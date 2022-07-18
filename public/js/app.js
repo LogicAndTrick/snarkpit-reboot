@@ -649,6 +649,8 @@ window.$ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.
 
 __webpack_require__(/*! ./bbcode-preview */ "./resources/js/bbcode-preview.js");
 
+__webpack_require__(/*! ./image-cycler */ "./resources/js/image-cycler.js");
+
 var hljs = __webpack_require__(/*! highlight.js/lib/core */ "./node_modules/highlight.js/lib/core.js");
 
 hljs.registerLanguage('php', __webpack_require__(/*! highlight.js/lib/languages/php */ "./node_modules/highlight.js/lib/languages/php.js"));
@@ -672,6 +674,55 @@ $(document).on('click', '.video-content .uninitialised', function (event) {
     allowfullscreen: ''
   }).addClass('caption-body');
   $t.replaceWith(frame);
+});
+
+/***/ }),
+
+/***/ "./resources/js/image-cycler.js":
+/*!**************************************!*\
+  !*** ./resources/js/image-cycler.js ***!
+  \**************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.image-cycler').forEach(function (x) {
+    var images = Array.from(x.querySelectorAll('img'));
+    var controls = x.querySelector('.controls');
+    if (images.length <= 1 || !controls) return;
+    var numImages = images.length;
+    var curImage = 0;
+    var prev = document.createElement('a');
+    prev.href = "#";
+    prev.innerHTML = '<span class="fas fa-chevron-left"></span>';
+    var next = document.createElement('a');
+    next.href = "#";
+    next.innerHTML = '<span class="fas fa-chevron-right"></span>';
+    var label = document.createElement('span');
+    label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
+
+    var cycle = function cycle(num) {
+      images[curImage].classList.add('d-none');
+      curImage += num;
+
+      while (curImage < 0) {
+        curImage += numImages;
+      }
+
+      curImage = curImage % numImages;
+      label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
+      images[curImage].classList.remove('d-none');
+    };
+
+    prev.addEventListener('click', function (event) {
+      event.preventDefault();
+      cycle(-1);
+    });
+    next.addEventListener('click', function (event) {
+      event.preventDefault();
+      cycle(+1);
+    });
+    controls.append(prev, label, next);
+  });
 });
 
 /***/ }),

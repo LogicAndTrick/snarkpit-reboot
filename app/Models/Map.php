@@ -29,6 +29,10 @@ class Map extends Model
         return $this->hasMany(MapImage::class, 'map_id');
     }
 
+    public function ratings() {
+        return $this->hasMany(MapRating::class, 'map_id');
+    }
+
     public function getMirrors() {
         $files = [];
         if ($this->download_file) {

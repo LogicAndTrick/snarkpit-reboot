@@ -58,8 +58,9 @@ class DeployMaps extends Command
             $m->stat_views = $map->views;
             $m->stat_downloads = $map->downloads;
             $m->download_file = $file;
-            $m->stat_rating = $map->rating_calc;
-            $m->mirrors = $map->mirrors;
+            $m->stat_rating = 0;
+            $m->stat_ratings = 0;
+            $m->mirrors = str_replace('|', "\n",$map->mirrors ?? '');
             $m->created_at = Carbon::createFromTimestamp($map->added ? $map->added : 1062184897);
             $m->updated_at = Carbon::createFromTimestamp($map->updated ? $map->updated : 1062184897);
             $m->deleted_at = null;

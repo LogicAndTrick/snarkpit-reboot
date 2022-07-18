@@ -38,6 +38,7 @@ return new class extends Migration
             $table->integer('stat_views');
             $table->integer('stat_downloads');
             $table->float('stat_rating');
+            $table->integer('stat_ratings');
             $table->string('download_file', 100);
             $table->string('mirrors', 1000);
             $table->timestamps();
@@ -57,10 +58,47 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class)->references('id')->on('users');
             $table->integer('rating', false, true);
         });
+
+        DB::unprepared("
+            CREATE PROCEDURE update_map_statistics(mid INT)
+            BEGIN
+                update maps m set
+                stat_ratings = COALESCE((select COUNT(*) from map_ratings r where r.map_id = m.id), 0),
+                stat_rating = COALESCE((select AVG(rating) from map_ratings r where r.map_id = m.id), 0)
+                where id = mid;
+            END;
+        ");
+
+        DB::unprepared("
+            CREATE TRIGGER map_ratings_update_statistics_on_insert AFTER INSERT ON map_ratings
+            FOR EACH ROW BEGIN
+                CALL update_map_statistics(NEW.map_id);
+            END;");
+
+        DB::unprepared("
+            CREATE TRIGGER map_ratings_update_statistics_on_update AFTER UPDATE ON map_ratings
+            FOR EACH ROW BEGIN
+                CALL update_map_statistics(NEW.map_id);
+
+                IF NEW.map_id != OLD.map_id THEN
+                    CALL update_map_statistics(OLD.map_id);
+                END IF;
+            END;");
+
+        DB::unprepared("
+            CREATE TRIGGER map_ratings_update_statistics_on_delete AFTER DELETE ON map_ratings
+            FOR EACH ROW BEGIN
+                CALL update_map_statistics(OLD.map_id);
+            END;");
     }
 
     public function down()
     {
+        DB::unprepared("DROP TRIGGER IF EXISTS map_ratings_update_statistics_on_insert");
+        DB::unprepared("DROP TRIGGER IF EXISTS map_ratings_update_statistics_on_update");
+        DB::unprepared("DROP TRIGGER IF EXISTS map_ratings_update_statistics_on_delete");
+        DB::unprepared("DROP PROCEDURE IF EXISTS update_map_statistics");
+        Schema::dropIfExists('map_ratings');
         Schema::dropIfExists('map_images');
         Schema::dropIfExists('maps');
         Schema::dropIfExists('map_statuses');

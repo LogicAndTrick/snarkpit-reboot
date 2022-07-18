@@ -75,6 +75,9 @@ class ArticleController extends Controller
             return $match[0];
         }, $html);
 
+        $version->article->stat_views++;
+        $version->article->save();
+
         return view('article.view', [
             'version' => $version,
             'html' => $html

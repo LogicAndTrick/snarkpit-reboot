@@ -165,12 +165,28 @@ function bbcode_excerpt($text, $length = 200, $scope = 'excerpt') {
 }
 
 /**
- * @param $num float
+ * @param $avg float
  * @return string
  */
-function rating_image($num) {
-    $num = round($num);
-    if ($num < 0) $num = 0;
-    if ($num > 5) $num = 5;
-    return asset('images/ratings/'.$num.'.gif');
+function rating_image($avg) {
+    $avg = round($avg);
+    if ($avg < 0) $avg = 0;
+    if ($avg > 5) $avg = 5;
+    return asset('images/ratings/'.$avg.'.gif');
+}
+
+/**
+ * @param $avg float
+ * @param $num integer
+ * @return string
+ */
+function rating_summary($avg, $num) {
+    if ($num == 0) return 'unrated';
+
+    $avg = round($avg, 2);
+    if ($avg < 0) $avg = 0;
+    if ($avg > 5) $avg = 5;
+    return $num . ' rating' . ($num == 1 ? '' : 's')
+        . ' / '
+        . $avg . ' star' . ($avg == 1 ? '' : 's');
 }
