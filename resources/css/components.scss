@@ -1,18 +1,28 @@
 
 .image-cycler {
+  text-align: center;
   img {
     border: 1px solid #666;
+    max-width: 100%;
   }
   .controls {
     text-align: center;
     display: block;
 
     > span {
-      padding: 0 0.25rem;
+      padding: 0 0.25em;
       display: inline-block;
     }
     > a {
-      padding: 0 0.125rem;
+      padding: 0 0.125em;
+    }
+  }
+  &.image-cycler-clickable img {
+    cursor: pointer;
+  }
+  &.enlarged {
+    .controls {
+      font-size: 2rem;
     }
   }
 }

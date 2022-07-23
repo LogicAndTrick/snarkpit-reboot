@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Forum;
 use App\Models\ForumPost;
+use App\Models\ForumThread;
+use App\Models\Game;
 use App\Models\Map;
 use App\Models\MapImage;
 use App\Models\MapRating;
+use App\Models\MapStatus;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -66,10 +70,17 @@ class MapController extends Controller
             ->findOrFail($id);
 
         $map->stat_views++;
+        $map->timestamps = false;
         $map->save();
+        $map->timestamps = true;
 
         $page = intval($request->input('page')) ?: 1;
         $post_query = ForumPost::with('user')->where('thread_id', '=', $map->thread_id)->whereNull('deleted_at')->orderByDesc('created_at')->orderByDesc('id');
+
+        // Exclude the first post from the discussion thread
+        $first_post = ForumPost::query()->where('thread_id', '=', $map->thread_id)->whereNull('deleted_at')->orderBy('id')->first();
+        if ($first_post) $post_query = $post_query->where('id', '!=', $first_post->id);
+
         $count = $post_query->getQuery()->getCountForPagination();
         $posts = $post_query->skip(($page - 1) * 10)->take(10)->get();
         $pag = new LengthAwarePaginator($posts, $count, 10, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
@@ -91,6 +102,10 @@ class MapController extends Controller
     public function postRate(Request $request) {
         $this->loggedIn();
         $id = $request->input('id');
+
+        $map = Map::findOrFail($id);
+        if ($map->user_id === Auth::id()) abort(403, "You can't rate your own map");
+
         $r = $request->input('rating');
         $rating = MapRating::where('map_id', '=', $id)->where('user_id', '=', Auth::id())->first();
         if ($r == 0) {
@@ -105,5 +120,100 @@ class MapController extends Controller
             $rating->save();
         }
         return redirect('map/view/'.$id);
+    }
+
+    public function getCreate() {
+        $this->loggedIn();
+        $games = Game::query()->orderBy('name')->get();
+        $statuses = MapStatus::query()->orderBy('id')->get();
+        return view('map/create', [
+            'games' => $games,
+            'statuses' => $statuses
+        ]);
+    }
+
+    public function postCreate(Request $request) {
+        $this->loggedIn();
+        $this->validate($request, [
+            'name' => 'required|max:100',
+            'game_id' => 'required',
+            'status_id' => 'required',
+            'file' => 'required_without:mirrors|max:102400|mimes:rar,zip',
+            'mirrors' => 'required_without:file|max:1000',
+            'image' => 'required|max:4096|mimes:jpg,jpeg',
+            'images.*' => 'mimes:jpg,jpeg|max:4096',
+            'text' => 'required|max:10000',
+        ]);
+
+        $map = Map::Create([
+            'name' => $request->input('name'),
+            'user_id' => Auth::id(),
+            'game_id' => $request->input('game_id'),
+            'thread_id' => null,
+            'status_id' => $request->input('status_id'),
+            'is_featured' => false,
+            'content_text' => $request->input('text'),
+            'content_html' => bbcode($request->input('text')),
+            'stat_views' => 0,
+            'stat_downloads' => 0,
+            'stat_rating' => 0,
+            'stat_ratings' => 0,
+            'download_file' => '',
+            'mirrors' => $request->input('mirrors') ?? '',
+        ]);
+
+        // Upload the map file
+        $file = $request->file('file');
+        if ($file) {
+            $dir = public_path('uploads/maps/files');
+            $file_name = $map->id . '_map.' . strtolower($file->getClientOriginalExtension());
+            $file->move($dir, $file_name);
+            $map->download_file = 'uploads/maps/files/' . $file_name;
+            $map->save();
+        }
+
+        // Upload the images
+        $image = $request->file('image');
+        $images = $request->file('images') ?? [];
+        array_unshift($images, $image);
+        $imgNum = 1;
+        foreach ($images as $img) {
+            $dir = public_path('uploads/maps/images');
+            $img_name = $map->id . '_' . $imgNum . '.' . strtolower($img->getClientOriginalExtension());
+            $img->move($dir, $img_name);
+            MapImage::Create([
+                'map_id' => $map->id,
+                'image_file' => 'uploads/maps/images/' . $img_name,
+                'order_index' => $imgNum - 1
+            ]);
+            $imgNum++;
+        }
+
+        // Create the thread
+        $forum = Forum::query()->where('name', '=', 'Maps')->first();
+        if ($forum) {
+            $thread = ForumThread::create([
+                'forum_id' => $forum->id,
+                'user_id' => Auth::id(),
+                'title' => '[map] ' . $map->name,
+                'description' => '',
+                'is_poll' => false
+            ]);
+            $post_text = "This is a a discussion topic for the map:\n\n" .
+                "[mapthumbs]{$map->id}[/mapthumbs]\n\n" .
+                "[b]Map description:[/b]\n\n" .
+                $map->content_text;
+            $post = ForumPost::create([
+                'thread_id' => $thread->id,
+                'forum_id' => $forum->id,
+                'user_id' => Auth::id(),
+                'content_text' => $post_text,
+                'content_html' => bbcode($post_text),
+            ]);
+            $map->thread_id = $thread->id;
+            $map->save();
+        }
+
+        return redirect('map/view/'.$map->id);
     }
 }

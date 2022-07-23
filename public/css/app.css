@@ -18195,19 +18195,29 @@ span.bbcode {
   vertical-align: top;
 }
 
+.image-cycler {
+  text-align: center;
+}
 .image-cycler img {
   border: 1px solid #666;
+  max-width: 100%;
 }
 .image-cycler .controls {
   text-align: center;
   display: block;
 }
 .image-cycler .controls > span {
-  padding: 0 0.25rem;
+  padding: 0 0.25em;
   display: inline-block;
 }
 .image-cycler .controls > a {
-  padding: 0 0.125rem;
+  padding: 0 0.125em;
+}
+.image-cycler.image-cycler-clickable img {
+  cursor: pointer;
+}
+.image-cycler.enlarged .controls {
+  font-size: 2rem;
 }
 
 h1, .h1 {
@@ -18308,6 +18318,9 @@ input, textarea, select {
 
 textarea {
   min-height: 14rem;
+}
+textarea.small-textarea {
+  min-height: 4rem !important;
 }
 
 .form-group {

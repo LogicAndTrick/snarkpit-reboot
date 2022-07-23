@@ -13,7 +13,7 @@
     </h1>
 
     <div class="row">
-        <div class="col-md-6 image-cycler">
+        <div class="col-md-6 image-cycler image-cycler-clickable">
             @forelse($map->images as $img)
                 <img class="img-fluid {{ $loop->first ? '' : 'd-none' }}" src="{{ asset($img->image_file) }}" />
             @empty
@@ -45,7 +45,7 @@
                             <li><img src="{{rating_image($map->stat_rating)}}" alt="{{$map->stat_rating}}" ></li>
                             <li>{{rating_summary($map->stat_rating, $map->stat_ratings)}}</li>
                         </ul>
-                        @auth
+                        @if (Auth::check() && $map->user_id !== Auth::id())
                             <form method="post" action="{{url('map/rate')}}" class="d-flex flex-column align-items-center" id="rating-form">
                                 @csrf
                                 <input type="hidden" name="id" value="{{$map->id}}">
@@ -74,7 +74,7 @@
                                     select.addEventListener('change', () => form.submit());
                                 }
                             </script>
-                        @endauth
+                        @endif
                     </section>
                 </div>
                 <div class="col-4 d-flex flex-column">
@@ -83,7 +83,7 @@
                         <ul class="list-unstyled">
                             <li>{{ $map->stat_ratings }} rating{{ $map->stat_ratings == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_views }} view{{ $map->stat_views == 1 ? '' : 's' }}</li>
-                            <li>{{ $map->stat_downloads }} downloads{{ $map->stat_downloads == 1 ? '' : 's' }}</li>
+                            <li>{{ $map->stat_downloads }} download{{ $map->stat_downloads == 1 ? '' : 's' }}</li>
                             <li>game: <a href="#">{{$map->game->name}}</a></li>
                             <li>added {{ $map->created_at->format("D M jS Y") }}</li>
                             <li>updated {{ $map->updated_at->format("D M jS Y") }}</li>
@@ -98,34 +98,47 @@
         </div>
     </div>
 
-    <nav class="nav-header bg-body">
-        <div class="btn-group">
-            <a href="{{ url('thread/view', [ $map->thread_id ]) }}#reply" class="btn">Post reply</a>
-            <a href="{{ url('thread/view', [ $map->thread_id ]) }}" class="btn">View topic</a>
-        </div>
-        {{ $posts->render() }}
-    </nav>
-    <h1>
-        Discussion
-    </h1>
-    @foreach($posts as $post)
-        <section>
-            <div class="d-flex justify-content-between">
-                <div>
-                    Posted by <a href="#">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
-                </div>
-                <div>
-                    @if ($post->user_id == $map->user_id)
-                        <strong class="text-danger">[Author]</strong>
-                    @elseif ($rating)
-                        <img src="{{rating_image($rating->rating)}}" alt="{{$rating->rating}}" />
-                    @endif
-                </div>
+    @if ($map->thread_id)
+        <nav class="nav-header bg-body">
+            <div class="btn-group">
+                <a href="{{ url('thread/view', [ $map->thread_id ]) }}#reply" class="btn">Post reply</a>
+                <a href="{{ url('thread/view', [ $map->thread_id ]) }}" class="btn">View topic</a>
             </div>
-            <hr class="my-1"/>
-            <div class="bbcode">
-                {!! $post->content_html !!}
+            {{ $posts->render() }}
+        </nav>
+        <h1>
+            Discussion
+        </h1>
+        @forelse($posts as $post)
+            <section>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        Posted by <a href="#">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                    </div>
+                    <div>
+                        @if ($post->user_id == $map->user_id)
+                            <strong class="text-danger">[Author]</strong>
+                        @elseif ($rating)
+                            <img src="{{rating_image($rating->rating)}}" alt="{{$rating->rating}}" />
+                        @endif
+                    </div>
+                </div>
+                <hr class="my-1"/>
+                <div class="bbcode">
+                    {!! $post->content_html !!}
+                </div>
+            </section>
+        @empty
+            <section>
+                There are not yet any comments for this map
+            </section>
+        @endforelse
+        <nav class="nav-header bg-body">
+            <div class="btn-group">
+                <a href="{{ url('thread/view', [ $map->thread_id ]) }}#reply" class="btn">Post reply</a>
+                <a href="{{ url('thread/view', [ $map->thread_id ]) }}" class="btn">View topic</a>
             </div>
-        </section>
-    @endforeach
+            {{ $posts->render() }}
+        </nav>
+    @endif
 @endsection

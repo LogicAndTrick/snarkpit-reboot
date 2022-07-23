@@ -9,6 +9,23 @@ class Map extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'user_id',
+        'game_id',
+        'thread_id',
+        'status_id',
+        'is_featured',
+        'content_text',
+        'content_html',
+        'stat_views',
+        'stat_downloads',
+        'stat_rating',
+        'stat_ratings',
+        'download_file',
+        'mirrors',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

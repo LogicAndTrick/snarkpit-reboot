@@ -651,6 +651,8 @@ __webpack_require__(/*! ./bbcode-preview */ "./resources/js/bbcode-preview.js");
 
 __webpack_require__(/*! ./image-cycler */ "./resources/js/image-cycler.js");
 
+__webpack_require__(/*! ./images-form */ "./resources/js/images-form.js");
+
 var hljs = __webpack_require__(/*! highlight.js/lib/core */ "./node_modules/highlight.js/lib/core.js");
 
 hljs.registerLanguage('php', __webpack_require__(/*! highlight.js/lib/languages/php */ "./node_modules/highlight.js/lib/languages/php.js"));
@@ -722,6 +724,76 @@ document.addEventListener('DOMContentLoaded', function () {
       cycle(+1);
     });
     controls.append(prev, label, next);
+
+    if (x.classList.contains('image-cycler-clickable')) {
+      var containers = Array.from(x.parentElement.children);
+      x.addEventListener('click', function (event) {
+        if (event.target && event.target.tagName == 'IMG') {
+          containers.forEach(function (c) {
+            c.classList.toggle('col-md-12');
+            c.classList.toggle('enlarged');
+          });
+        }
+      });
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/js/images-form.js":
+/*!*************************************!*\
+  !*** ./resources/js/images-form.js ***!
+  \*************************************/
+/***/ (() => {
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.images-form-container').forEach(function (form) {
+    var btn = form.querySelector('button');
+    if (!btn) return;
+    var before = btn.closest('.text-center'); // Set the event listeners for any existing remove buttons
+
+    form.querySelectorAll('a').forEach(function (remove) {
+      var div = remove.parentElement;
+      remove.addEventListener('click', function (e) {
+        e.preventDefault();
+        div.remove();
+        updateButtonVisibility();
+      });
+    }); // Button visibility to limit maximum number of images to 10 (mandatory first image + 9 optional additional images)
+
+    var updateButtonVisibility = function updateButtonVisibility() {
+      var num = form.querySelectorAll('input').length;
+      before.classList.toggle('d-none', num >= 9);
+    };
+
+    updateButtonVisibility(); // When the button is clicked add a new input for an image
+
+    btn.addEventListener('click', function (event) {
+      event.preventDefault();
+      var num = form.querySelectorAll('input').length;
+      if (num >= 9) return; // max. 10 images
+
+      var div = document.createElement('div');
+      var input = document.createElement('input');
+      var remove = document.createElement('a');
+      div.classList.add('d-flex', 'flex-row');
+      input.classList.add('flex-fill', 'my-1');
+      input.type = 'file';
+      input.name = 'images[]';
+      input.accept = '.jpg,.jpeg';
+      remove.classList.add('align-self-center', 'px-2');
+      remove.href = '#';
+      remove.innerHTML = '<span class="fas fa-times"></span>';
+      remove.addEventListener('click', function (e) {
+        e.preventDefault();
+        div.remove();
+        updateButtonVisibility();
+      });
+      div.append(input, remove);
+      form.insertBefore(div, before);
+      updateButtonVisibility();
+    });
   });
 });
 

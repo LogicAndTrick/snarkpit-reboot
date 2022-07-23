@@ -8,6 +8,10 @@ input, textarea, select {
 
 textarea {
   min-height: 14rem;
+
+  &.small-textarea {
+    min-height: 4rem !important;
+  }
 }
 
 .form-group {

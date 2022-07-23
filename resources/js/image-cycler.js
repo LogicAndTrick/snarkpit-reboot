@@ -31,12 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             cycle(-1);
         });
-        
+
         next.addEventListener('click', event => {
             event.preventDefault();
             cycle(+1);
         });
 
         controls.append(prev, label, next);
+
+        if (x.classList.contains('image-cycler-clickable')) {
+            const containers = Array.from(x.parentElement.children);
+            x.addEventListener('click', event => {
+                if (event.target && event.target.tagName == 'IMG') {
+                    containers.forEach(c => {
+                        c.classList.toggle('col-md-12');
+                        c.classList.toggle('enlarged');
+                    });
+                }
+            });
+        }
     });
 });

@@ -29,7 +29,7 @@ class DeployGames extends Command
         $this->withProgressBar($games, function($game) {
             $g = new Game();
             $g->id = $game->id;
-            $g->name = $game->title;
+            $g->name = reverse_snarkpit_format($game->title);
             $g->description = reverse_snarkpit_format($game->description);
             $g->url = $game->url;
             $g->abbreviation = '';
