@@ -5,6 +5,11 @@
     <h1>
         <span class="fa fa-map"></span>
         Snarkpit Maps Archive
+        @auth
+            <small>
+                <a href="{{url('map/create')}}" class="btn btn-outline-primary">Upload a map</a>
+            </small>
+        @endauth
     </h1>
 
 <?php

@@ -48,7 +48,7 @@ class DeployArticles extends Command
         });
         $this->output->writeln("\nArticles done.");
 
-        $articles_old_file_dir = 'path/to/content/articles';
+        $articles_old_file_dir = env('MIGRATION_OLD_PATH').'/content/articles';
         $articles_new_file_dir = public_path('uploads/articles');
         $do_file_move = false;
 
@@ -73,13 +73,9 @@ class DeployArticles extends Command
             $attach = '';
 
             $thumb_loc = "${articles_old_file_dir}/${aid}/${vid}/${aid}.jpg";
-            if (file_exists($thumb_loc)) {
-                $thumb = "uploads/articles/images/article_${aid}_${vid}_thumb.jpg";
-                if ($do_file_move) {
-                    copy($thumb_loc, "$articles_new_file_dir/images/article_${aid}_${vid}_thumb.jpg");
-                }
-            } else {
-                $thumb = "uploads/articles/images/article_${aid}_${vid}_thumb.jpg";
+            $thumb = "uploads/articles/images/article_${aid}_${vid}_thumb.jpg";
+            if (file_exists($thumb_loc) && $do_file_move) {
+                copy($thumb_loc, "$articles_new_file_dir/images/article_${aid}_${vid}_thumb.jpg");
             }
             if ($version->hosted) {
                 // zip or jpg
