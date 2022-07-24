@@ -24,13 +24,14 @@ class DeployFiles extends Command
 
     public function handle()
     {
-        $old_site_root = env('MIGRATION_OLD_PATH', '');
+        $old_site_root = config('migration.old_path');
         if ($old_site_root == '') {
             $this->output->error('Old migration directory not found.');
             return 1;
         }
         $old_site_root = rtrim($old_site_root, "\\/").'/';
         $this->output->writeln('Old site root is: ' . $old_site_root);
+        $this->assertExists($old_site_root);
 
         $original_articles_dir = $old_site_root.'/content/articles';
         $original_downloads_dir = $old_site_root.'/content/downloads';
