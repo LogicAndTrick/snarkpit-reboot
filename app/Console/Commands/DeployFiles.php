@@ -29,7 +29,11 @@ class DeployFiles extends Command
 
     private function attemptCopy($source, $destination) {
         if (!file_exists($source)) return; // file doesn't exist at source
-        if (file_exists($destination)) return; // file already exists at destination
+        if (file_exists($destination)) {
+            $source_size = filesize($source);
+            $dest_size = filesize($destination);
+            if ($source_size == $dest_size) return; // file already exists at destination and is the same size
+        }
         copy($source, $destination);
         $this->output->writeln('Copied ' .$source. ' to '.$destination.'.');
     }
