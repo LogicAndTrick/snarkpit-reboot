@@ -124,6 +124,12 @@ class DeployFiles extends Command
             $this->attemptCopy("$original_downloads_dir/$download_file_name", "$downloads_files_dir/$download_file_name");
         }
 
+        $download_images = $this->enumerateDirectory($original_download_images_dir);
+        $download_images = array_filter($download_images, fn($name) => str_starts_with($name, 'download'));
+        foreach ($download_images as $download_image_name) {
+            $this->attemptCopy("$original_download_images_dir/$download_image_name", "$downloads_images_dir/$download_image_name");
+        }
+
         // Maps
 
         // Avatars
