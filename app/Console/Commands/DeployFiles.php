@@ -133,6 +133,11 @@ class DeployFiles extends Command
         // Maps
 
         // Avatars
+        $avatar_images = $this->enumerateDirectory($original_avatars_dir);
+        $avatar_images = array_filter($avatar_images, fn($name) => str_starts_with($name, 'avatar'));
+        foreach ($avatar_images as $avatar_image_name) {
+            $this->attemptCopy("$original_avatars_dir/$avatar_image_name", "$avatars_dir/$avatar_image_name");
+        }
 
         return 0;
     }
