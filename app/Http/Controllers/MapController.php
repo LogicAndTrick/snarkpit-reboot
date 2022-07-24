@@ -323,4 +323,27 @@ class MapController extends Controller
 
         return redirect('map/view/'.$map->id);
     }
+
+    public function getDelete($id) {
+        $this->loggedIn();
+
+        $map = Map::with(['user'])->findOrFail($id);
+        if (!$map->isEditable()) abort(403);
+
+        return view('map/delete', [
+            'map' => $map
+        ]);
+    }
+
+    public function postDelete(Request $request) {
+        $this->loggedIn();
+        $id = $request->input('id');
+
+        $map = Map::findOrFail($id);
+        if (!$map->isEditable()) abort(403);
+
+        $map->delete();
+
+        return redirect('map');
+    }
 }

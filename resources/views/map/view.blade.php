@@ -13,6 +13,7 @@
         @if ($map->isEditable())
             <small>
                 <a href="{{url('map/edit', [$map->id])}}" class="btn btn-outline-primary">Edit</a>
+                <a href="{{url('map/delete', [$map->id])}}" class="btn btn-outline-danger">Delete</a>
             </small>
         @endif
     </h1>
