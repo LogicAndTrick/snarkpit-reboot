@@ -21,6 +21,7 @@
         'deploy-downloads' => 'Deploy downloads',
         'deploy-links' => 'Deploy links',
         'deploy-articles' => 'Deploy articles',
+        'deploy-files' => 'Deploy files',
     ];
 ?>
         <p>The current version is: <code>{{ $version }}</code></p>
