@@ -39,8 +39,8 @@ class DeployMaps extends Command
             if ($userid <= 0) $userid = 100;
 
             $statusid = MapStatus::STATUS_COMPLETE;
-            if ($map->beta === 1) $statusid = MapStatus::STATUS_BETA;
-            if ($map->beta === 2) $statusid = MapStatus::STATUS_ABANDONED;
+            if ($map->beta == 1) $statusid = MapStatus::STATUS_BETA;
+            if ($map->beta == 2) $statusid = MapStatus::STATUS_ABANDONED;
 
             $file = '';
             if ($map->hosted) $file  = 'uploads/maps/files/' . $map->id . '_map.' . trim($map->hosted, '.');
@@ -52,7 +52,7 @@ class DeployMaps extends Command
             $m->game_id = $map->game;
             $m->thread_id = $map->topic_id;
             $m->status_id = $statusid;
-            $m->is_featured = $map->star === 1;
+            $m->is_featured = $map->star == 1;
             $m->content_text = reverse_snarkpit_format($map->description);
             $m->content_html = bbcode($m->content_text);
             $m->stat_views = $map->views;
