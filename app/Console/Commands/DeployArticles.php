@@ -48,58 +48,28 @@ class DeployArticles extends Command
         });
         $this->output->writeln("\nArticles done.");
 
-        $articles_old_file_dir = env('MIGRATION_OLD_PATH').'/content/articles';
-        $articles_new_file_dir = public_path('uploads/articles');
-        $do_file_move = false;
-
-        if ($do_file_move) {
-            exec(sprintf("rd /s /q %s", escapeshellarg($articles_new_file_dir)));
-            mkdir($articles_new_file_dir);
-            mkdir($articles_new_file_dir . '/images');
-            mkdir($articles_new_file_dir . '/files');
-        }
-
         // id article_id updated description title text notes admin
         // approved cat game hosted
         $versions = DB::select('select * from snark3_snarkpit.articles_versions');
-        $this->withProgressBar($versions, function ($version) use ($saved_articles, $articles_old_file_dir, $articles_new_file_dir, $do_file_move) {
+        $this->withProgressBar($versions, function ($version) use ($saved_articles) {
             $article = $saved_articles->first(fn($x) => $x->id == $version->article_id);
             if (!$article) return;
 
             $aid = $article->id;
             $vid = $version->id;
 
-            $thumb = '';
-            $attach = '';
-
-            $thumb_loc = "${articles_old_file_dir}/${aid}/${vid}/${aid}.jpg";
             $thumb = "uploads/articles/images/article_${aid}_${vid}_thumb.jpg";
-            if (file_exists($thumb_loc) && $do_file_move) {
-                copy($thumb_loc, "$articles_new_file_dir/images/article_${aid}_${vid}_thumb.jpg");
-            }
+            $attach = '';
             if ($version->hosted) {
-                // zip or jpg
+                $attach = "uploads/articles/files/article_${aid}_${vid}_example." . $version->hosted;
             }
-
-            $image = '';
-            $file = '';
-
-            //if ($version->image == 1) $image = 'uploads/articles/images/article_' . $version->id . '.jpg';
-            //if ($version->hosted) $file  = 'uploads/articles/files/article_' . $version->id . '.' . $version->hosted;
 
             $status = ArticleVersion::STATUS_DRAFT;
             if ($article->is_active) $status = ArticleVersion::STATUS_APPROVED;
 
             $text = reverse_snarkpit_format($version->text);
-            $images = $this->parse_images($article->id, $version->id, $articles_old_file_dir, $text);
+            $images = $this->parse_images($article->id, $version->id, $text);
             $text = $this->replace_images($text, $images);
-
-            if ($do_file_move) {
-                foreach ($images as $num => $path) {
-                    $dest = "$articles_new_file_dir/images/article_${aid}_${vid}_${num}.jpg";
-                    copy("$articles_old_file_dir/$path", $dest);
-                }
-            }
 
             $v = new ArticleVersion();
             $v->id = $version->id;
@@ -134,13 +104,13 @@ class DeployArticles extends Command
         return 0;
     }
 
-    function parse_images($article_id, $version_id, $folder, $text) {
+    function parse_images($article_id, $version_id, $text) {
         $images = [];
         preg_match_all('/\[image(\d+)\]/sim', $text, $result, PREG_PATTERN_ORDER);
         foreach ($result[1] as $number) {
             $num = intval($number);
             $location = "${article_id}/${version_id}/${article_id}_${num}.jpg";
-            if (file_exists("$folder/$location")) $images[$num] = $location;
+            $images[$num] = $location;
         }
         return $images;
     }

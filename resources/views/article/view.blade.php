@@ -36,11 +36,21 @@
                     <li>updated {{ $version->article->created_at->format("D M jS Y") }}</li>
                     <li>viewed {{ $version->article->stat_views }} time{{ $version->article->stat_views == 1 ? '' : 's' }}</li>
                     <li><a href="{{ url('thread/view', $version->article->forum_thread_id) }}">Discussion topic &raquo;</a></li>
+                    @if ($version->attachment_file)
+                        <li class="mt-2">
+                            <a href="{{asset($version->attachment_file)}}"><span class="fas fa-download"></span> Download example file</a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>
     </section>
     <section>
         <div class="bbcode">{!! $html !!}</div>
+        @if ($version->attachment_file)
+            <div class="mt-2">
+                <a href="{{asset($version->attachment_file)}}"><span class="fas fa-download"></span> Download example file</a>
+            </div>
+        @endif
     </section>
 @endsection

@@ -10,8 +10,8 @@ class DeployFiles extends Command
     protected $description = 'Deploy files (by copying) from the old site folders to the new one';
 
     private function mkdir($dir) {
-        $this->output->writeln($dir);
         if (file_exists($dir)) return;
+        $this->output->writeln($dir);
         mkdir($dir);
     }
 
@@ -22,6 +22,18 @@ class DeployFiles extends Command
         }
     }
 
+    private function enumerateDirectory($dir) {
+        if (!file_exists($dir) || !is_dir($dir)) return [];
+        return array_diff(scandir($dir), array('..', '.'));
+    }
+
+    private function attemptCopy($source, $destination) {
+        if (!file_exists($source)) return; // file doesn't exist at source
+        if (file_exists($destination)) return; // file already exists at destination
+        copy($source, $destination);
+        $this->output->writeln('Copied ' .$source. ' to '.$destination.'.');
+    }
+
     public function handle()
     {
         $old_site_root = config('migration.old_path');
@@ -29,7 +41,7 @@ class DeployFiles extends Command
             $this->output->error('Old migration directory not found.');
             return 1;
         }
-        $old_site_root = rtrim($old_site_root, "\\/").'/';
+        $old_site_root = rtrim($old_site_root, "\\/");
         $this->output->writeln('Old site root is: ' . $old_site_root);
         $this->assertExists($old_site_root);
 
@@ -74,8 +86,42 @@ class DeployFiles extends Command
         $this->mkdir($maps_images_dir);
         $this->mkdir($avatars_dir);
 
-        $this->output->writeln('Migrating articles...');
-        $this->output->writeln('(I haven\'t done anything yet)');
+        // Articles
+        $this->output->writeln('Migrating article files...');
+
+        $article_dirs = $this->enumerateDirectory($original_articles_dir);
+        foreach ($article_dirs as $article_dir_name) {
+            $article_dir = "$original_articles_dir/$article_dir_name";
+            $article_id = intval($article_dir_name);
+            if (!$article_id) continue;
+
+            $revision_dirs = $this->enumerateDirectory($article_dir);
+            foreach ($revision_dirs as $revision_dir_name) {
+                $revision_dir = "$article_dir/$revision_dir_name";
+                $revision_id = intval($revision_dir_name);
+                if (!$revision_id) continue;
+
+                // Article thumbnail
+                $this->attemptCopy("{$revision_dir}/{$article_id}.jpg", "$articles_images_dir/article_${article_id}_${revision_id}_thumb.jpg");
+
+                // Article example files
+                $this->attemptCopy("{$revision_dir}/example_{$article_id}.zip", "$articles_files_dir/article_${article_id}_${revision_id}_example.zip");
+                $this->attemptCopy("{$revision_dir}/example_{$article_id}.jpg", "$articles_files_dir/article_${article_id}_${revision_id}_example.jpg");
+
+                // Article images
+                for ($i = 1; $i < 100; $i++) {
+                    $img = "$revision_dir/${article_id}_${i}.jpg";
+                    if (!file_exists($img)) break;
+                    $this->attemptCopy($img, "$articles_images_dir/article_${article_id}_${revision_id}_${i}.jpg");
+                }
+            }
+        }
+
+        // Downloads
+
+        // Maps
+
+        // Avatars
 
         return 0;
     }
