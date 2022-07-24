@@ -118,6 +118,11 @@ class DeployFiles extends Command
         }
 
         // Downloads
+        $download_files = $this->enumerateDirectory($original_downloads_dir);
+        $download_files = array_filter($download_files, fn($name) => str_starts_with($name, 'download'));
+        foreach ($download_files as $download_file_name) {
+            $this->attemptCopy("$original_downloads_dir/$download_file_name", "$downloads_files_dir/$download_file_name");
+        }
 
         // Maps
 
