@@ -4,6 +4,11 @@ input, textarea, select {
   border: 1px solid $red-border;
   background: black;
   color: #ccc;
+
+  &:disabled {
+    background: #565656;
+    border-color: lighten($red-border, 20%);
+  }
 }
 
 textarea {

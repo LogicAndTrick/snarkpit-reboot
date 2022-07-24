@@ -18315,6 +18315,10 @@ input, textarea, select {
   background: black;
   color: #ccc;
 }
+input:disabled, textarea:disabled, select:disabled {
+  background: #565656;
+  border-color: red;
+}
 
 textarea {
   min-height: 14rem;

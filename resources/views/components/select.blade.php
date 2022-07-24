@@ -1,7 +1,8 @@
-@props(['name', 'label' => '', 'disabled' => false, 'value' => null, 'items' => [], 'key' => 'id', 'value' => 'name'])
+@props(['name', 'label' => '', 'disabled' => false, 'value' => null, 'items' => [], 'item_key' => 'id', 'item_value' => 'name'])
 
 <?php
     $id = $name . '_' . rand(10000, 99999);
+    $value = old($name, $value);
 ?>
 <div {!! $attributes->merge(['class' => 'form-group']) !!}>
     <label for="{{ $id }}">
@@ -12,7 +13,7 @@
                {{ $disabled ? 'disabled' : '' }}
                {!! $attributes->merge(['class' => 'form-select']) !!}>
         @foreach ($items as $v)
-            <option value="{{$v->$key}}">{{$v->$value}}</option>
+            <option value="{{$v->$item_key}}" {{$value==$v->$item_key ? 'selected':''}}>{{$v->$item_value}}</option>
         @endforeach
         </select>
     @if ($errors->has($name))

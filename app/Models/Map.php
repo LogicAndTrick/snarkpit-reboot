@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class Map extends Model
 {
@@ -76,5 +78,14 @@ class Map extends Model
             return 'Unknown';
         }
         return null;
+    }
+
+    /**
+     * Returns true if this map is editable by the current user.
+     * @return bool
+     */
+    public function isEditable()
+    {
+        return Auth::id() == $this->user_id || Gate::allows('moderator');
     }
 }

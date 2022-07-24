@@ -15,6 +15,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MapController extends Controller
 {
@@ -178,8 +179,9 @@ class MapController extends Controller
         array_unshift($images, $image);
         $imgNum = 1;
         foreach ($images as $img) {
+            $image_id = Str::uuid()->toString();
             $dir = public_path('uploads/maps/images');
-            $img_name = $map->id . '_' . $imgNum . '.' . strtolower($img->getClientOriginalExtension());
+            $img_name = $map->id . '_' . $image_id . '.' . strtolower($img->getClientOriginalExtension());
             $img->move($dir, $img_name);
             MapImage::Create([
                 'map_id' => $map->id,
@@ -213,6 +215,111 @@ class MapController extends Controller
             $map->thread_id = $thread->id;
             $map->save();
         }
+
+        return redirect('map/view/'.$map->id);
+    }
+
+    public function getEdit($id) {
+        $this->loggedIn();
+
+        $map = Map::with(['images'])->findOrFail($id);
+        if (!$map->isEditable()) abort(403);
+
+        $games = Game::query()->orderBy('name')->get();
+        $statuses = MapStatus::query()->orderBy('id')->get();
+
+        return view('map/edit', [
+            'map' => $map,
+            'games' => $games,
+            'statuses' => $statuses
+        ]);
+    }
+
+    public function postEdit(Request $request) {
+        $this->loggedIn();
+        $id = $request->input('id');
+
+        $map = Map::with(['images'])->findOrFail($id);
+        if (!$map->isEditable()) abort(403);
+
+        // No file uploaded - same logic as create
+        $file_valid = 'required_without:mirrors|';
+        $mirrors_valid = 'required_without:file|';
+        if ($map->download_file) {
+            // File uploaded - file is optional, and mirrors is only required if we're removing the existing file
+            $file_valid = '';
+            $mirrors_valid = 'required_with:remove_existing|';
+        }
+
+        $image_valid = '';
+        if ($map->images->count() == 0) {
+            // No current images, first image is required
+            $image_valid = 'required|';
+        }
+
+        $this->validate($request, [
+            'name' => 'required|max:100',
+            'game_id' => 'required',
+            'status_id' => 'required',
+            'file' => $file_valid.'max:102400|mimes:rar,zip',
+            'mirrors' => $mirrors_valid.'max:1000',
+            'image' => $image_valid.'max:4096|mimes:jpg,jpeg',
+            'images.*' => 'mimes:jpg,jpeg|max:4096',
+            'text' => 'required|max:10000',
+        ]);
+
+        $map->name = $request->input('name');
+        $map->game_id = $request->input('game_id');
+        $map->status_id = $request->input('status_id');
+        $map->content_text = $request->input('text');
+        $map->content_html = bbcode($request->input('text'));
+        $map->mirrors = $request->input('mirrors') ?? '';
+
+        // Upload the map file
+        $file = $request->file('file');
+        $remove_existing = $request->boolean('remove_existing');
+        if ($file) {
+            $dir = public_path('uploads/maps/files');
+            $file_name = $map->id . '_map.' . strtolower($file->getClientOriginalExtension());
+            $file->move($dir, $file_name);
+            $map->download_file = 'uploads/maps/files/' . $file_name;
+        } else if ($remove_existing) {
+            $map->download_file = '';
+        }
+
+        // Handle first image
+        $image = $request->file('image');
+        $first_image = $map->images->sortBy('order_index')->first();
+        if ($image) {
+            $image_id = Str::uuid()->toString();
+            $dir = public_path('uploads/maps/images');
+            $img_name = $map->id . '_' . $image_id . '.' . strtolower($image->getClientOriginalExtension());
+            $image->move($dir, $img_name);
+            $first_image->image_file = 'uploads/maps/images/' . $img_name;
+            $first_image->save();
+        }
+
+        // Handle additional images
+        $change_additional_images = $request->boolean('change_additional_images');
+        if ($change_additional_images) {
+            $map->images->filter(fn($x) => $x != $first_image)->each(fn($x) => $x->delete());
+            $images = $request->file('images') ?? [];
+            $idx = $first_image->order_index + 1;
+            foreach ($images as $img) {
+                $image_id = Str::uuid()->toString();
+                $dir = public_path('uploads/maps/images');
+                $img_name = $map->id . '_' . $image_id . '.' . strtolower($img->getClientOriginalExtension());
+                $img->move($dir, $img_name);
+                MapImage::Create([
+                    'map_id' => $map->id,
+                    'image_file' => 'uploads/maps/images/' . $img_name,
+                    'order_index' => $idx
+                ]);
+                $idx++;
+            }
+        }
+
+        $map->save();
 
         return redirect('map/view/'.$map->id);
     }

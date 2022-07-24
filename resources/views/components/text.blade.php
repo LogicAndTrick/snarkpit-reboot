@@ -2,6 +2,7 @@
 
 <?php
     $id = $name . '_' . rand(10000, 99999);
+    $value = old($name, $value);
 ?>
 <div {!! $attributes->merge(['class' => 'form-group']) !!}>
     <label for="{{ $id }}">
@@ -10,7 +11,7 @@
 
     <input type="{{ $type }}"
            name="{{ $name }}"
-           value="{{ $value ?? old($name) }}"
+           value="{{ $value }}"
            id="{{ $id }}"
             {{ $disabled ? 'disabled' : '' }}
             {!! $attributes->merge(['class' => 'form-control']) !!} />

@@ -3,6 +3,7 @@
 <?php
     $id = $name . '_' . rand(10000, 99999);
     $cls = $bbcode ? 'bbcode-input' : '';
+    $value = old($name, $value);
 ?>
 <div {!! $attributes->merge(['class' => 'form-group']) !!}>
     <label for="{{ $id }}">
@@ -14,7 +15,7 @@
                name="{{ $name }}"
                id="{{ $id }}"
                {{ $disabled ? 'disabled' : '' }}
-            {!! $attributes->merge(['class' => 'form-control']) !!}>{{$value ?? old($name)}}</textarea>
+            {!! $attributes->merge(['class' => 'form-control']) !!}>{{$value}}</textarea>
         @if ($errors->has($name))
             <span class="text-danger">{{$errors->first($name)}}</span>
         @endif

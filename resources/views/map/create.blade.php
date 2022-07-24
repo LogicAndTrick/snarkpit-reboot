@@ -12,9 +12,9 @@
     <section>
         <form method="POST" action="{{ url('map/create') }}" enctype="multipart/form-data">
             @csrf
-            <x-text name="name" label="Map name:" />
-            <x-select name="game_id" label="Game:" :items="$games" />
-            <x-select name="status_id" label="Status:" :items="$statuses" />
+            <x-text name="name" label="Map name:" required />
+            <x-select name="game_id" label="Game:" :items="$games" required />
+            <x-select name="status_id" label="Status:" :items="$statuses" required />
             <div class="row">
                 <div class="col-md-6">
                     <div class="border p-2">
@@ -26,7 +26,7 @@
                 <div class="col-md-6">
                     <div class="border p-2">
                         <h3>Images</h3>
-                        <x-text type="file" name="image" label="First image (required, jpg only, maximum size: 4mb):" accept=".jpg,.jpeg" />
+                        <x-text type="file" name="image" label="First image (required, jpg only, maximum size: 4mb):" accept=".jpg,.jpeg" required />
 
                         Additional images (up to 9 more allowed):
                         <div class="images-form-container">
@@ -48,7 +48,7 @@
                     </div>
                 </div>
             </div>
-            <x-textarea name="text" label="Content:" :bbcode="true" />
+            <x-textarea name="text" label="Description:" :bbcode="true" required />
             <button type="submit">Upload</button>
         </form>
     </section>

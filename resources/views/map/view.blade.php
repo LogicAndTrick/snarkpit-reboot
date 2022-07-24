@@ -10,11 +10,16 @@
     <h1>
         {{$map->name}}
         by <a href="#">{{$map->user->name}}</a>
+        @if ($map->isEditable())
+            <small>
+                <a href="{{url('map/edit', [$map->id])}}" class="btn btn-outline-primary">Edit</a>
+            </small>
+        @endif
     </h1>
 
     <div class="row">
         <div class="col-md-6 image-cycler image-cycler-clickable">
-            @forelse($map->images as $img)
+            @forelse($map->images->sortBy('order_index') as $img)
                 <img class="img-fluid {{ $loop->first ? '' : 'd-none' }}" src="{{ asset($img->image_file) }}" />
             @empty
                 <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />

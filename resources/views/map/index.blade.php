@@ -75,7 +75,7 @@
                     <div class="image">
                         <a href="{{url('map/view', $map->id)}}" class="stretched-link">
                             @if(!$map->images->isEmpty())
-                                <img class="img-fluid" src="{{ asset($map->images->get(0)->image_file) }}" />
+                                <img class="img-fluid" src="{{ asset($map->images->sortBy('order_index')->get(0)->image_file) }}" />
                             @else
                                 <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
                             @endif
