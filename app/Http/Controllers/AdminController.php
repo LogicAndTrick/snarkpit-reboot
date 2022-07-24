@@ -151,6 +151,9 @@ update("Update complete.");
             case 'deploy-articles':
                 $commands[] = 'php artisan deploy:articles';
                 break;
+            case 'deploy-maps':
+                $commands[] = 'php artisan deploy:maps';
+                break;
             case 'deploy-files':
                 $commands[] = 'php artisan deploy:files';
                 break;

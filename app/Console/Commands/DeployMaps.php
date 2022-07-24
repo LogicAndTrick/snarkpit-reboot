@@ -43,7 +43,7 @@ class DeployMaps extends Command
             if ($map->beta === 2) $statusid = MapStatus::STATUS_ABANDONED;
 
             $file = '';
-            if ($map->hosted) $file  = 'uploads/maps/files/' . $map->id . '_map.' . $map->hosted;
+            if ($map->hosted) $file  = 'uploads/maps/files/' . $map->id . '_map.' . trim($map->hosted, '.');
 
             $m = new Map();
             $m->id = $map->id;

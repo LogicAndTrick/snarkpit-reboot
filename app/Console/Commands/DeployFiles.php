@@ -118,6 +118,8 @@ class DeployFiles extends Command
         }
 
         // Downloads
+        $this->output->writeln('Migrating download files...');
+
         $download_files = $this->enumerateDirectory($original_downloads_dir);
         $download_files = array_filter($download_files, fn($name) => str_starts_with($name, 'download'));
         foreach ($download_files as $download_file_name) {
@@ -131,8 +133,30 @@ class DeployFiles extends Command
         }
 
         // Maps
+        $this->output->writeln('Migrating map files...');
+
+        $map_cat_dirs = $this->enumerateDirectory($original_maps_dir);
+        foreach ($map_cat_dirs as $map_cat_dir) {
+            $files_dir = "$original_maps_dir/$map_cat_dir";
+            if (!is_dir($files_dir)) continue;
+
+            $map_files = $this->enumerateDirectory($files_dir);
+            $map_files = array_filter($map_files, fn($name) => str_contains($name, 'map'));
+            foreach ($map_files as $map_file_name) {
+                $new_map_file_name = str_replace('..', '.', $map_file_name);
+                $this->attemptCopy("$files_dir/$map_file_name", "$maps_files_dir/$new_map_file_name");
+            }
+
+            $image_files = $this->enumerateDirectory("$files_dir/images");
+            $image_files = array_filter($image_files, fn($name) => str_ends_with($name, '.jpg'));
+            foreach ($image_files as $image_file_name) {
+                $this->attemptCopy("$files_dir/images/$image_file_name", "$maps_images_dir/$image_file_name");
+            }
+        }
 
         // Avatars
+        $this->output->writeln('Migrating avatars...');
+
         $avatar_images = $this->enumerateDirectory($original_avatars_dir);
         $avatar_images = array_filter($avatar_images, fn($name) => str_starts_with($name, 'avatar'));
         foreach ($avatar_images as $avatar_image_name) {
