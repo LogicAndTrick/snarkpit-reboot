@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class DeployFiles extends Command
 {
@@ -54,6 +55,7 @@ class DeployFiles extends Command
         $original_download_images_dir = $old_site_root.'/content/downloads/images';
         $original_maps_dir = $old_site_root.'/maps';
         $original_avatars_dir = $old_site_root.'/images/avatars';
+        $original_links_dir = $old_site_root.'/images';
 
         $this->output->writeln('Validating environment...');
         $this->assertExists($original_articles_dir);
@@ -61,6 +63,7 @@ class DeployFiles extends Command
         $this->assertExists($original_download_images_dir);
         $this->assertExists($original_maps_dir);
         $this->assertExists($original_avatars_dir);
+        $this->assertExists($original_links_dir);
 
         $uploads_base_dir = public_path('uploads');
 
@@ -78,6 +81,8 @@ class DeployFiles extends Command
 
         $avatars_dir = $uploads_base_dir.'/avatars';
 
+        $links_dir = $uploads_base_dir.'/links';
+
         $this->output->writeln('Creating directories...');
         $this->mkdir($articles_base_dir);
         $this->mkdir($articles_files_dir);
@@ -89,6 +94,7 @@ class DeployFiles extends Command
         $this->mkdir($maps_files_dir);
         $this->mkdir($maps_images_dir);
         $this->mkdir($avatars_dir);
+        $this->mkdir($links_dir);
 
         // Articles
         $this->output->writeln('Migrating article files...');
@@ -165,6 +171,15 @@ class DeployFiles extends Command
         $avatar_images = array_filter($avatar_images, fn($name) => str_starts_with($name, 'avatar'));
         foreach ($avatar_images as $avatar_image_name) {
             $this->attemptCopy("$original_avatars_dir/$avatar_image_name", "$avatars_dir/$avatar_image_name");
+        }
+
+        // Links
+        $this->output->writeln('Migrating links...');
+
+        $links = DB::select('select * from snark3_snarkpit.links');
+        foreach ($links as $link) {
+            $icon_name = reverse_snarkpit_format($link->icon);
+            $this->attemptCopy("$original_links_dir/$icon_name", "$links_dir/$icon_name");
         }
 
         return 0;

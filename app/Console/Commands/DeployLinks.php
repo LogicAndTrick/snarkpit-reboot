@@ -27,7 +27,7 @@ class DeployLinks extends Command
             $links->id = $link->id;
             $links->name = reverse_snarkpit_format($link->name);
             $links->url = reverse_snarkpit_format($link->url);
-            $links->icon = reverse_snarkpit_format($link->icon);
+            $links->icon = 'uploads/links/' . reverse_snarkpit_format($link->icon);
             $links->description = reverse_snarkpit_format($link->description);
             $links->save();
         });
