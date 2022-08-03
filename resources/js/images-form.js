@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = form.querySelector('button');
         if (!btn) return;
 
+        const max_images = parseInt(form.getAttribute('data-max-images'), 10) || 9;
+
         const before = btn.closest('.text-center');
 
         // Set the event listeners for any existing remove buttons
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Button visibility to limit maximum number of images to 10 (mandatory first image + 9 optional additional images)
         const updateButtonVisibility = () => {
             const num = form.querySelectorAll('input').length;
-            before.classList.toggle('d-none', num >= 9);
+            before.classList.toggle('d-none', num >= max_images);
         };
         updateButtonVisibility();
 
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
 
             const num = form.querySelectorAll('input').length;
-            if (num >= 9) return; // max. 10 images
+            if (num >= max_images) return; // max. 10 images
 
             const div = document.createElement('div');
             const input = document.createElement('input');

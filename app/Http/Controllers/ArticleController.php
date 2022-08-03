@@ -3,9 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\ArticleCategory;
 use App\Models\ArticleVersion;
+use App\Models\Forum;
+use App\Models\ForumPost;
+use App\Models\ForumThread;
+use App\Models\Game;
+use App\Models\MapImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -53,34 +62,279 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function getManage() {
+        $this->loggedIn();
+
+        $versions = ArticleVersion::with(['user']);
+
+        if (!Gate::allows('moderator')) {
+            $versions = $versions->where('user_id', '=', Auth::id());
+        } else {
+            // Show pending & rejected articles for moderators
+            $versions = $versions->whereRaw('(status = ? or user_id = ?)', [
+                ArticleVersion::STATUS_PENDING,
+                Auth::id()
+            ]);
+        }
+
+        $versions = $versions->get();
+        $articles = Article::query()->whereIn('id', $versions->map(fn($x) => $x->article_id))->get();
+
+        return view('article.manage', [
+            'articles' => $articles,
+            'versions' => $versions
+        ]);
+    }
+
     public function getView(Request $request, $id)
     {
-        $version = ArticleVersion::with(['article', 'article.user', 'article.category', 'article.game'])
-            ->where('slug', '=', $id)
-            ->firstOrFail();
+        $version = ArticleVersion::with(['article', 'article.user', 'article.category', 'article.game']);
+        if (is_numeric($id)) {
+            $version = $version->where('id', '=', $id);
+        } else {
+            $version = $version->where('slug', '=', $id)->where('status', '=', ArticleVersion::STATUS_APPROVED);
+        }
+        $version = $version->orderByDesc('id')->firstOrFail();
+
+        if (!$version->canView()) abort(404);
 
         $html = $version->content_html;
         $aid = $version->article_id;
         $vid = $version->id;
-        $html = preg_replace_callback('/\[image(\d+)\]/sim', function($match) use ($aid, $vid) {
+        $html = preg_replace_callback('/\[image(\d+)\]/sim', function($match) use ($version) {
             $num = $match[1];
-            $path = "uploads/articles/images/article_${aid}_${vid}_${num}.jpg";
+            $path = $version->image_files_base . "_${num}.jpg";
             $location = public_path($path);
+            $url = asset('images/no_image.png');
             if (file_exists($location)) {
                 $url = asset($path);
-                return ' <div class="embedded image"><span class="caption-panel">'
-                    . '<img class="caption-body" src="' . $url . '" alt="Article image" />'
-                    . '</span></div> ';
             }
-            return $match[0];
+            return ' <div class="embedded image"><span class="caption-panel">'
+                . '<img class="caption-body" src="' . $url . '" alt="Article image" />'
+                . '</span></div> ';
         }, $html);
 
-        $version->article->stat_views++;
-        $version->article->save();
+        if ($version->status === ArticleVersion::STATUS_APPROVED) {
+            $version->article->stat_views++;
+            $version->article->save();
+        }
 
         return view('article.view', [
             'version' => $version,
             'html' => $html
         ]);
+    }
+
+    public function postStatus(Request $request) {
+        $this->loggedIn();
+
+        $article = Article::findOrFail($request->get('article_id'));
+        $version = ArticleVersion::findOrFail($request->get('version_id'));
+        $status = $request->get('status');
+
+        // If not the article creator, must be a moderator
+        if ($version->user_id !== Auth::id()) $this->moderator();
+
+        // If not changing from pending or draft, must be a moderator
+        if ($status != ArticleVersion::STATUS_PENDING && $status != ArticleVersion::STATUS_DRAFT) $this->moderator();
+        if ($version->status != ArticleVersion::STATUS_PENDING && $version->status != ArticleVersion::STATUS_DRAFT) $this->moderator();
+
+        // If changing to approved, change the current version and activate the article
+        if ($status == ArticleVersion::STATUS_APPROVED) {
+
+            if (!$article->forum_thread_id) {
+                // Create the forum thread
+                $forum = Forum::query()->where('name', '=', 'Articles & Downloads')->first();
+                if ($forum) {
+                    $thread = ForumThread::create([
+                        'forum_id' => $forum->id,
+                        'user_id' => Auth::id(),
+                        'title' => '[article] ' . $version->title,
+                        'description' => 'An article for ' . $article->game->name . ' > ' . $article->category->name,
+                        'is_poll' => false
+                    ]);
+                    $post_text = "This is a a discussion topic for the article:\n\n" .
+                        "[athumb]{$article->id}[/athumb]\n\n" .
+                        "[b]Article description:[/b]\n\n" .
+                        $version->description;
+                    $post = ForumPost::create([
+                        'thread_id' => $thread->id,
+                        'forum_id' => $forum->id,
+                        'user_id' => Auth::id(),
+                        'content_text' => $post_text,
+                        'content_html' => bbcode($post_text),
+                    ]);
+                    $article->forum_thread_id = $thread->id;
+                }
+            }
+
+            $article->current_version_id = $version->id;
+            $article->is_active = true;
+            $article->save();
+        }
+        // If changing from approved and the version is the current version, deactivate the article
+        else if ($version->status == ArticleVersion::STATUS_APPROVED && $article->current_version_id === $version->id) {
+            $article->is_active = false;
+            $article->save();
+        }
+
+        // If we're not setting status to archived, then archive all pending/draft/rejected versions of this article
+        if ($status != ArticleVersion::STATUS_ARCHIVED) {
+            DB::update('
+                update article_versions
+                set status = ?
+                where id != ? and article_id = ?
+                and status in (?, ?, ?)
+            ', [
+                ArticleVersion::STATUS_ARCHIVED,
+                $version->id, $article->id,
+                ArticleVersion::STATUS_DRAFT, ArticleVersion::STATUS_PENDING, ArticleVersion::STATUS_REJECTED
+            ]);
+        }
+
+        $review = $request->get('review');
+        if ($review) {
+            $version->review_text = $review;
+            $version->review_html = bbcode($review);
+            $version->review_user_id = Auth::id();
+        }
+
+        $version->status = $status;
+        $version->save();
+
+        if ($status == ArticleVersion::STATUS_APPROVED) return redirect('article/view/'.$version->slug);
+        return redirect('article/view/'.$version->id);
+    }
+
+    public function getCreate() {
+        $this->loggedIn();
+
+        $categories = ArticleCategory::query()->orderBy('name')->get();
+        $games = Game::query()->orderBy('name')->get();
+
+        return view('article.edit', [
+            'article' => new Article(),
+            'version' => new ArticleVersion(),
+            'categories' => $categories,
+            'games' => $games
+        ]);
+    }
+
+    public function getEdit($id) {
+        $this->loggedIn();
+        $article = Article::findOrFail($id);
+        $version = $article->current_version;
+        if (!$version) $version = ArticleVersion::query()->where('article_id', '=', $id)->orderByDesc('id')->firstOrFail();
+        abort_unless($article->canEdit(), 403);
+
+        $categories = ArticleCategory::query()->orderBy('name')->get();
+        $games = Game::query()->orderBy('name')->get();
+
+        return view('article.edit', [
+            'article' => $article,
+            'version' => $version,
+            'categories' => $categories,
+            'games' => $games
+        ]);
+    }
+
+    public function postCreate(Request $request) {
+        $this->loggedIn();
+
+        $id = $request->id;
+        $this->validate($request, [
+            'title' => 'required|max:200',
+            'article_category_id' => 'required',
+            'game_id' => 'required',
+            'description' => 'required|max:1000',
+            'thumbnail_file' => ($id ? '' : 'required|') . 'max:4096|mimes:jpg,jpeg,png',
+            'attachment_file' => 'max:10240|mimes:jpg,jpeg,png,7z,rar,zip',
+            'images.*' => 'mimes:jpg,jpeg|max:4096',
+            'text' => 'required|max:65535',
+        ]);
+
+        $last_version = null;
+        if ($id) {
+            $article = Article::findOrFail($id);
+            $last_version = ArticleVersion::query()->where('article_id', '=', $id)->orderByDesc('id')->firstOrFail();
+
+            $article->update([
+                'article_category_id' => $request->get('article_category_id'),
+                'game_id' => $request->get('game_id')
+            ]);
+        } else {
+            $article = Article::Create([
+                'user_id' => Auth::id(),
+                'article_category_id' => $request->get('article_category_id'),
+                'game_id' => $request->get('game_id'),
+                'forum_thread_id' => null,
+                'current_version_id' => 0,
+                'is_active' => false,
+                'stat_views' => 0
+            ]);
+        }
+
+        $version = ArticleVersion::Create([
+            'article_id' => $article->id,
+            'user_id' => Auth::id(),
+            'status' => ArticleVersion::STATUS_DRAFT,
+            'slug' => ArticleVersion::CreateSlug($request->get('title')),
+            'title' => $request->get('title'),
+            'description' => $request->get('description'),
+            'attachment_file' => '',
+            'thumbnail_file' => '',
+            'image_files_base' => '',
+            'content_text' => $request->get('text'),
+            'content_html' => bbcode($request->get('text')),
+            'review_user_id' => null,
+            'review_text' => '',
+            'review_html' => '',
+        ]);
+
+        // Upload thumbnail
+        // uploads/articles/images/article_{aid}_{vid}_thumb.ext
+        $thumbnail_file = $request->file('thumbnail_file');
+        if ($thumbnail_file) {
+            $dir = public_path('uploads/articles/images');
+            $file_name = 'article_' . $article->id . '_' . $version->id . '_thumb.' . strtolower($thumbnail_file->getClientOriginalExtension());
+            $thumbnail_file->move($dir, $file_name);
+            $version->thumbnail_file = 'uploads/articles/images/' . $file_name;
+        } else if ($last_version) {
+            $version->thumbnail_file = $last_version->thumbnail_file;
+        }
+
+        // Upload attachment
+        // uploads/articles/files/article_{aid}_{vid}_example.ext
+        $attachment_file = $request->file('attachment_file');
+        if ($attachment_file) {
+            $dir = public_path('uploads/articles/files');
+            $file_name = 'article_' . $article->id . '_' . $version->id . '_example.' . strtolower($attachment_file->getClientOriginalExtension());
+            $attachment_file->move($dir, $file_name);
+            $version->attachment_file = 'uploads/articles/files/' . $file_name;
+        } else if ($last_version) {
+            $version->attachment_file = $last_version->attachment_file;
+        }
+
+        // Upload images
+        // uploads/articles/images/article_{aid}_{vid}_{imgnum}.ext
+        $change_additional_images = $request->boolean('change_additional_images');
+        if (!$id || $change_additional_images) {
+            $version->image_files_base = 'uploads/articles/images/article_' . $article->id . '_' . $version->id;
+            $images = $request->file('images') ?? [];
+            $imgNum = 1;
+            foreach ($images as $img) {
+                $dir = public_path('uploads/articles/images');
+                $file_name = 'article_' . $article->id . '_' . $version->id . '_' . $imgNum . '.jpg';
+                $img->move($dir, $file_name);
+                $imgNum++;
+            }
+        } else if ($last_version) {
+            $version->image_files_base = $last_version->image_files_base;
+        }
+
+        $version->save();
+
+        // Don't create forum thread yet - article isn't approved
+        return redirect('article/view/'.$version->id);
     }
 }

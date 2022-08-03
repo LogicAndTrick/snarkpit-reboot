@@ -242,11 +242,18 @@ $(function() {
 
         var refresh = function() {
             panel.html('Loading...');
-            $.post(window.urls.api.format + '?field=' + name, form.serializeArray(), function(data) {
-                panel.html(data);
-                panel.find('pre code').each(function() {
-                    hljs.highlightBlock(this);
+            $.post(window.urls.api.format + '?field=' + name, form.serializeArray(), async function(data) {
+                const event = new CustomEvent('bbcode-preview-updating', {
+                    detail: { html: data, element: panel }
                 });
+                ta[0].dispatchEvent(event);
+                panel.html(await Promise.resolve(event.detail.html));
+                panel.find('pre code').each(function() {
+                    hljs.highlightElement(this);
+                });
+                ta[0].dispatchEvent(new CustomEvent('bbcode-preview-updated', {
+                    detail: { element: panel }
+                }));
             });
         };
 

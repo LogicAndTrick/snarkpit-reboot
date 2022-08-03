@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('attachment_file', 200);
             $table->text('thumbnail_file', 200);
+            $table->text('image_files_base', 200);
             $table->text('content_text');
             $table->text('content_html');
             $table->foreignIdFor(\App\Models\User::class, 'review_user_id')->nullable()->references('id')->on('users');

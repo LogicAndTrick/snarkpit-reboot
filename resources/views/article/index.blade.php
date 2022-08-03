@@ -5,6 +5,20 @@
     <h1>
         <span class="fa fa-file-lines"></span>
         Snarkpit Articles Archive
+        @auth
+            <small>
+                <a href="{{ url('article/create') }}" class="btn btn-outline-primary">
+                    <span class="fas fa-plus"></span> Create article
+                </a>
+                <a href="{{ url('article/manage') }}" class="btn btn-outline-info">
+                    @can('moderator')
+                        Review pending articles
+                    @else
+                        Manage my articles
+                    @endcan
+                </a>
+            </small>
+        @endauth
     </h1>
 
 <?php
@@ -65,11 +79,12 @@
                         <a href="{{ url('article/view', [$article->current_version->slug]) }}">{{ $article->current_version->title }}</a>
                     </h2>
                     <h3 class="small">
-
-                        @can('moderator')
-                            | <a href="{{ url('article/edit', [$article->id]) }}">edit</a>
-                            | <a href="{{ url('article/delete', [$article->id]) }}">delete</a>
-                        @endcan
+                        @if ($article->current_version->canEdit())
+                            <a href="{{ url('article/edit', [$article->id]) }}">edit</a>
+                            @if ($article->current_version->canDelete())
+                                | <a href="{{ url('article/delete', [$article->id]) }}">delete</a>
+                            @endif
+                        @endif
                     </h3>
                     <div class="bbcode">{{$article->current_version->description}}</div>
                 </div>

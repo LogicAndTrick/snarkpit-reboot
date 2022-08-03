@@ -16,6 +16,7 @@ hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'));
 hljs.registerLanguage('angelscript', require('highlight.js/lib/languages/angelscript'));
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
 hljs.highlightAll();
+window.hljs = hljs;
 
 $(document).on('click', '.video-content .uninitialised', function(event) {
     var $t = $(this),

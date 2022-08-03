@@ -64,6 +64,8 @@ class DeployArticles extends Command
                 $attach = "uploads/articles/files/article_${aid}_${vid}_example." . $version->hosted;
             }
 
+            $image_base = "uploads/articles/images/article_${aid}_${vid}";
+
             $status = ArticleVersion::STATUS_DRAFT;
             if ($article->is_active) $status = ArticleVersion::STATUS_APPROVED;
 
@@ -81,6 +83,7 @@ class DeployArticles extends Command
             $v->description = reverse_snarkpit_format($version->description);
             $v->attachment_file = $attach;
             $v->thumbnail_file = $thumb;
+            $v->image_files_base = $image_base;
             $v->content_text = $text;
             $v->content_html = bbcode($v->content_text);
             $v->review_user_id = $version->admin > 0 ? $version->admin : null;
