@@ -4,10 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class Download extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id',
+        'download_category_id',
+        'user_id',
+        'game_id',
+        'thread_id',
+        'name',
+        'content_text',
+        'content_html',
+        'stat_downloads',
+        'image_file',
+        'download_file',
+        'mirrors',
+    ];
 
     public function user() {
         return $this->belongsTo(User::class);
@@ -51,5 +68,10 @@ class Download extends Model
             return 'Unknown';
         }
         return null;
+    }
+
+    public function canEdit()
+    {
+        return Auth::id() == $this->user_id || Gate::allows('moderator');
     }
 }

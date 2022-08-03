@@ -7,7 +7,10 @@
         Snarkpit Maps Archive
         @auth
             <small>
-                <a href="{{url('map/create')}}" class="btn btn-outline-primary">Upload a map</a>
+                <a href="{{url('map/create')}}" class="btn btn-outline-primary">
+                    <span class="fas fa-plus"></span>
+                    Upload a map
+                </a>
             </small>
         @endauth
     </h1>

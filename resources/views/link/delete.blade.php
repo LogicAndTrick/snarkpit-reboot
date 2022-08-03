@@ -1,10 +1,10 @@
-@section('title', 'Edit link')
+@section('title', 'Delete link')
 @extends('layouts.default')
 
 @section('content')
     <h1>
-        <span class="fa fa-plus"></span>
-        Edit link: {{$link->name}}
+        <span class="fa fa-times"></span>
+        Delete link: {{$link->name}}
     </h1>
 
     <section>

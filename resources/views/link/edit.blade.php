@@ -3,7 +3,7 @@
 
 @section('content')
     <h1>
-        <span class="fa fa-plus"></span>
+        <span class="fa fa-pencil"></span>
         Edit link: {{$link->name}}
     </h1>
 

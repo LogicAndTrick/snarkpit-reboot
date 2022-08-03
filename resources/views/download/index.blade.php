@@ -5,6 +5,14 @@
     <h1>
         <span class="fa fa-download"></span>
         Snarkpit Downloads Archive
+        @auth
+            <small>
+                <a href="{{url('download/create')}}" class="btn btn-outline-primary">
+                    <span class="fas fa-plus"></span>
+                    Submit new download
+                </a>
+            </small>
+        @endauth
     </h1>
 
 <?php
@@ -63,10 +71,10 @@
                     <h2>{{ $download->name }}</h2>
                     <h3 class="small">
 
-                        @can('moderator')
-                            | <a href="{{ url('download/edit', [$download->id]) }}">edit</a>
+                        @if($download->canEdit())
+                            <a href="{{ url('download/edit', [$download->id]) }}">edit</a>
                             | <a href="{{ url('download/delete', [$download->id]) }}">delete</a>
-                        @endcan
+                        @endif
                     </h3>
                     <div class="bbcode">{!! $download->content_html !!}</div>
                 </div>

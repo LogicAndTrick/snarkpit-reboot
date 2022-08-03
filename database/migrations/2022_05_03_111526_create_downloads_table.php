@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\DownloadCategory::class)->references('id')->on('download_categories');
             $table->foreignIdFor(\App\Models\User::class)->references('id')->on('users');
             $table->foreignIdFor(\App\Models\Game::class)->references('id')->on('games');
-            $table->foreignIdFor(\App\Models\ForumThread::class, 'thread_id')->references('id')->on('forum_threads');
+            $table->foreignIdFor(\App\Models\ForumThread::class, 'thread_id')->nullable()->references('id')->on('forum_threads');
             $table->string('name', 100);
             $table->string('content_text', 1000);
             $table->string('content_html', 8000);
