@@ -8,7 +8,7 @@
             <div class="quick-links-container">
                 <div class="quick-links">
                     @auth
-                        <a href="#">control panel</a>
+                        <a href="{{ url('panel') }}">control panel</a>
                         <a href="#">messages</a>
                         <a href="#">updates</a>
                         @can('admin')

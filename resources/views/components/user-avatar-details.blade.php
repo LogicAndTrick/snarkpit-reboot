@@ -29,6 +29,8 @@
         @endif
         @if($user->avatar_custom)
             <img src="{{ asset('uploads/avatars/'.$user->avatar_file) }}" />
+        @elseif($user->avatar_file)
+            <img src="{{ asset('images/avatars/'.$user->avatar_file) }}" />
         @endif
         @if ($link)
             {{ $user->name }}

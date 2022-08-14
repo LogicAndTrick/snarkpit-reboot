@@ -26,7 +26,7 @@ $controllers = [
     'thread' => \App\Http\Controllers\ThreadController::class,
     'post' => \App\Http\Controllers\PostController::class,
 
-    //'panel' => 'User\PanelController',
+    'panel' => \App\Http\Controllers\PanelController::class,
     //'message' => 'User\MessageController',
     'user' => \App\Http\Controllers\UserController::class,
 

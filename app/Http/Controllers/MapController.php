@@ -28,6 +28,8 @@ class MapController extends Controller
         if ($game > 0) $maps = $maps->where('game_id', '=', $game);
         $status = intval($request->get('status'));
         if ($status > 0) $maps = $maps->where('status_id', '=', $status);
+        $user = intval($request->get('user'));
+        if ($user > 0) $maps = $maps->where('user_id', '=', $user);
 
         // sorting
         $sort_exp = explode('.', $request->get('sort', ''));

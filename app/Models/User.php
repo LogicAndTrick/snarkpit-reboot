@@ -144,4 +144,12 @@ class User extends Authenticatable implements MustVerifyEmail
             $this->info_birthday = 0;
         }
     }
+
+    public function deleteAvatar() {
+        if ($this->avatar_custom && is_file(public_path('uploads/avatars/'.$this->avatar_file))) {
+            unlink(public_path('uploads/avatars/'.$this->avatar_file));
+        }
+        $this->avatar_custom = false;
+        $this->avatar_file = '';
+    }
 }

@@ -18367,7 +18367,7 @@ button.btn-outline-danger, .btn.btn-outline-danger {
   color: #dc3545;
 }
 
-button[type=submit] {
+button[type=submit]:not(.not-submit) {
   font-size: 1rem;
   color: #000;
   background: #ead30f;
@@ -18378,7 +18378,7 @@ button[type=submit] {
   margin: 0.5rem auto;
   display: block;
 }
-button[type=submit]:disabled {
+button[type=submit]:not(.not-submit):disabled {
   background: #70630a;
   color: #a1a1a1;
 }

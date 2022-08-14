@@ -26,6 +26,8 @@ class DownloadController extends Controller
         if ($game > 0) $downloads = $downloads->where('game_id', '=', $game);
         $cat = intval($request->get('cat'));
         if ($cat > 0) $downloads = $downloads->where('download_category_id', '=', $cat);
+        $user = intval($request->get('user'));
+        if ($user > 0) $downloads = $downloads->where('user_id', '=', $user);
 
         // sorting
         $sort_exp = explode('.', $request->get('sort', ''));

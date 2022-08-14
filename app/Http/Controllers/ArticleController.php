@@ -27,6 +27,8 @@ class ArticleController extends Controller
         if ($game > 0) $articles = $articles->where('game_id', '=', $game);
         $cat = intval($request->get('cat'));
         if ($cat > 0) $articles = $articles->where('article_category_id', '=', $cat);
+        $user = intval($request->get('user'));
+        if ($user > 0) $articles = $articles->where('user_id', '=', $user);
 
         // sorting
         $sort_exp = explode('.', $request->get('sort', ''));
