@@ -112,6 +112,36 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<string, string>
      */
     protected $casts = [
+        'last_login_time' => 'datetime',
+        'last_access_time' => 'datetime',
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = [
+        'info_birthday_formatted'
+    ];
+
+    public function maps() {
+        return $this->hasMany(Map::class);
+    }
+
+    public function articles() {
+        return $this->hasMany(Article::class);
+    }
+
+    public function getInfoBirthdayFormattedAttribute() {
+        $val = $this->info_birthday;
+        if ($val == 0) return '';
+        $d = $val % 100;
+        $m = ($val - $d) / 100;
+        return str_pad(strval($d), 2, '0', STR_PAD_LEFT) . '/' . str_pad(strval($m), 2, '0', STR_PAD_LEFT);
+    }
+
+    public function setInfoBirthdayFormattedAttribute($value) {
+        if (preg_match('%(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])%m', $value, $regs)) {
+            $this->info_birthday = intval($regs[2] . $regs[1]);
+        } else {
+            $this->info_birthday = 0;
+        }
+    }
 }

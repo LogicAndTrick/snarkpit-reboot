@@ -28,7 +28,7 @@ $controllers = [
 
     //'panel' => 'User\PanelController',
     //'message' => 'User\MessageController',
-    //'user' => 'User\UserController',
+    'user' => \App\Http\Controllers\UserController::class,
 
     'news' => \App\Http\Controllers\NewsController::class,
     'download' => \App\Http\Controllers\DownloadController::class,
