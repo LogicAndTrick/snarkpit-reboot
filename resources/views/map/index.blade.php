@@ -78,7 +78,7 @@
                         <img src="{{rating_image($map->stat_rating)}}" alt="{{$map->stat_rating}}" >
                     </div>
                     <div class="info">
-                        <span>by <a href="#">{{$map->user->name}}</a></span>
+                        <span>by <a href="{{ url('user/view', [ $map->user->id ]) }}">{{$map->user->name}}</a></span>
                     </div>
                     <div class="image">
                         <a href="{{url('map/view', $map->id)}}" class="stretched-link">

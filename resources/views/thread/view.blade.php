@@ -117,7 +117,7 @@
             <header>
                 <div class="me-auto">
                     <small>Re: {{$thread->title}}</small>
-                    <small>Posted by <a href="#">{{ $post->user->name }}</a> on {{$post->created_at->format('D M jS Y \a\\t g:ia')}}</small>
+                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on {{$post->created_at->format('D M jS Y \a\\t g:ia')}}</small>
                 </div>
                 <div class="mt-1">
                     <a href="#" class="btn" title="Quote post"><span class="fas fa-quote-left"></span></a>

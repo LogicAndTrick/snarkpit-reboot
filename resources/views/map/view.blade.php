@@ -9,7 +9,7 @@
 @section('content')
     <h1>
         {{$map->name}}
-        by <a href="#">{{$map->user->name}}</a>
+        by <a href="{{ url('user/view', [ $map->user->id ]) }}">{{$map->user->name}}</a>
         @if ($map->isEditable())
             <small>
                 <a href="{{url('map/edit', [$map->id])}}" class="btn btn-outline-primary">Edit</a>
@@ -119,7 +119,7 @@
             <section>
                 <div class="d-flex justify-content-between">
                     <div>
-                        Posted by <a href="#">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
                     </div>
                     <div>
                         @if ($post->user_id == $map->user_id)

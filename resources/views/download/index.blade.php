@@ -88,7 +88,7 @@
                         @if ($download->download_file)
                             <li>Size: {{$download->getFileSize()}}</li>
                         @endif
-                        <li>by <a href="#">{{ $download->user->name }}</a></li>
+                        <li>by <a href="{{ url('user/view', [ $download->user->id ]) }}">{{ $download->user->name }}</a></li>
                         <li>in <a href="#">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a></li>
                         <li>updated {{ $download->created_at->format("D M jS Y") }}</li>
                         <li>downloaded {{ $download->stat_downloads }} time{{ $download->stat_downloads == 1 ? '' : 's' }}</li>

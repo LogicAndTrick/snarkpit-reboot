@@ -67,7 +67,7 @@
                 <div class="border m-2 p-2">
                     <h3>Article was not approved</h3>
                     @if ($version->review_user_id)
-                        <p>The article was not approved, changes have been requested by <a href="#">{{$version->review_user->name}}</a>:</p>
+                        <p>The article was not approved, changes have been requested by <a href="{{ url('user/view', [ $version->review_user->id ]) }}">{{$version->review_user->name}}</a>:</p>
                     @else
                         <p>The article was not approved, changes have been requested:</p>
                     @endif</p>
@@ -102,7 +102,7 @@
             </div>
             <div class="col-3">
                 <ul class="list-unstyled">
-                    <li>by <a href="#">{{ $version->article->user->name }}</a></li>
+                    <li>by <a href="{{ url('user/view', [ $version->article->user->id ]) }}">{{ $version->article->user->name }}</a></li>
                     <li>in <a href="{{ url("article?game={$version->article->game_id}&cat={$version->article->article_category_id}") }}">{{ $version->article->game->name }} &raquo; {{ $version->article->category->name }}</a></li>
                     <li>updated {{ $version->article->created_at->format("D M jS Y") }}</li>
                     <li>viewed {{ $version->article->stat_views }} time{{ $version->article->stat_views == 1 ? '' : 's' }}</li>

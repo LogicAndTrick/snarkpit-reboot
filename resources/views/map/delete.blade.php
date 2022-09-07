@@ -16,7 +16,7 @@
             <x-hidden name="id" :value="$map->id" required />
             <div class="border text-center p-2">
                 Are you sure you want to delete this map?<br/>
-                <strong>{{$map->name}} by <a href="#">{{$map->user->name}}</a></strong>
+                <strong>{{$map->name}} by <a href="{{ url('user/view', [ $map->user->id ]) }}">{{$map->user->name}}</a></strong>
             </div>
             <button type="submit">Delete</button>
         </form>

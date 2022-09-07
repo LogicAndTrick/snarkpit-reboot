@@ -29,7 +29,7 @@
                         <a href="{{ url('article/view', [$version->id]) }}">{{ $version->title }}</a>
                     </td>
                     <td>
-                        <a href="#">{{ $article->user->name }}</a>
+                        <a href="{{ url('user/view', [ $article->user->id ]) }}">{{ $article->user->name }}</a>
                     </td>
                     <td>
                         {{$version->getStatus()}}

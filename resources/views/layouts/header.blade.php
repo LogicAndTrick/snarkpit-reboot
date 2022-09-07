@@ -29,13 +29,13 @@
             <div class="member-info d-flex flex-row">
                 @auth
                     <div class="me-4">
-                        Welcome, <a href="#">{{ Auth::user()->name }}</a>!
+                        Welcome, <a href="{{ url('user/view', [ Auth::id() ]) }}">{{ Auth::user()->name }}</a>!
                     </div>
                 @endauth
                 <div class="flex-fill"></div>
                 @if (isset($latest_user))
                     <div>
-                        Say hi to our newest member, <a href="#">{{ $latest_user->name }}</a>!
+                        Say hi to our newest member, <a href="{{ url('user/view', [ $latest_user->id ]) }}">{{ $latest_user->name }}</a>!
                     </div>
                 @endif
             </div>
