@@ -20,7 +20,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 $controllers = [
-    //'ban' => 'Auth\BanController',
+    'ban' => \App\Http\Controllers\BanController::class,
 
     'forum' => \App\Http\Controllers\ForumController::class,
     'thread' => \App\Http\Controllers\ThreadController::class,

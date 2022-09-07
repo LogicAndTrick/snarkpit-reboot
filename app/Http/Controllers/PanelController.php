@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Image;
+use App\Models\Ban;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -219,147 +221,140 @@ class PanelController extends Controller
 //        $sub->delete();
 //        return redirect('panel/notifications/'.$user->id);
 //    }
-//
-//    public function getEditName($id = 0) {
-//        $user = $this->getUser($id);
-//        return view('user/panel/edit-name', [
-//            'user' => $user
-//        ]);
-//    }
-//
-//    public function postEditName() {
-//        $id = $request->input('id');
-//        $user = $this->getUser($id);
-//
-//        $this->validate($request->instance(), [
-//            'new_name' => 'required|max:255|unique:users,name,'.$user->id
-//        ]);
-//
-//        $orig_name = $user->name;
-//        $user->update([ 'name' => $request->input('new_name') ]);
-//        UserNameHistory::create([
-//            'user_id' => $user->id,
-//            'name' => $orig_name
-//        ]);
-//        return redirect('panel/index/'.$id);
-//    }
-//
-//    public function getEditBans($id = 0) {
-//        $user = $this->getUser($id);
-//        $bans = Ban::whereUserId($id)->get();
-//        return view('user/panel/edit-bans', [
-//            'user' => $user,
-//            'bans' => $bans
-//        ]);
-//    }
-//
-//    public function postAddBan() {
-//        $id = $request->input('id');
-//        $user = $this->getUser($id);
-//
-//        $this->validate($request->instance(), [
-//            'reason' => 'required|max:255',
-//            'duration' => 'required|integer',
-//            'unit' => 'required|integer'
-//        ]);
-//
-//        $hours = intval($request->input('duration')) * intval($request->input('unit'));
-//        $ban = Ban::create([
-//            'user_id' => $user->id,
-//            'ip' => ($request->input('ip_ban') && $user->last_access_ip ? $user->last_access_ip : null),
-//            'ends_at' => $hours < 0 ? null : Carbon::now()->addHours($hours),
-//            'reason' => $request->input('reason')
-//        ]);
-//
-//        return redirect('panel/edit-bans/'.$id);
-//    }
-//
-//    public function postDeleteBan() {
-//        $id = $request->input('id');
-//        $ban = Ban::findOrFail($id);
-//        $ban->delete();
-//        return redirect('panel/edit-bans/'.$ban->user_id);
-//    }
-//
-//    public function getEditPermissions($id = 0) {
-//        $user = $this->getUser($id);
-//        $permissions = UserPermission::with(['permission'])->whereUserId($id)->get();
-//        return view('user/panel/edit-permissions', [
-//            'user' => $user,
-//            'permissions' => $permissions
-//        ]);
-//    }
-//
-//    public function postAddPermission() {
-//        $id = $request->input('id');
-//        $user = $this->getUser($id);
-//
-//        $this->validate($request->instance(), [
-//            'permission_id' => 'required|integer'
-//        ]);
-//
-//        $perm = UserPermission::create([
-//            'user_id' => $user->id,
-//            'permission_id' => $request->input('permission_id')
-//        ]);
-//
-//        return redirect('panel/edit-permissions/'.$id);
-//    }
-//
-//    public function postDeletePermission() {
-//        $id = $request->input('id');
-//        $perm = UserPermission::findOrFail($id);
-//        $perm->delete();
-//        return redirect('panel/edit-permissions/'.$perm->user_id);
-//    }
-//
-//    public function getObliterate($id) {
-//        $user = $this->getUser($id);
-//        return view('user/panel/obliterate', [
-//            'user' => $user
-//        ]);
-//    }
-//
-//    public function postObliterate() {
-//        $id = $request->input('id');
-//        $user = $this->getUser($id);
-//
-//        $this->validate($request->instance(), [
-//            'sure' => 'required|confirmed'
-//        ], [
-//            'required' => 'You must check both boxes if you want to obliterate this user.',
-//            'confirmed' => 'You must check both boxes if you want to obliterate this user.'
-//        ]);
-//
-//        set_time_limit(500);
-//        $user->obliterate(User::DEFINITELY_OBLITERATE_THIS_USER);
-//
-//        return redirect('/');
-//    }
-//
-//    public function getRemove($id) {
-//        $user = $this->getUser($id);
-//        return view('user/panel/remove', [
-//            'user' => $user
-//        ]);
-//    }
-//
-//    public function postRemove() {
-//        $id = $request->input('id');
-//        $user = $this->getUser($id);
-//
-//        $this->validate($request->instance(), [
-//            'sure' => 'required|confirmed'
-//        ], [
-//            'required' => 'You must check both boxes if you want to remove this user.',
-//            'confirmed' => 'You must check both boxes if you want to remove this user.'
-//        ]);
-//
-//        set_time_limit(500);
-//        $user->remove(User::DEFINITELY_REMOVE_THIS_USER);
-//
-//        return redirect('/user/view/' . $id);
-//    }
+
+    public function getEditName($id = 0) {
+        $this->admin();
+        $user = $this->getUser($id);
+        return view('panel.edit-name', [
+            'user' => $user
+        ]);
+    }
+
+    public function postEditName(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'new_name' => 'required|max:255|unique:users,name,'.$user->id
+        ]);
+
+        $user->update([ 'name' => $request->input('new_name') ]);
+        return redirect('panel/index/'.$id);
+    }
+
+    public function getEditBans($id = 0) {
+        $this->admin();
+        $user = $this->getUser($id);
+        $bans = Ban::whereUserId($id)->get();
+        return view('panel.edit-bans', [
+            'user' => $user,
+            'bans' => $bans
+        ]);
+    }
+
+    public function postAddBan(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'reason' => 'required|max:255',
+            'duration' => 'required|integer',
+            'unit' => 'required|integer'
+        ]);
+
+        $hours = intval($request->input('duration')) * intval($request->input('unit'));
+        $ban = Ban::create([
+            'user_id' => $user->id,
+            'ip' => ($request->input('ip_ban') && $user->last_access_ip ? $user->last_access_ip : null),
+            'ends_at' => $hours < 0 ? null : Carbon::now()->addHours($hours),
+            'reason' => $request->input('reason')
+        ]);
+
+        return redirect('panel/edit-bans/'.$id);
+    }
+
+    public function postDeleteBan(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+        $ban = Ban::findOrFail($id);
+        $ban->delete();
+        return redirect('panel/edit-bans/'.$ban->user_id);
+    }
+
+    public function getEditLevel($id = 0) {
+        $this->superAdmin();
+        $user = $this->getUser($id);
+        return view('panel.edit-level', [
+            'user' => $user
+        ]);
+    }
+
+    public function postEditLevel(Request $request) {
+        $this->superAdmin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'new_level' => 'required|integer'
+        ]);
+        $user->update([ 'level' => $request->input('new_level') ]);
+
+        return redirect('panel/index/'.$id);
+    }
+
+    public function getObliterate($id) {
+        $this->superAdmin();
+        $user = $this->getUser($id);
+        return view('panel.obliterate', [
+            'user' => $user
+        ]);
+    }
+
+    public function postObliterate(Request $request) {
+        $this->superAdmin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'sure' => 'required|confirmed'
+        ], [
+            'required' => 'You must check both boxes if you want to obliterate this user.',
+            'confirmed' => 'You must check both boxes if you want to obliterate this user.'
+        ]);
+
+        set_time_limit(500);
+        $user->obliterate(User::DEFINITELY_OBLITERATE_THIS_USER);
+
+        return redirect('/');
+    }
+
+    public function getRemove($id) {
+        $this->superAdmin();
+        $user = $this->getUser($id);
+        return view('panel.remove', [
+            'user' => $user
+        ]);
+    }
+
+    public function postRemove(Request $request) {
+        $this->superAdmin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'sure' => 'required|confirmed'
+        ], [
+            'required' => 'You must check both boxes if you want to remove this user.',
+            'confirmed' => 'You must check both boxes if you want to remove this user.'
+        ]);
+
+        set_time_limit(500);
+        $user->remove(User::DEFINITELY_REMOVE_THIS_USER);
+
+        return redirect('/user/view/' . $id);
+    }
 
     private static $preset_avatars = [
         '1.png',

@@ -46,7 +46,6 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         // ConvertEmptyStringsToNull::class,
-        CheckForBan::class
     ];
 
     /**
@@ -60,6 +59,7 @@ class Kernel extends HttpKernel
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            CheckForBan::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,

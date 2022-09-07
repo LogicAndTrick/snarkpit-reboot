@@ -40,7 +40,7 @@ class CheckForBan
      */
     protected function shouldCheckForBan(Request $request)
     {
-        return !$request->is('ban/*') && !$request->is('auth/logout');
+        return !$request->is('ban/*') && !$request->is('account/logout');
     }
 
     /**
