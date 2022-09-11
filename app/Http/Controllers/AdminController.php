@@ -119,12 +119,12 @@ update("Update complete.");
                 $commands[] = 'php artisan optimize';
                 break;
             case 'migrate':
-                $commands[] = 'php artisan migrate';
+                $commands[] = 'php artisan migrate --force';
                 break;
             case 'update-migrate':
                 $commands[] = 'git pull';
                 $commands[] = 'COMPOSER_HOME=~/.composer-home php composer.phar install';
-                $commands[] = 'php artisan migrate';
+                $commands[] = 'php artisan migrate --force';
                 $commands[] = 'php artisan optimize';
                 break;
             case 'refresh';
