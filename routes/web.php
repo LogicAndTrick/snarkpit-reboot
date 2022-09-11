@@ -27,7 +27,7 @@ $controllers = [
     'post' => \App\Http\Controllers\PostController::class,
 
     'panel' => \App\Http\Controllers\PanelController::class,
-    //'message' => 'User\MessageController',
+    'message' => \App\Http\Controllers\MessageController::class,
     'user' => \App\Http\Controllers\UserController::class,
 
     'news' => \App\Http\Controllers\NewsController::class,
@@ -35,9 +35,10 @@ $controllers = [
     'link' => \App\Http\Controllers\LinksController::class,
     'article' => \App\Http\Controllers\ArticleController::class,
     'map' => \App\Http\Controllers\MapController::class,
+    'journal' => \App\Http\Controllers\JournalController::class,
 
     'api' => \App\Http\Controllers\ApiController::class,
-    //'search' => 'Search\SearchController',
+    'search' => \App\Http\Controllers\SearchController::class,
     'admin' => \App\Http\Controllers\AdminController::class
 ];
 App\Helpers\Routing::controllers($controllers);

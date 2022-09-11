@@ -40,6 +40,13 @@ $attribs = [
             <h1>{{$user->name}}</h1>
             <section>
                 <x-user-avatar-details :user="$user" :name="false" :details="false" :link="false" />
+                @auth
+                    <div class="text-center mb-2">
+                        <a class="btn btn-outline-primary" href="{{ url('message/send') }}?to={{ $user->name }}">
+                            Send message
+                        </a>
+                    </div>
+                @endauth
                 <dl class="row">
                 @foreach($attribs as $label => $value)
                     @if ($value === $split)

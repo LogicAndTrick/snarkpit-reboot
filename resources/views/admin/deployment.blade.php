@@ -22,6 +22,7 @@
         'deploy-links' => 'Deploy links',
         'deploy-articles' => 'Deploy articles',
         'deploy-maps' => 'Deploy maps',
+        'deploy-messages' => 'Deploy messages',
         'deploy-files' => 'Deploy files',
     ];
 ?>

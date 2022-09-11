@@ -9,7 +9,13 @@
                 <div class="quick-links">
                     @auth
                         <a href="{{ url('panel') }}">control panel</a>
-                        <a href="#">messages</a>
+                        <a href="{{ url('message') }}">
+                            @if ($num_unread_messages > 0)
+                                <strong class="text-danger">messages ({{$num_unread_messages}})</strong>
+                            @else
+                                messages
+                            @endif
+                        </a>
                         <a href="#">updates</a>
                         @can('admin')
                             <a href="{{ url('admin') }}">admin</a>
@@ -22,8 +28,7 @@
                         <a href="{{ route('login') }}">login</a>
                         <a href="{{ route('register') }}">register</a>
                     @endauth
-                    {{--<a href="#">theme</a>--}}
-                    <a href="#">search</a>
+                    <a href="{{ url('search') }}">search</a>
                 </div>
             </div>
             <div class="member-info d-flex flex-row">

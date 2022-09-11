@@ -157,6 +157,9 @@ update("Update complete.");
             case 'deploy-files':
                 $commands[] = 'php artisan deploy:files';
                 break;
+            case 'deploy-messages':
+                $commands[] = 'php artisan deploy:messages';
+                break;
         }
 
         self::executeCommands($commands);

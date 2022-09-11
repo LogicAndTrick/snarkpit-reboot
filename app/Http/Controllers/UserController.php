@@ -43,4 +43,19 @@ class UserController extends Controller
             'downloads' => $downloads,
         ]);
     }
+
+    public function getFindUser(Request $request) {
+        $this->loggedIn();
+        $name = $request->input('name');
+
+        $exactMatch = User::query()->where('name', '=', $name)->first();
+        if ($exactMatch) return response()->json([$exactMatch]);
+
+        $users = User::query()
+            ->whereRaw("name like concat(?, '%')", [ $name ])
+            ->orderBy('id')
+            ->limit(5)
+            ->get();
+        return response()->json($users);
+    }
 }
