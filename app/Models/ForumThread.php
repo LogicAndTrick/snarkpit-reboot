@@ -149,13 +149,15 @@ class ForumThread extends Model
         session(['thread_persistance_data' => $thread_read]);
     }
 
-    public function getIcons()
+    public function getIcons($limited = false)
     {
         $icons = [];
 
         if (!$this->is_open) $icons[] = 'locked';
         else if ($this->hasNewPosts()) $icons[] = 'unread';
         else $icons[] = 'read';
+
+        if ($limited) return $icons;
 
         if ($this->is_sticky) $icons[] = 'sticky';
         if ($this->is_poll) $icons[] = 'poll';

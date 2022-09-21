@@ -109,6 +109,10 @@
         background: black;
         border-top: 1px solid #666;
         pointer-events: none;
+
+        &.autosize {
+          top: auto;
+        }
       }
 
       &:hover .description {
