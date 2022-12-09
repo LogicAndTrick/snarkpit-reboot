@@ -35,9 +35,26 @@
                 </section>
             @endforeach
             <h1>Recent Updates</h1>
-            <section>
-                ...
-            </section>
+            @foreach($updates as $update)
+                <section class="px-1 py-0">
+                    <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
+                        <span class="text-danger">[{{$update->type}}]</span>
+                        @if ($update->type == 'download')
+                            <a href="{{ url('thread/view', [ $update->thread_id ]) }}">{{ $update->name }}</a>
+                        @elseif ($update->type == 'article')
+                            <a href="{{ url('article/view', [ $update->slug ]) }}">{{ $update->name }}</a>
+                        @else
+                            <a href="{{ url($update->type.'/view', [ $update->id ]) }}">{{ $update->name }}</a>
+                        @endif
+                    </span>
+                    <div class="text-end">
+                        <small>
+                            {{$update->updated_at->fromNow(null, true)}}
+                            by <a href="{{ url('user/view', [ $update->user_id ]) }}">{{$update->user->name}}</a>
+                        </small>
+                    </div>
+                </section>
+            @endforeach
         </div>
         <div class="col-md-6">
             <h1><a href="{{ url('news') }}">Community News</a></h1>

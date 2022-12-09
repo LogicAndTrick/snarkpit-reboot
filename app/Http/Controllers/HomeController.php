@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ForumPost;
+use App\Models\CombinedUpdate;
 use App\Models\ForumThread;
 use App\Models\Map;
 use App\Models\News;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -24,10 +23,15 @@ class HomeController extends Controller
             ->orderBy('last_post_at', 'desc')
             ->limit(10)
             ->get();
+        $updates = CombinedUpdate::with(['user', 'game', 'article_category', 'download_category'])
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
         return view('home.index', [
             'news' => $news,
             'maps' => $maps,
-            'threads' => $threads
+            'threads' => $threads,
+            'updates' => $updates
         ]);
     }
 }
