@@ -147,21 +147,17 @@ if (!function_exists('ordinal'))
 }
 
 function bbcode($text, $scope = '') {
-    /** @var \App\Helpers\BBCode\Parser $parser */
+    /** @var LogicAndTrick\WikiCodeParser\Parser $parser */
     $parser = app('bbcode');
-    return $parser->Parse($text, $scope);
+    $result = $parser->ParseResult($text, $scope);
+    return $result->ToHtml();
 }
 
 function bbcode_result($text, $scope = '') {
-    /** @var \App\Helpers\BBCode\Parser $parser */
+    /** @var LogicAndTrick\WikiCodeParser\Parser $parser */
     $parser = app('bbcode');
-    return $parser->ParseResult($text, $scope);
-}
-
-function bbcode_excerpt($text, $length = 200, $scope = 'excerpt') {
-    /** @var \App\Helpers\BBCode\Parser $parser */
-    $parser = app('bbcode');
-    return $parser->ParseExcerpt($text, $length, $scope);
+    $result = $parser->ParseResult($text, $scope);
+    return $result;
 }
 
 /**
