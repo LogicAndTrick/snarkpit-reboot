@@ -3,6 +3,7 @@
 use Illuminate\Support\ServiceProvider;
 use LogicAndTrick\WikiCodeParser\Parser;
 use LogicAndTrick\WikiCodeParser\ParserConfiguration;
+use LogicAndTrick\WikiCodeParser\Processors\SmiliesProcessor;
 
 class BBCodeServiceProvider extends ServiceProvider {
 
@@ -23,7 +24,14 @@ class BBCodeServiceProvider extends ServiceProvider {
     }
 
     private function getConfig() : ParserConfiguration {
-        $config = app('config')->get('bbcode');
-        return $config ?? ParserConfiguration::Snarkpit();
+        $conf = ParserConfiguration::Snarkpit();
+
+        foreach ($conf->processors as $p) {
+            if ($p instanceof SmiliesProcessor) {
+                $p->urlFormatString = '/images/smilies/{0}.gif';
+            }
+        }
+
+        return $conf;
     }
 }
