@@ -11,7 +11,7 @@ input, textarea, select {
   }
 }
 
-textarea {
+textarea, textarea.form-control {
   min-height: 14rem;
 
   &.small-textarea {

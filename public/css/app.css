@@ -19690,10 +19690,10 @@ input:disabled, textarea:disabled, select:disabled {
   border-color: red;
 }
 
-textarea {
+textarea, textarea.form-control {
   min-height: 14rem;
 }
-textarea.small-textarea {
+textarea.small-textarea, textarea.form-control.small-textarea {
   min-height: 4rem !important;
 }
 
