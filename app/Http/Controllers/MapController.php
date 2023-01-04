@@ -86,7 +86,7 @@ class MapController extends Controller
 
         $count = $post_query->getQuery()->getCountForPagination();
         $posts = $post_query->skip(($page - 1) * 10)->take(10)->get();
-        $pag = new LengthAwarePaginator($posts, $count, 10, $page, [ 'path' => Paginator::resolveCurrentPath() ]);
+        $pag = new LengthAwarePaginator($posts, $count, 10, $page, [ 'path' => Paginator::resolveCurrentPath(), 'fragment' => 'discussion' ]);
 
         return view('map.view', [
             'map' => $map,

@@ -105,7 +105,7 @@
     </div>
 
     @if ($map->thread_id)
-        <nav class="nav-header bg-body">
+        <nav class="nav-header bg-body" id="discussion">
             <div class="btn-group">
                 <a href="{{ url('thread/view', [ $map->thread_id ]) }}#reply" class="btn">Post reply</a>
                 <a href="{{ url('thread/view', [ $map->thread_id ]) }}" class="btn">View topic</a>

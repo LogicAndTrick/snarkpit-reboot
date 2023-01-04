@@ -11,6 +11,8 @@ use App\Models\ForumThread;
 use App\Models\Game;
 use App\Models\MapImage;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -118,12 +120,26 @@ class ArticleController extends Controller
 
         if ($version->status === ArticleVersion::STATUS_APPROVED) {
             $version->article->stat_views++;
+            $version->article->timestamps = false;
             $version->article->save();
+            $version->article->timestamps = true;
         }
+
+        $page = intval($request->input('page')) ?: 1;
+        $post_query = ForumPost::with('user')->where('thread_id', '=', $version->article->forum_thread_id)->whereNull('deleted_at')->orderByDesc('created_at')->orderByDesc('id');
+
+        // Exclude the first post from the discussion thread
+        $first_post = ForumPost::query()->where('thread_id', '=', $version->article->forum_thread_id)->whereNull('deleted_at')->orderBy('id')->first();
+        if ($first_post) $post_query = $post_query->where('id', '!=', $first_post->id);
+
+        $count = $post_query->getQuery()->getCountForPagination();
+        $posts = $post_query->skip(($page - 1) * 10)->take(10)->get();
+        $pag = new LengthAwarePaginator($posts, $count, 10, $page, [ 'path' => Paginator::resolveCurrentPath(), 'fragment' => 'discussion' ]);
 
         return view('article.view', [
             'version' => $version,
-            'html' => $html
+            'html' => $html,
+            'posts' => $pag
         ]);
     }
 

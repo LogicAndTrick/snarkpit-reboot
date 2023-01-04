@@ -126,4 +126,46 @@
             </div>
         @endif
     </section>
+
+    @if ($version->article->forum_thread_id)
+        <nav class="nav-header bg-body" id="discussion">
+            <div class="btn-group">
+                <a href="{{ url('thread/view', [ $version->article->forum_thread_id ]) }}#reply" class="btn">Post reply</a>
+                <a href="{{ url('thread/view', [ $version->article->forum_thread_id ]) }}" class="btn">View topic</a>
+            </div>
+            {{ $posts->render() }}
+        </nav>
+        <h1>
+            Discussion
+        </h1>
+        @forelse($posts as $post)
+            <section>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                    </div>
+                    <div>
+                        @if ($post->user_id == $version->article->user_id)
+                            <strong class="text-danger">[Author]</strong>
+                        @endif
+                    </div>
+                </div>
+                <hr class="my-1"/>
+                <div class="bbcode">
+                    {!! $post->content_html !!}
+                </div>
+            </section>
+        @empty
+            <section>
+                There are not yet any comments for this map
+            </section>
+        @endforelse
+        <nav class="nav-header bg-body">
+            <div class="btn-group">
+                <a href="{{ url('thread/view', [ $version->article->forum_thread_id ]) }}#reply" class="btn">Post reply</a>
+                <a href="{{ url('thread/view', [ $version->article->forum_thread_id ]) }}" class="btn">View topic</a>
+            </div>
+            {{ $posts->render() }}
+        </nav>
+    @endif
 @endsection

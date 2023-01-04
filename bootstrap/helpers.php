@@ -17,6 +17,28 @@ function reverse_snarkpit_format($text)
     $text = preg_replace('/<BR>/i', "\n", $text);
     $text = str_replace("<br>", "\n", $text);
     $text = preg_replace('/\s*\[addsig\]\s*/', '', $text);
+
+    // size tags
+    $text = preg_replace_callback('%\[size=(.*?)\](.*?)\[/size\]%im', function ($matches) {
+        $size = $matches[1];
+        if ($size && is_numeric($size)) {
+            switch ($size) {
+                case '1': $size = '10'; break;
+                case '2': $size = '13'; break;
+                case '3': $size = '16'; break;
+                case '4': $size = '18'; break;
+                case '5': $size = '24'; break;
+                case '6': $size = '32'; break;
+                default : $size = '40'; break;
+            }
+        }
+        return "[size=$size]{$matches[2]}[/size]";
+    }, $text);
+
+    // page tags (used in articles, replace with headings)
+    $text = preg_replace('/\[page=(.*?)\]\s*/im', "[size=24][b]\$1[/b][/size]\n---\n\n", $text);
+    $text = str_ireplace('[/page]', '', $text);
+
     if (str_contains($text, '<')) {
         // The text probably contains html...
 
