@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,13 @@ class Download extends Model
         'image_file',
         'download_file',
         'mirrors',
+        'mirror_list',
+        'file_size_readable'
+    ];
+
+    protected $appends = [
+        'mirror_list',
+        'file_size_readable'
     ];
 
     public function user() {
@@ -40,6 +48,14 @@ class Download extends Model
 
     public function thread() {
         return $this->belongsTo(ForumThread::class, 'thread_id');
+    }
+
+    protected function getMirrorListAttribute() {
+        return $this->getMirrors();
+    }
+
+    protected function getFileSizeReadableAttribute() {
+        return $this->getFileSize();
     }
 
     public function getMirrors() {

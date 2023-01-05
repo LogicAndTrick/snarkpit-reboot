@@ -14,39 +14,77 @@ function esc(text) {
     return e.innerHTML;
 }
 
+function attr_esc(text) {
+    text = (text || '').toString();
+    return text.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 const embed_callbacks = {
     article: function(element, json) {
         const thread_link = json.forum_thread_id ?
-            `<li><a href="${window.urls.view.thread.replace('{id}', json.forum_thread_id)}">Discussion topic &raquo;</a></li>`
+            `<li><a href="${attr_esc(window.urls.view.thread.replace('{id}', json.forum_thread_id))}">Discussion topic &raquo;</a></li>`
             : '';
         const template = `
             <div class="row">
                 <div class="col-3 text-center">
-                    <img class="img-fluid" src="${window.urls.images.root}${json.current_version.thumbnail_file || 'images/no_image.png'}" alt="Article thumbnail" />
+                    <img class="img-fluid" src="${attr_esc(window.urls.images.root)}${attr_esc(json.current_version.thumbnail_file || 'images/no_image.png')}" alt="Article thumbnail" />
                 </div>
                 <div class="col-6">
                     <h2>
-                        <a href="${window.urls.view.article.replace('{slug}', json.current_version.slug)}">${esc(json.current_version.title)}</a>
+                        <a href="${attr_esc(window.urls.view.article.replace('{slug}', json.current_version.slug))}">${esc(json.current_version.title)}</a>
                     </h2>
                     <div class="bbcode">${esc(json.current_version.description)}</div>
                 </div>
                 <div class="col-3">
                     <ul class="list-unstyled">
-                        <li>by <a href="${window.urls.view.user.replace('{id}', json.user_id)}">${json.user.name}</a></li>
-                        <li>in <a href="${window.urls.list.article}?game=${json.game_id}&cat=${json.article_category_id}">${json.game.name} &raquo; ${json.category.name}</a></li>
-                        <li>updated ${new Date(json.created_at).toLocaleDateString()}</li>
-                        <li>viewed ${json.stat_views} time${json.stat_views == 1 ? '' : 's'}</li>
+                        <li>by <a href="${attr_esc(window.urls.view.user.replace('{id}', json.user_id))}">${json.user.name}</a></li>
+                        <li>in <a href="${attr_esc(window.urls.list.article)}?game=${attr_esc(json.game_id)}&cat=${attr_esc(json.article_category_id)}">${esc(json.game.name)} &raquo; ${esc(json.category.name)}</a></li>
+                        <li>updated ${esc(new Date(json.created_at).toLocaleDateString())}</li>
+                        <li>viewed ${esc(json.stat_views)} time${json.stat_views == 1 ? '' : 's'}</li>
                         ${thread_link}
                     </ul>
                 </div>
             </div>
         `.trim();
-
-        console.log(element, template);
         const embed = document.createElement('div');
         embed.innerHTML = template;
         element.replaceWith(embed.children[0]);
-    }
+    },
+    download: function(element, json) {
+        const mirrors = json.mirror_list.map(x => `<li class="mb-1"><a target="_blank" href="${attr_esc(x.url)}" class="btn btn-primary">${esc(x.text)}</a></li>`).join('');
+        const size = json.file_size_readable ? `<li>Size: ${json.file_size_readable}</li>` : '';
+        const template = `
+            <div class="row">
+                <div class="col-3 text-center">
+                    <img class="img-fluid" src="${attr_esc(window.urls.images.root)}${attr_esc(json.image_file || 'images/no_image.png')}" alt="Article thumbnail" />
+                </div>
+                <div class="col-6">
+                    <h2>
+                        <a href="${attr_esc(window.urls.view.download.replace('{id}', json.id))}">${esc(json.name)}</a>
+                    </h2>
+                    <div class="bbcode">${json.content_html}</div>
+                </div>
+                <div class="col-3">
+                    <ul class="list-unstyled">
+                        ${mirrors}
+                        ${size}
+                        <li>by <a href="${attr_esc(window.urls.view.user.replace('{id}', json.user_id))}">${esc(json.user.name)}</a></li>
+                        <li>in <a href="${attr_esc(window.urls.list.download)}?game=${attr_esc(json.game_id)}&cat=${attr_esc(json.download_category_id)}">${esc(json.game.name)} &raquo; ${esc(json.category.name)}</a></li>
+                        <li>updated ${esc(new Date(json.created_at).toLocaleDateString())}</li>
+                        <li>downloaded ${esc(json.stat_downloads)} time${json.stat_downloads == 1 ? '' : 's'}</li>
+                        <li><a href="${attr_esc(window.urls.view.thread.replace('{id}', json.thread_id))}">Discussion topic &raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+        `.trim();
+        const embed = document.createElement('div');
+        embed.innerHTML = template;
+        element.replaceWith(embed.children[0]);
+    },
 };
 
 const embed_cache = {};
@@ -60,6 +98,7 @@ async function load_embed(el) {
 
     if (el.getAttribute('data-stop')) return;
     el.setAttribute('data-stop', 'true');
+    observer.unobserve(el);
 
     let json;
     const cacheKey = `${typ}:${id}`;

@@ -687,11 +687,24 @@ function esc(text) {
   e.textContent = text;
   return e.innerHTML;
 }
+function attr_esc(text) {
+  text = (text || '').toString();
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 var embed_callbacks = {
   article: function article(element, json) {
-    var thread_link = json.forum_thread_id ? "<li><a href=\"".concat(window.urls.view.thread.replace('{id}', json.forum_thread_id), "\">Discussion topic &raquo;</a></li>") : '';
-    var template = "\n            <div class=\"row\">\n                <div class=\"col-3 text-center\">\n                    <img class=\"img-fluid\" src=\"".concat(window.urls.images.root).concat(json.current_version.thumbnail_file || 'images/no_image.png', "\" alt=\"Article thumbnail\" />\n                </div>\n                <div class=\"col-6\">\n                    <h2>\n                        <a href=\"").concat(window.urls.view.article.replace('{slug}', json.current_version.slug), "\">").concat(esc(json.current_version.title), "</a>\n                    </h2>\n                    <div class=\"bbcode\">").concat(esc(json.current_version.description), "</div>\n                </div>\n                <div class=\"col-3\">\n                    <ul class=\"list-unstyled\">\n                        <li>by <a href=\"").concat(window.urls.view.user.replace('{id}', json.user_id), "\">").concat(json.user.name, "</a></li>\n                        <li>in <a href=\"").concat(window.urls.list.article, "?game=").concat(json.game_id, "&cat=").concat(json.article_category_id, "\">").concat(json.game.name, " &raquo; ").concat(json.category.name, "</a></li>\n                        <li>updated ").concat(new Date(json.created_at).toLocaleDateString(), "</li>\n                        <li>viewed ").concat(json.stat_views, " time").concat(json.stat_views == 1 ? '' : 's', "</li>\n                        ").concat(thread_link, "\n                    </ul>\n                </div>\n            </div>\n        ").trim();
-    console.log(element, template);
+    var thread_link = json.forum_thread_id ? "<li><a href=\"".concat(attr_esc(window.urls.view.thread.replace('{id}', json.forum_thread_id)), "\">Discussion topic &raquo;</a></li>") : '';
+    var template = "\n            <div class=\"row\">\n                <div class=\"col-3 text-center\">\n                    <img class=\"img-fluid\" src=\"".concat(attr_esc(window.urls.images.root)).concat(attr_esc(json.current_version.thumbnail_file || 'images/no_image.png'), "\" alt=\"Article thumbnail\" />\n                </div>\n                <div class=\"col-6\">\n                    <h2>\n                        <a href=\"").concat(attr_esc(window.urls.view.article.replace('{slug}', json.current_version.slug)), "\">").concat(esc(json.current_version.title), "</a>\n                    </h2>\n                    <div class=\"bbcode\">").concat(esc(json.current_version.description), "</div>\n                </div>\n                <div class=\"col-3\">\n                    <ul class=\"list-unstyled\">\n                        <li>by <a href=\"").concat(attr_esc(window.urls.view.user.replace('{id}', json.user_id)), "\">").concat(json.user.name, "</a></li>\n                        <li>in <a href=\"").concat(attr_esc(window.urls.list.article), "?game=").concat(attr_esc(json.game_id), "&cat=").concat(attr_esc(json.article_category_id), "\">").concat(esc(json.game.name), " &raquo; ").concat(esc(json.category.name), "</a></li>\n                        <li>updated ").concat(esc(new Date(json.created_at).toLocaleDateString()), "</li>\n                        <li>viewed ").concat(esc(json.stat_views), " time").concat(json.stat_views == 1 ? '' : 's', "</li>\n                        ").concat(thread_link, "\n                    </ul>\n                </div>\n            </div>\n        ").trim();
+    var embed = document.createElement('div');
+    embed.innerHTML = template;
+    element.replaceWith(embed.children[0]);
+  },
+  download: function download(element, json) {
+    var mirrors = json.mirror_list.map(function (x) {
+      return "<li class=\"mb-1\"><a target=\"_blank\" href=\"".concat(attr_esc(x.url), "\" class=\"btn btn-primary\">").concat(esc(x.text), "</a></li>");
+    }).join('');
+    var size = json.file_size_readable ? "<li>Size: ".concat(json.file_size_readable, "</li>") : '';
+    var template = "\n            <div class=\"row\">\n                <div class=\"col-3 text-center\">\n                    <img class=\"img-fluid\" src=\"".concat(attr_esc(window.urls.images.root)).concat(attr_esc(json.image_file || 'images/no_image.png'), "\" alt=\"Article thumbnail\" />\n                </div>\n                <div class=\"col-6\">\n                    <h2>\n                        <a href=\"").concat(attr_esc(window.urls.view.download.replace('{id}', json.id)), "\">").concat(esc(json.name), "</a>\n                    </h2>\n                    <div class=\"bbcode\">").concat(json.content_html, "</div>\n                </div>\n                <div class=\"col-3\">\n                    <ul class=\"list-unstyled\">\n                        ").concat(mirrors, "\n                        ").concat(size, "\n                        <li>by <a href=\"").concat(attr_esc(window.urls.view.user.replace('{id}', json.user_id)), "\">").concat(esc(json.user.name), "</a></li>\n                        <li>in <a href=\"").concat(attr_esc(window.urls.list.download), "?game=").concat(attr_esc(json.game_id), "&cat=").concat(attr_esc(json.download_category_id), "\">").concat(esc(json.game.name), " &raquo; ").concat(esc(json.category.name), "</a></li>\n                        <li>updated ").concat(esc(new Date(json.created_at).toLocaleDateString()), "</li>\n                        <li>downloaded ").concat(esc(json.stat_downloads), " time").concat(json.stat_downloads == 1 ? '' : 's', "</li>\n                        <li><a href=\"").concat(attr_esc(window.urls.view.thread.replace('{id}', json.thread_id)), "\">Discussion topic &raquo;</a></li>\n                    </ul>\n                </div>\n            </div>\n        ").trim();
     var embed = document.createElement('div');
     embed.innerHTML = template;
     element.replaceWith(embed.children[0]);
@@ -720,16 +733,17 @@ function _load_embed() {
             return _context.abrupt("return");
           case 7:
             el.setAttribute('data-stop', 'true');
+            observer.unobserve(el);
             cacheKey = "".concat(typ, ":").concat(id);
             if (!embed_cache[cacheKey]) {
-              _context.next = 13;
+              _context.next = 14;
               break;
             }
             json = embed_cache[cacheKey];
-            _context.next = 20;
+            _context.next = 21;
             break;
-          case 13:
-            _context.next = 15;
+          case 14:
+            _context.next = 16;
             return fetch(url, {
               method: 'post',
               body: JSON.stringify({
@@ -739,16 +753,16 @@ function _load_embed() {
                 'Content-Type': 'application/json'
               }
             });
-          case 15:
+          case 16:
             resp = _context.sent;
-            _context.next = 18;
+            _context.next = 19;
             return resp.json();
-          case 18:
+          case 19:
             json = _context.sent;
             embed_cache[cacheKey] = json;
-          case 20:
-            embed_callbacks[typ].call(window, el, json);
           case 21:
+            embed_callbacks[typ].call(window, el, json);
+          case 22:
           case "end":
             return _context.stop();
         }

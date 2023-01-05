@@ -3,7 +3,7 @@
 
 @section('content')
     <h1>
-        {{ $forum->subject }}
+        {{ $forum->name }}
     </h1>
 
     <nav class="nav-header">

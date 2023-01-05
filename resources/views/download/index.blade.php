@@ -68,7 +68,7 @@
                     @endif
                 </div>
                 <div class="col-6">
-                    <h2>{{ $download->name }}</h2>
+                    <h2><a href="{{ url('download/view', [ $download->id ]) }}">{{ $download->name }}</a></h2>
                     <h3 class="small">
 
                         @if($download->canEdit())
@@ -89,7 +89,7 @@
                             <li>Size: {{$download->getFileSize()}}</li>
                         @endif
                         <li>by <a href="{{ url('user/view', [ $download->user->id ]) }}">{{ $download->user->name }}</a></li>
-                        <li>in <a href="#">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a></li>
+                        <li>in <a href="{{ url("download?game=$download->game_id&cat=$download->download_category_id") }}">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a></li>
                         <li>updated {{ $download->created_at->format("D M jS Y") }}</li>
                         <li>downloaded {{ $download->stat_downloads }} time{{ $download->stat_downloads == 1 ? '' : 's' }}</li>
                         <li><a href="{{ url('thread/view', $download->thread_id) }}">Discussion topic &raquo;</a></li>

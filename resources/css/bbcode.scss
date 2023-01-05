@@ -277,6 +277,8 @@ pre {
     @extend .card;
     @extend .card-body;
 
+    background: lighten($section-background, 10%);
+
     padding: 1rem;
 
     .embed-content {
@@ -302,10 +304,11 @@ pre {
     }
 
     .uninitialised {
-      line-height: 500px;
+      line-height: 200px;
       font-size: 2em;
       padding: 30px;
-      background-color: #bbb;
+      background-color: #606060;
+      text-align: center;
     }
 
      .slider, &.slider { height: 340px; }

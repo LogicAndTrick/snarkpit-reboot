@@ -16,13 +16,16 @@
                     format: '{{ url("api/format") }}'
                 },
                 embed: {
-                    article: '{{ url('article/embed-info') }}'
+                    article: '{{ url('article/embed-info') }}',
+                    download: '{{ url('download/embed-info') }}',
                 },
                 list: {
                     article: '{{ url('article') }}',
+                    download: '{{ url('download') }}',
                 },
                 view: {
                     article: '{{ url('article/view/{slug}') }}',
+                    download: '{{ url('download/view/{id}') }}',
                     thread: '{{ url('thread/view/{id}') }}',
                     user: '{{ url('user/view/{id}') }}',
                 }

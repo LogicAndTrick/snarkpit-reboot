@@ -1,6 +1,7 @@
 <?php namespace App\Providers;
 
 use App\Helpers\BBCode\ArticleEmbedTag;
+use App\Helpers\BBCode\DownloadEmbedTag;
 use Illuminate\Support\ServiceProvider;
 use LogicAndTrick\WikiCodeParser\Parser;
 use LogicAndTrick\WikiCodeParser\ParserConfiguration;
@@ -34,6 +35,7 @@ class BBCodeServiceProvider extends ServiceProvider {
         }
 
         $conf->tags[] = new ArticleEmbedTag();
+        $conf->tags[] = new DownloadEmbedTag();
 
         return $conf;
     }

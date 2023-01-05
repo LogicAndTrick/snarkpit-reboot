@@ -18,7 +18,7 @@
 
 @section('content')
     <h1>
-        {{ $forum->subject }}
+        {{ $thread->title }}
     </h1>
 
     <nav class="nav-header">

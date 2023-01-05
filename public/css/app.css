@@ -19439,6 +19439,7 @@ pre .line-highlight {
 }
 .bbcode .embed-container {
   display: block;
+  background: #4d4d4d;
   padding: 1rem;
 }
 .bbcode .embed-container .embed-content {
@@ -19459,10 +19460,11 @@ pre .line-highlight {
   max-width: 100%;
 }
 .bbcode .embed-container .uninitialised {
-  line-height: 500px;
+  line-height: 200px;
   font-size: 2em;
   padding: 30px;
-  background-color: #bbb;
+  background-color: #606060;
+  text-align: center;
 }
 .bbcode .embed-container .slider, .bbcode .embed-container.slider {
   height: 340px;
