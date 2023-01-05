@@ -10,12 +10,12 @@ use LogicAndTrick\WikiCodeParser\Parser;
 use LogicAndTrick\WikiCodeParser\State;
 use LogicAndTrick\WikiCodeParser\Tags\Tag;
 
-class DownloadEmbedTag extends Tag
+class MapEmbedTag extends Tag
 {
 
     public function __construct()
     {
-        parent::__construct('dlthumb');
+        parent::__construct('mthumb');
     }
 
     public function FormatResult(Parser $parser, ParseData $data, State $state, string $scope, array $options, string $text): INode|null
@@ -23,17 +23,17 @@ class DownloadEmbedTag extends Tag
         if (!is_numeric($text)) return null;
         $id = intval($text);
 
-        $before = '<div class="embedded download">'
+        $before = '<div class="embedded map">'
                 . '<div class="embed-container">'
                 . '<div class="embed-content">'
-                . '<div class="uninitialised" data-embed-type="download" data-download-id="' . $id . '">Loading embedded content: Download #' . $id . '</div>'
+                . '<div class="uninitialised" data-embed-type="map" data-map-id="' . $id . '">Loading embedded content: Map #' . $id . '</div>'
                 . '</div>'
                 . '</div>'
                 . '</div>';
         $content = PlainTextNode::Empty();
         $after = "</div>\n";
         $ret = new HtmlNode($before, $content, $after);
-        $ret->plainAfter = 'Download: ' . url('download/view', [ $text ]) . "\n";
+        $ret->plainAfter = 'Map: ' . url('map/view', [ $text ]) . "\n";
         return $ret;
     }
 }

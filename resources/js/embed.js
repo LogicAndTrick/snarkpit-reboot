@@ -85,6 +85,37 @@ const embed_callbacks = {
         embed.innerHTML = template;
         element.replaceWith(embed.children[0]);
     },
+    map: function(element, json) {
+        const images = json.images.length
+            ? json.images.map((x, i) => `<img class="img-fluid ${i==0?'':'d-none'}" src="${attr_esc(window.urls.images.root+x.image_file)}" />`).join('')
+            : `<img class="img-fluid" src="${attr_esc(window.urls.images.no_image)}" />`;
+        const template = `
+            <div>
+                <h1 class="d-flex align-items-start">
+                    <a href="${attr_esc(window.urls.list.map)}?game=${attr_esc(json.game_id)}">
+                        <img src="${attr_esc(window.urls.images.root + 'images/games/' + json.game_id + '.png')}" alt="${json.game.name}" />
+                    </a>
+                    <span class="flex-fill">
+                        <a href="${attr_esc(window.urls.view.map.replace('{id}', json.id))}">
+                            ${esc(json.name)}
+                        </a>
+                        by
+                        <a href="${attr_esc(window.urls.view.user.replace('{id}', json.user_id))}">
+                            ${esc(json.user.name)}
+                        </a>
+                    </span>
+                    <span class="game-image-filler"></span>
+                </h1>
+                <div class="image-cycler image-cycler-clickable m-auto">
+                    ${images}
+                    <span class="controls"></span>
+                </div>
+            </div>
+        `.trim();
+        const embed = document.createElement('div');
+        embed.innerHTML = template;
+        element.replaceWith(embed.children[0]);
+    }
 };
 
 const embed_cache = {};
@@ -114,6 +145,7 @@ async function load_embed(el) {
         embed_cache[cacheKey] = json;
     }
     embed_callbacks[typ].call(window, el, json);
+    init_all_image_cyclers(document);
 }
 
 const observer = new IntersectionObserver((entries, options) => {

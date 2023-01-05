@@ -94,6 +94,14 @@ class MapController extends Controller
         ]);
     }
 
+    public function postEmbedInfo(Request $request) {
+        $id = $request->integer('id');
+        $download = Map::with(['user', 'status', 'game', 'images'])
+            ->where('id', '=', $id)
+            ->firstOrFail();
+        return response()->json($download);
+    }
+
     public function getDownload($id, Request $request) {
         $map = Map::findOrFail($id);
         $map->stat_downloads++;

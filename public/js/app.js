@@ -708,6 +708,15 @@ var embed_callbacks = {
     var embed = document.createElement('div');
     embed.innerHTML = template;
     element.replaceWith(embed.children[0]);
+  },
+  map: function map(element, json) {
+    var images = json.images.length ? json.images.map(function (x, i) {
+      return "<img class=\"img-fluid ".concat(i == 0 ? '' : 'd-none', "\" src=\"").concat(attr_esc(window.urls.images.root + x.image_file), "\" />");
+    }).join('') : "<img class=\"img-fluid\" src=\"".concat(attr_esc(window.urls.images.no_image), "\" />");
+    var template = "\n            <div>\n                <h1 class=\"d-flex align-items-start\">\n                    <a href=\"".concat(attr_esc(window.urls.list.map), "?game=").concat(attr_esc(json.game_id), "\">\n                        <img src=\"").concat(attr_esc(window.urls.images.root + 'images/games/' + json.game_id + '.png'), "\" alt=\"").concat(json.game.name, "\" />\n                    </a>\n                    <span class=\"flex-fill\">\n                        <a href=\"").concat(attr_esc(window.urls.view.map.replace('{id}', json.id)), "\">\n                            ").concat(esc(json.name), "\n                        </a>\n                        by\n                        <a href=\"").concat(attr_esc(window.urls.view.user.replace('{id}', json.user_id)), "\">\n                            ").concat(esc(json.user.name), "\n                        </a>\n                    </span>\n                    <span class=\"game-image-filler\"></span>\n                </h1>\n                <div class=\"image-cycler image-cycler-clickable m-auto\">\n                    ").concat(images, "\n                    <span class=\"controls\"></span>\n                </div>\n            </div>\n        ").trim();
+    var embed = document.createElement('div');
+    embed.innerHTML = template;
+    element.replaceWith(embed.children[0]);
   }
 };
 var embed_cache = {};
@@ -762,7 +771,8 @@ function _load_embed() {
             embed_cache[cacheKey] = json;
           case 21:
             embed_callbacks[typ].call(window, el, json);
-          case 22:
+            init_all_image_cyclers(document);
+          case 23:
           case "end":
             return _context.stop();
         }
@@ -800,52 +810,60 @@ addEmbedInit(document);
 /***/ (() => {
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.image-cycler').forEach(function (x) {
-    var images = Array.from(x.querySelectorAll('img'));
-    var controls = x.querySelector('.controls');
-    if (images.length <= 1 || !controls) return;
-    var numImages = images.length;
-    var curImage = 0;
-    var prev = document.createElement('a');
-    prev.href = "#";
-    prev.innerHTML = '<span class="fas fa-chevron-left"></span>';
-    var next = document.createElement('a');
-    next.href = "#";
-    next.innerHTML = '<span class="fas fa-chevron-right"></span>';
-    var label = document.createElement('span');
-    label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
-    var cycle = function cycle(num) {
-      images[curImage].classList.add('d-none');
-      curImage += num;
-      while (curImage < 0) {
-        curImage += numImages;
-      }
-      curImage = curImage % numImages;
-      label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
-      images[curImage].classList.remove('d-none');
-    };
-    prev.addEventListener('click', function (event) {
-      event.preventDefault();
-      cycle(-1);
-    });
-    next.addEventListener('click', function (event) {
-      event.preventDefault();
-      cycle(+1);
-    });
-    controls.append(prev, label, next);
-    if (x.classList.contains('image-cycler-clickable')) {
-      var containers = Array.from(x.parentElement.children);
-      x.addEventListener('click', function (event) {
-        if (event.target && event.target.tagName == 'IMG') {
-          containers.forEach(function (c) {
-            c.classList.toggle('col-md-12');
-            c.classList.toggle('enlarged');
-          });
-        }
-      });
-    }
-  });
+  init_all_image_cyclers(document);
 });
+window.init_all_image_cyclers = function (element) {
+  element.querySelectorAll('.image-cycler').forEach(function (x) {
+    init_image_cycler(x);
+  });
+};
+function init_image_cycler(element) {
+  if (element.getAttribute('data-stop')) return;
+  element.setAttribute('data-stop', 'true');
+  var images = Array.from(element.querySelectorAll('img'));
+  var controls = element.querySelector('.controls');
+  if (images.length <= 1 || !controls) return;
+  var numImages = images.length;
+  var curImage = 0;
+  var prev = document.createElement('a');
+  prev.href = "#";
+  prev.innerHTML = '<span class="fas fa-chevron-left"></span>';
+  var next = document.createElement('a');
+  next.href = "#";
+  next.innerHTML = '<span class="fas fa-chevron-right"></span>';
+  var label = document.createElement('span');
+  label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
+  var cycle = function cycle(num) {
+    images[curImage].classList.add('d-none');
+    curImage += num;
+    while (curImage < 0) {
+      curImage += numImages;
+    }
+    curImage = curImage % numImages;
+    label.textContent = "".concat(curImage + 1, " / ").concat(numImages);
+    images[curImage].classList.remove('d-none');
+  };
+  prev.addEventListener('click', function (event) {
+    event.preventDefault();
+    cycle(-1);
+  });
+  next.addEventListener('click', function (event) {
+    event.preventDefault();
+    cycle(+1);
+  });
+  controls.append(prev, label, next);
+  if (element.classList.contains('image-cycler-clickable')) {
+    var containers = Array.from(element.parentElement.children);
+    element.addEventListener('click', function (event) {
+      if (event.target && event.target.tagName == 'IMG') {
+        containers.forEach(function (c) {
+          c.classList.toggle('col-md-12');
+          c.classList.toggle('enlarged');
+        });
+      }
+    });
+  }
+}
 
 /***/ }),
 

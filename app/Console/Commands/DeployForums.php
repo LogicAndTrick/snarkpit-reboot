@@ -89,6 +89,7 @@ class DeployForums extends Command
             $t->description = stripslashes(html_entity_decode($topic->description));
             $t->stat_views = $topic->views;
             $t->stat_posts = $topic->topic_replies;
+            $t->stat_posts = $topic->topic_replies;
             $t->last_post_id = $topic->last_post_id;
             $t->last_post_at = Carbon::createFromTimestamp($topic->topic_time);
             $t->is_open = $topic->topic_status == 0;

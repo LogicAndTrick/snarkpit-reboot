@@ -2,6 +2,7 @@
 
 use App\Helpers\BBCode\ArticleEmbedTag;
 use App\Helpers\BBCode\DownloadEmbedTag;
+use App\Helpers\BBCode\MapEmbedTag;
 use Illuminate\Support\ServiceProvider;
 use LogicAndTrick\WikiCodeParser\Parser;
 use LogicAndTrick\WikiCodeParser\ParserConfiguration;
@@ -36,6 +37,7 @@ class BBCodeServiceProvider extends ServiceProvider {
 
         $conf->tags[] = new ArticleEmbedTag();
         $conf->tags[] = new DownloadEmbedTag();
+        $conf->tags[] = new MapEmbedTag();
 
         return $conf;
     }

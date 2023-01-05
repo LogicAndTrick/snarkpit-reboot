@@ -18,14 +18,17 @@
                 embed: {
                     article: '{{ url('article/embed-info') }}',
                     download: '{{ url('download/embed-info') }}',
+                    map: '{{ url('map/embed-info') }}',
                 },
                 list: {
                     article: '{{ url('article') }}',
                     download: '{{ url('download') }}',
+                    map: '{{ url('map') }}',
                 },
                 view: {
                     article: '{{ url('article/view/{slug}') }}',
                     download: '{{ url('download/view/{id}') }}',
+                    map: '{{ url('map/view/{id}') }}',
                     thread: '{{ url('thread/view/{id}') }}',
                     user: '{{ url('user/view/{id}') }}',
                 }

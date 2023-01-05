@@ -39,6 +39,10 @@ function reverse_snarkpit_format($text)
     $text = preg_replace('/\[page=(.*?)\]\s*/im', "[size=24][b]\$1[/b][/size]\n---\n\n", $text);
     $text = str_ireplace('[/page]', '', $text);
 
+    // mapthumbs -> mthumb
+    $text = str_ireplace("[mapthumbs]", "[mthumb]", $text);
+    $text = str_ireplace("[/mapthumbs]", "[/mthumb]", $text);
+
     if (str_contains($text, '<')) {
         // The text probably contains html...
 
