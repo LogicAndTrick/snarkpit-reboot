@@ -19340,7 +19340,6 @@ pre .line-highlight {
 }
 .bbcode .embedded, .bbcode table .embedded {
   display: block;
-  text-align: center;
   margin: 15px auto;
 }
 .bbcode .embedded.inline, .bbcode table .embedded {
@@ -19440,13 +19439,17 @@ pre .line-highlight {
 }
 .bbcode .embed-container {
   display: block;
-  padding: 10px;
+  padding: 1rem;
 }
 .bbcode .embed-container .embed-content {
   overflow: hidden;
 }
 .bbcode .embed-container .embed-content h2, .bbcode .embed-container .embed-content .h2 {
   margin: 0 0 4px;
+}
+.bbcode .embed-container .embed-content > .row {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .bbcode .embed-container .embed-image {
   margin-top: 15px;

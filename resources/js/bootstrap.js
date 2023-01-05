@@ -3,6 +3,7 @@ window.$ = require('jquery');
 require('./bbcode-preview');
 require('./image-cycler');
 require('./images-form');
+require('./embed');
 
 const hljs = require('highlight.js/lib/core');
 hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));
@@ -17,11 +18,3 @@ hljs.registerLanguage('angelscript', require('highlight.js/lib/languages/angelsc
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
 hljs.highlightAll();
 window.hljs = hljs;
-
-$(document).on('click', '.video-content .uninitialised', function(event) {
-    var $t = $(this),
-        ytid = $t.data('youtube-id'),
-        url = 'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0',
-        frame = $('<iframe></iframe>').attr({ src: url, frameborder: 0, allowfullscreen: ''}).addClass('caption-body');
-    $t.replaceWith(frame);
-});

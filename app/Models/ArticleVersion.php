@@ -34,6 +34,26 @@ class ArticleVersion extends Model
 	    'review_html',
     ];
 
+    protected $visible = [
+        'id',
+        'article_id',
+        'user_id',
+	    'status',
+	    'slug',
+	    'title',
+	    'description',
+	    'attachment_file',
+	    'thumbnail_file',
+        'image_files_base',
+	    'content_text',
+	    'content_html',
+	    'review_user_id',
+	    'review_text',
+	    'review_html',
+        'article',
+        'user'
+    ];
+
     public function article() {
         return $this->belongsTo(Article::class);
     }

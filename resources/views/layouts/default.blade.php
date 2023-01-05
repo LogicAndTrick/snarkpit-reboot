@@ -8,10 +8,23 @@
         <script type="text/javascript">
             window.urls = {
                 images: {
+                    root: '{{ asset('/') }}',
+                    no_image: '{{ asset('images/no_image.png') }}',
                     smiley_folder: '{{ asset('images/smilies') }}'
                 },
                 api: {
                     format: '{{ url("api/format") }}'
+                },
+                embed: {
+                    article: '{{ url('article/embed-info') }}'
+                },
+                list: {
+                    article: '{{ url('article') }}',
+                },
+                view: {
+                    article: '{{ url('article/view/{slug}') }}',
+                    thread: '{{ url('thread/view/{id}') }}',
+                    user: '{{ url('user/view/{id}') }}',
                 }
             };
         </script>

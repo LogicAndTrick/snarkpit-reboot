@@ -1,5 +1,6 @@
 <?php namespace App\Providers;
 
+use App\Helpers\BBCode\ArticleEmbedTag;
 use Illuminate\Support\ServiceProvider;
 use LogicAndTrick\WikiCodeParser\Parser;
 use LogicAndTrick\WikiCodeParser\ParserConfiguration;
@@ -31,6 +32,8 @@ class BBCodeServiceProvider extends ServiceProvider {
                 $p->urlFormatString = '/images/smilies/{0}.gif';
             }
         }
+
+        $conf->tags[] = new ArticleEmbedTag();
 
         return $conf;
     }

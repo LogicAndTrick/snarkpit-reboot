@@ -143,6 +143,16 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function postEmbedInfo(Request $request) {
+        $id = $request->integer('id');
+        $article = Article::with(['user', 'category', 'game', 'current_version'])
+            ->where('id', '=', $id)
+            ->orderByDesc('id')
+            ->firstOrFail();
+        if (!$article->current_version || !$article->current_version->canView()) abort(404);
+        return response()->json($article);
+    }
+
     public function postStatus(Request $request) {
         $this->loggedIn();
 

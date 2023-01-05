@@ -21,6 +21,23 @@ class Article extends Model
         'stat_views'
     ];
 
+    protected $visible = [
+        'user_id',
+        'article_category_id',
+        'game_id',
+        'forum_thread_id',
+        'current_version_id',
+        'is_active',
+        'stat_views',
+        'current_version',
+        'created_at',
+        'updated_at',
+        'user',
+        'category',
+        'game',
+        'thread'
+    ];
+
     public function current_version() {
         return $this->belongsTo(ArticleVersion::class, 'current_version_id');
     }

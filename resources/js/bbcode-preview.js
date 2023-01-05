@@ -252,7 +252,7 @@ $(function() {
                     hljs.highlightElement(this);
                 });
                 ta[0].dispatchEvent(new CustomEvent('bbcode-preview-updated', {
-                    detail: { element: panel }
+                    detail: { element: panel[0] }
                 }));
             });
         };
