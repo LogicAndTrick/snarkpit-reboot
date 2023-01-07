@@ -106,7 +106,7 @@ const embed_callbacks = {
                     </span>
                     <span class="game-image-filler"></span>
                 </h1>
-                <div class="image-cycler image-cycler-clickable m-auto">
+                <div class="image-cycler m-auto">
                     ${images}
                     <span class="controls"></span>
                 </div>

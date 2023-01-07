@@ -19558,6 +19558,10 @@ span.bbcode {
   vertical-align: top;
 }
 
+dd {
+  word-break: break-word;
+}
+
 .image-cycler {
   text-align: center;
 }
@@ -19714,6 +19718,7 @@ textarea.small-textarea, textarea.form-control.small-textarea {
 .form-group input[type=checkbox] {
   display: inline-block;
   width: 1em;
+  border: 1px solid #666;
 }
 
 button, .btn {
@@ -19895,6 +19900,24 @@ button[type=submit]:not(.not-submit):disabled {
 }
 .map-list section .image .bbcode br:after {
   content: " ";
+}
+
+.card.spotlight .card-header, .bbcode .spotlight.caption-panel .card-header, .bbcode .spotlight.embed-container .card-header {
+  padding: 0 0 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.card.spotlight .card-body, .bbcode .spotlight.caption-panel .card-body, .bbcode .spotlight.embed-container .card-body, .card.spotlight .bbcode .caption-panel, .bbcode .card.spotlight .caption-panel, .bbcode .spotlight.caption-panel .caption-panel, .bbcode .spotlight.embed-container .caption-panel, .card.spotlight .bbcode .card-block, .bbcode .card.spotlight .card-block, .bbcode .spotlight.caption-panel .card-block, .bbcode .spotlight.embed-container .card-block, .card.spotlight .bbcode .embed-container, .bbcode .card.spotlight .embed-container, .bbcode .spotlight.caption-panel .embed-container, .bbcode .spotlight.embed-container .embed-container {
+  padding: 0;
+}
+.card.spotlight .bbcode, .bbcode .spotlight.caption-panel .bbcode, .bbcode .spotlight.embed-container .bbcode {
+  margin-bottom: 0;
+  max-height: 10rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 8;
+  line-clamp: 8;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .bg-body {

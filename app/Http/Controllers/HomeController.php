@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\CombinedUpdate;
 use App\Models\ForumThread;
 use App\Models\Map;
 use App\Models\News;
+use App\Models\Spotlight;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class HomeController extends Controller
 {
@@ -27,11 +30,22 @@ class HomeController extends Controller
             ->orderBy('updated_at', 'desc')
             ->limit(10)
             ->get();
+
+        $spotlights = Spotlight::with(['item' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    Article::class => ['current_version'],
+                    Map::class => ['images']
+                ]);
+            }, 'item.user'])
+            ->orderBy('position', 'asc')
+            ->limit(10)
+            ->get();
         return view('home.index', [
             'news' => $news,
             'maps' => $maps,
             'threads' => $threads,
-            'updates' => $updates
+            'updates' => $updates,
+            'spotlights' => $spotlights
         ]);
     }
 }

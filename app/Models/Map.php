@@ -62,6 +62,7 @@ class Map extends Model
         }
 
         $mirrors = array_filter(array_map(fn($x) => trim($x), explode("\n", $this->mirrors)), fn($x) => $x && strlen($x) > 0);
+        $mirrors = array_values($mirrors);
         for ($i = 0; $i < count($mirrors); $i++) {
             $files[] = [
                 'url' => url('map/download?mirror=' . urlencode($mirrors[$i]), $this->id),

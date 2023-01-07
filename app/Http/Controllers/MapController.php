@@ -212,7 +212,7 @@ class MapController extends Controller
                 'is_poll' => false
             ]);
             $post_text = "This is a a discussion topic for the map:\n\n" .
-                "[mapthumbs]{$map->id}[/mapthumbs]\n\n" .
+                "[mthumb]{$map->id}[/mthumb]\n\n" .
                 "[b]Map description:[/b]\n\n" .
                 $map->content_text;
             $post = ForumPost::create([

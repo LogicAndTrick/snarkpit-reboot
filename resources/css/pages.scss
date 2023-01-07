@@ -129,3 +129,26 @@
     }
   }
 }
+
+
+.card.spotlight {
+  .card-header {
+    padding: 0 0 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .card-body {
+    padding: 0;
+  }
+  .bbcode {
+    margin-bottom: 0;
+    max-height: 10rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    // this line-clamp thing gives us a nice ellipsis instead of
+    // just cutting off, so we use it if supported
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+}

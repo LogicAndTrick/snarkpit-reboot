@@ -160,6 +160,9 @@ update("Update complete.");
             case 'deploy-messages':
                 $commands[] = 'php artisan deploy:messages';
                 break;
+            case 'deploy-spotlight':
+                $commands[] = 'php artisan deploy:spotlight';
+                break;
         }
 
         self::executeCommands($commands);

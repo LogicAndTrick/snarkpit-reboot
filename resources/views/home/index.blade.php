@@ -7,9 +7,61 @@
     <div class="row gx-1">
         <div class="col-md-3">
             <h1>Spotlight</h1>
-            <section>
-                ...
-            </section>
+            @foreach($spotlights as $spot)
+                <section class="spotlight card">
+                    <div class="card-header">
+                        @if ($spot->item_type == \App\Models\Spotlight::TYPE_MAP)
+                            <span class="text-danger">[map]</span>
+                            <a href="{{ url('map/view', [ $spot->item_id ]) }}">{{$spot->item->name}}</a>
+                        @elseif ($spot->item_type == \App\Models\Spotlight::TYPE_DOWNLOAD)
+                            <span class="text-danger">[download]</span>
+                            <a href="{{ url('download/view', [ $spot->item_id ]) }}">{{$spot->item->name}}</a>
+                        @elseif ($spot->item_type == \App\Models\Spotlight::TYPE_ARTICLE)
+                            <span class="text-danger">[article]</span>
+                            <a href="{{ url('article/view', [ $spot->item->current_version->slug ]) }}">{{$spot->item->current_version->title}}</a>
+                        @endif
+                        <br />
+                        by
+                        <a href="{{ url('user/view', [ $spot->item->user->id ]) }}">{{$spot->item->user->name}}</a>
+                    </div>
+                    <div class="card-body">
+                        @if ($spot->item_type == \App\Models\Spotlight::TYPE_MAP)
+                            <div class="image-cycler">
+                                <a href="{{ url('map/view', [ $spot->item_id ]) }}">
+                                @forelse($spot->item->images->sortBy('order_index') as $img)
+                                    <img class="img-fluid {{ $loop->first ? '' : 'd-none' }}" src="{{ asset($img->image_file) }}" />
+                                @empty
+                                    <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
+                                @endforelse
+                                </a>
+                                <span class="controls"></span>
+                            </div>
+                        @elseif ($spot->item_type == \App\Models\Spotlight::TYPE_DOWNLOAD)
+                            <div class="bbcode mb-0">
+                                <a class="d-block w-50 float-start pe-2" href="{{ url('download/view', [ $spot->item_id ]) }}">
+                                    @if($spot->item->image_file)
+                                        <img class="img-fluid" src="{{ asset($spot->item->image_file) }}" />
+                                    @else
+                                        <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
+                                    @endif
+                                </a>
+                                {!! $spot->item->content_html !!}
+                            </div>
+                        @elseif ($spot->item_type == \App\Models\Spotlight::TYPE_ARTICLE)
+                            <div class="bbcode mb-0">
+                                <a class="d-block w-50 float-start pe-2" href="{{ url('article/view', [ $spot->item->current_version->slug ]) }}">
+                                    @if($spot->item->current_version->thumbnail_file)
+                                        <img class="img-fluid" src="{{ asset($spot->item->current_version->thumbnail_file) }}" />
+                                    @else
+                                        <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
+                                    @endif
+                                </a>
+                                {{ $spot->item->current_version->description }}
+                            </div>
+                        @endif
+                    </div>
+                </section>
+            @endforeach
             <h1>Recent Forum Posts</h1>
             @foreach($threads as $thread)
                 <section class="px-1 py-0">
