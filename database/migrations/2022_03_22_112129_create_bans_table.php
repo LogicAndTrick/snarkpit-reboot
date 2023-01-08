@@ -19,7 +19,7 @@ class CreateBansTable extends Migration
             $table->foreignIdFor(\App\Models\User::class)->nullable()->references('id')->on('users');
             $table->string('ip', 15)->nullable();
             $table->timestamp('ends_at')->nullable();
-            $table->string('reason', 255);
+            $table->string('reason', 512);
             $table->timestamps();
 
             $table->index(['ip', 'ends_at']);
