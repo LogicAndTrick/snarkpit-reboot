@@ -41,7 +41,7 @@ class DeployUsers extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit','64M');
+        ini_set('memory_limit','256M');
 
         DB::unprepared("delete from `snark3_reboot`.users");
 
