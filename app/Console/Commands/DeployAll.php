@@ -25,6 +25,7 @@ class DeployAll extends Command
         $this->call('deploy:files');
         $this->call('deploy:messages');
         $this->call('deploy:spotlight');
+        $this->call('deploy:journals');
         return self::SUCCESS;
     }
 }
