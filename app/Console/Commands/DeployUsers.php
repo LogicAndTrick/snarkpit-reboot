@@ -41,6 +41,8 @@ class DeployUsers extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit','64M');
+
         DB::unprepared("delete from `snark3_reboot`.users");
 
         // Use descending order so that the most recent email address is kept unchanged
