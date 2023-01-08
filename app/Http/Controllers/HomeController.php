@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\CombinedUpdate;
 use App\Models\ForumThread;
+use App\Models\Journal;
 use App\Models\Map;
 use App\Models\News;
 use App\Models\Spotlight;
@@ -40,12 +41,17 @@ class HomeController extends Controller
             ->orderBy('position', 'asc')
             ->limit(10)
             ->get();
+        $journals = Journal::with(['user'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
         return view('home.index', [
             'news' => $news,
             'maps' => $maps,
             'threads' => $threads,
             'updates' => $updates,
-            'spotlights' => $spotlights
+            'spotlights' => $spotlights,
+            'journals' => $journals,
         ]);
     }
 }

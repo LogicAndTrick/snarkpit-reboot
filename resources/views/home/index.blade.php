@@ -126,7 +126,23 @@
         </div>
         <div class="col-md-3">
             <h1>
-                <a href="#">Latest Maps</a>
+                <a href="{{ url('journal') }}">Latest Journals</a>
+            </h1>
+            @foreach($journals as $journal)
+                <section class="px-1 py-0">
+                    <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
+                        <a href="{{ url('journal/view', [ $journal->id ]) }}">{{ $journal->title }}</a>
+                    </span>
+                    <div>
+                        <small>
+                            {{$journal->updated_at->fromNow(null, true)}}
+                            by <a href="{{ url('user/view', [ $journal->user_id ]) }}">{{$journal->user->name}}</a>
+                        </small>
+                    </div>
+                </section>
+            @endforeach
+            <h1>
+                <a href="{{ url('map') }}">Latest Maps</a>
             </h1>
             <div class="row map-list">
                 @foreach ($maps as $map)

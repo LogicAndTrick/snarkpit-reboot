@@ -25,6 +25,7 @@
         'deploy-messages' => 'Deploy messages',
         'deploy-files' => 'Deploy files',
         'deploy-spotlight' => 'Deploy spotlight',
+        'deploy-journals' => 'Deploy journals',
     ];
 ?>
         <p>The current version is: <code>{{ $version }}</code></p>
