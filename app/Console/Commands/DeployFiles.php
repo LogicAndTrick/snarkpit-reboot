@@ -41,6 +41,8 @@ class DeployFiles extends Command
 
     public function handle()
     {
+        ini_set('memory_limit','64M');
+
         $old_site_root = config('migration.old_path');
         if ($old_site_root == '') {
             $this->output->error('Old migration directory not found.');

@@ -43,6 +43,8 @@ class DeployForums extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit','256M');
+
         DB::unprepared("delete from `snark3_reboot`.forum_poll_item_votes");
         DB::unprepared("delete from `snark3_reboot`.forum_poll_items");
         DB::unprepared("delete from `snark3_reboot`.forum_polls");

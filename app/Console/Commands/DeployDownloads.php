@@ -14,6 +14,8 @@ class DeployDownloads extends Command
 
     public function handle()
     {
+        ini_set('memory_limit','64M');
+
         DB::unprepared("delete from `snark3_reboot`.downloads");
         $downloads = DB::select('select * from snark3_snarkpit.download_files f');
         $this->withProgressBar($downloads, function($download) {

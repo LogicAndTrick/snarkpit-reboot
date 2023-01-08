@@ -16,6 +16,8 @@ class DeployArticles extends Command
 
     public function handle()
     {
+        ini_set('memory_limit','64M');
+
         DB::unprepared("delete from `snark3_reboot`.article_versions");
         DB::unprepared("delete from `snark3_reboot`.articles");
         DB::unprepared("delete from `snark3_reboot`.article_categories");

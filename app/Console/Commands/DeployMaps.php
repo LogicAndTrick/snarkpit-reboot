@@ -23,6 +23,8 @@ class DeployMaps extends Command
 
     public function handle()
     {
+        ini_set('memory_limit','128M');
+
         DB::unprepared("delete from `snark3_reboot`.map_ratings");
         DB::unprepared("delete from `snark3_reboot`.map_images");
         DB::unprepared("delete from `snark3_reboot`.maps");
