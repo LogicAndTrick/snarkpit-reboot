@@ -39,6 +39,7 @@ class DeployMessages extends Command
             $message->timestamps = false;
             $message->save();
         });
+        $this->output->writeln("\nMessages done.");
         return 0;
     }
 }

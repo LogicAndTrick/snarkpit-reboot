@@ -36,6 +36,7 @@ class DeployGames extends Command
             $g->order_index = $game->id;
             $g->save();
         });
+        $this->output->writeln("\nGames done.");
         return 0;
     }
 }

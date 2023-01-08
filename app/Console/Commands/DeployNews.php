@@ -55,6 +55,7 @@ class DeployNews extends Command
             $news->timestamps = false;
             $news->save();
         });
+        $this->output->writeln("\nNews done.");
         return 0;
     }
 }

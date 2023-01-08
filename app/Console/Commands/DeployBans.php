@@ -49,6 +49,7 @@ class DeployBans extends Command
             $b->reason = $ban->comments;
             $b->save();
         });
+        $this->output->writeln("\nBans done.");
         return 0;
     }
 }

@@ -32,6 +32,7 @@ class DeploySpotlight extends Command
             $spot->position = $spotlight->position;
             $spot->save();
         });
+        $this->output->writeln("\nSpotlight done.");
         return 0;
     }
 }

@@ -31,6 +31,7 @@ class DeployJournals extends Command
             $j->timestamps = false;
             $j->save();
         });
+        $this->output->writeln("\nJournals done.");
         return 0;
     }
 }

@@ -31,6 +31,7 @@ class DeployLinks extends Command
             $links->description = reverse_snarkpit_format($link->description);
             $links->save();
         });
+        $this->output->writeln("\nLinks done.");
         return 0;
     }
 }

@@ -96,7 +96,7 @@ class DeployArticles extends Command
             $v->timestamps = false;
             $v->save();
         });
-        $this->output->writeln("\nVersions done.");
+        $this->output->writeln("\nArticle versions done.");
 
         $app = ArticleVersion::STATUS_APPROVED;
         $dra = ArticleVersion::STATUS_DRAFT;

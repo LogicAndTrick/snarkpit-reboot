@@ -92,6 +92,7 @@ class DeployMaps extends Command
                 }
             }
         });
+        $this->output->writeln("\nMaps done.");
         return 0;
     }
 }

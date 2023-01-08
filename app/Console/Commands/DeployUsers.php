@@ -129,6 +129,7 @@ class DeployUsers extends Command
             $user->deleted_at = null;
             $user->save();
         });
+        $this->output->writeln("\nUsers done.");
         return 0;
     }
 }

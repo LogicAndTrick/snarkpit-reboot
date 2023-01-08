@@ -58,5 +58,7 @@ class DeployForumPolls extends Command
                 }
             }
         });
+        $this->output->writeln("\nPolls done.");
+        return self::SUCCESS;
     }
 }

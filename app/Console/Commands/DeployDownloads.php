@@ -43,6 +43,7 @@ class DeployDownloads extends Command
             $d->timestamps = false;
             $d->save();
         });
+        $this->output->writeln("\nDownloads done.");
         return 0;
     }
 }
