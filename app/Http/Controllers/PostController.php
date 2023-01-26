@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ForumPostCreatedEvent;
 use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
@@ -26,6 +27,9 @@ class PostController extends Controller
             'content_html' => bbcode($request->input('text')),
             'add_signature' => $request->boolean('add_signature')
         ]);
+
+        ForumPostCreatedEvent::dispatch($post);
+
         return redirect('thread/view/'.$thread->id.'?page=last');
     }
 

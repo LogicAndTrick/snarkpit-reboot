@@ -14,16 +14,16 @@ class ForumPostCreatedEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public ForumPost $forumPost;
+    public ForumPost $post;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(ForumPost $forumPost)
+    public function __construct(ForumPost $post)
     {
-        $this->forumPost = $forumPost;
+        $this->post = $post;
     }
 
     /**
@@ -34,7 +34,7 @@ class ForumPostCreatedEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: '[snarkpit] ForumPost Created: ' . $this->forumPost->name,
+            subject: '[snarkpit] Forum Reply: ' . $this->post->thread->title,
         );
     }
 
@@ -46,7 +46,11 @@ class ForumPostCreatedEmail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'view.name',
+            markdown: 'mail.forum-post-created',
+            with: [
+                'post' => $this->post,
+                'url' => url('thread/view/'.$this->post->thread_id.'?page=last')
+            ]
         );
     }
 

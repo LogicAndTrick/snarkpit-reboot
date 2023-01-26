@@ -91,6 +91,11 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function getGo(Request $request, $id) {
+        $article = Article::with(['current_version'])->findOrFail($id);
+        return redirect(url('article/view', [$article->current_version->slug]));
+    }
+
     public function getView(Request $request, $id)
     {
         $version = ArticleVersion::with(['article', 'article.user', 'article.category', 'article.game']);

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Validator;
+
 function reverse_snarkpit_format($text)
 {
     //$text = stripslashes($text);
@@ -211,4 +213,14 @@ function rating_summary($avg, $num) {
     return $num . ' rating' . ($num == 1 ? '' : 's')
         . ' / '
         . $avg . ' star' . ($avg == 1 ? '' : 's');
+}
+
+/**
+ * Removes invalid emails from an array of email addresses
+ * @param array $array
+ * @return array
+ */
+function filter_valid_emails($array) {
+    $validator = Validator::make([], []);
+    return array_filter($array, fn($x) => $validator->validateEmail(null, $x, ['rfc']));
 }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
+use App\Models\UserSubscription;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -91,7 +92,6 @@ class DeployForums extends Command
             $t->description = stripslashes(html_entity_decode($topic->description));
             $t->stat_views = $topic->views;
             $t->stat_posts = $topic->topic_replies;
-            $t->stat_posts = $topic->topic_replies;
             $t->last_post_id = $topic->last_post_id;
             $t->last_post_at = Carbon::createFromTimestamp($topic->topic_time);
             $t->is_open = $topic->topic_status == 0;
@@ -103,6 +103,14 @@ class DeployForums extends Command
             $t->save();
         });
         $this->output->writeln("\nThreads done.");
+
+        DB::insert('
+            insert into snark3_reboot.user_subscriptions (user_id, item_type, item_id, send_email)
+            select topic_poster as user_id, ? as item_type, topic_id as item_id, 1 as send_email
+            from snark3_snarkpit.topics
+            where topic_notify = 1
+            and topic_poster > 0
+        ', [ UserSubscription::FORUM_THREAD ]);
 
         // posts
         $post_count = DB::selectOne('
