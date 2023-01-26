@@ -34,7 +34,7 @@ class MessageCreatedEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: '[snarkpit] Message Created: ' . $this->message->name,
+            subject: '[snarkpit] Private Message from ' . $this->message->from_user->name . ': ' . $this->message->title,
         );
     }
 
@@ -46,7 +46,11 @@ class MessageCreatedEmail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'view.name',
+            markdown: 'mail.message-created',
+            with: [
+                'message' => $this->message,
+                'url' => url('message/view', [ $this->message->id ])
+            ]
         );
     }
 

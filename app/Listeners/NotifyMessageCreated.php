@@ -3,8 +3,11 @@
 namespace App\Listeners;
 
 use App\Events\MessageCreatedEvent;
+use App\Mail\ArticleApprovedEmail;
+use App\Mail\MessageCreatedEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Mail;
 
 class NotifyMessageCreated
 {
@@ -26,6 +29,10 @@ class NotifyMessageCreated
      */
     public function handle(MessageCreatedEvent $event)
     {
-        //
+        // send email to the recipient
+        $email = $event->message->to_user->email;
+        if ($email == '') return;
+
+        Mail::to($email)->send(new MessageCreatedEmail($event->message));
     }
 }

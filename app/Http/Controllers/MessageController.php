@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageCreatedEvent;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -63,7 +64,7 @@ class MessageController extends Controller
             'text' => ['required', 'max:10000']
         ]);
         $user = User::query()->where('name', '=', $request->input('to'))->first();
-        Message::create([
+        $message = Message::create([
             'from_user_id' => Auth::id(),
             'to_user_id' => $user->id,
             'title' => $request->input('title'),
@@ -71,6 +72,9 @@ class MessageController extends Controller
             'content_html' => bbcode($request->input('text')),
             'is_read' => false
         ]);
+
+        MessageCreatedEvent::dispatch($message);
+
         return redirect('message/sent');
     }
 
