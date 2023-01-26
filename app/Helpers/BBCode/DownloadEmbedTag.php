@@ -31,9 +31,10 @@ class DownloadEmbedTag extends Tag
                 . '</div>'
                 . '</div>';
         $content = PlainTextNode::Empty();
-        $after = "</div>\n";
+        $after = "\n";
         $ret = new HtmlNode($before, $content, $after);
         $ret->plainAfter = 'Download: ' . url('download/view', [ $text ]) . "\n";
+        $ret->isBlockNode = true;
         return $ret;
     }
 }

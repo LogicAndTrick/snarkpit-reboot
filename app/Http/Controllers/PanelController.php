@@ -72,6 +72,14 @@ class PanelController extends Controller
             'notify_messages' => $request->boolean('notify_messages'),
             'timezone' => intval($request->input('timezone')),
 
+            'notify_article_review' => $request->boolean('notify_article_review'),
+            'notify_forum_posts' => $request->boolean('notify_forum_posts'),
+            'notify_forum_threads' => $request->boolean('notify_forum_threads'),
+            'notify_journals' => $request->boolean('notify_journals'),
+            'notify_downloads' => $request->boolean('notify_downloads'),
+            'notify_news' => $request->boolean('notify_news'),
+            'notify_maps' => $request->boolean('notify_maps'),
+
             'title_custom' => !!$request->input('title_text'),
             'title_text' => $request->input('title_text'),
 

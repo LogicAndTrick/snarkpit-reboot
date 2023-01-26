@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewsCreatedEvent;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,9 @@ class NewsController extends Controller
             'content_text' => $request->input('text'),
             'content_html' => bbcode($request->input('text'))
         ]);
+
+        NewsCreatedEvent::dispatch($news);
+
         return redirect('/news/view/' . $news->id);
     }
 

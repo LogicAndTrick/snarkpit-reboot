@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\JournalCreatedEvent;
 use App\Models\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +56,8 @@ class JournalController extends Controller
             'content_text' => $request->input('text'),
             'content_html' => bbcode($request->input('text'))
         ]);
+
+        JournalCreatedEvent::dispatch($journal);
 
         return redirect('journal/view/'.$journal->id);
     }

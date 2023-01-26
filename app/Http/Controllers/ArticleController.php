@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ArticleStatusChangedEvent;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ArticleVersion;
@@ -229,6 +230,8 @@ class ArticleController extends Controller
 
         $version->status = $status;
         $version->save();
+
+        ArticleStatusChangedEvent::dispatch($article, $version);
 
         if ($status == ArticleVersion::STATUS_APPROVED) return redirect('article/view/'.$version->slug);
         return redirect('article/view/'.$version->id);

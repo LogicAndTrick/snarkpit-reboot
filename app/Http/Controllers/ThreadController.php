@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ForumThreadCreatedEvent;
 use App\Models\Forum;
 use App\Models\ForumPoll;
 use App\Models\ForumPollItem;
@@ -147,6 +148,8 @@ class ThreadController extends Controller
                 ]);
             }
         }
+
+        ForumThreadCreatedEvent::dispatch($thread);
 
         return redirect('thread/view/'.$thread->id.'?page=last');
     }

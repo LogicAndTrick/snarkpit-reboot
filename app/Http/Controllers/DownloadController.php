@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DownloadCreatedEvent;
 use App\Models\Download;
 use App\Models\DownloadCategory;
 use App\Models\Forum;
@@ -178,6 +179,8 @@ class DownloadController extends Controller
         }
 
         $download->save();
+
+        DownloadCreatedEvent::dispatch($download);
 
         return redirect('download');
     }

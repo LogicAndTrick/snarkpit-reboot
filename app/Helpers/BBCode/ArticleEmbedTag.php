@@ -31,9 +31,10 @@ class ArticleEmbedTag extends Tag
                 . '</div>'
                 . '</div>';
         $content = PlainTextNode::Empty();
-        $after = "</div>\n";
+        $after = "\n";
         $ret = new HtmlNode($before, $content, $after);
         $ret->plainAfter = 'Article: ' . url('article/view', [ $text ]) . "\n";
+        $ret->isBlockNode = true;
         return $ret;
     }
 }

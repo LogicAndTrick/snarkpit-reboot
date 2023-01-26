@@ -33,10 +33,26 @@ for ($i = -12; $i <= 12; $i++) {
         <x-hidden name="id" :value="$user->id" />
         <h1>Preferences</h1>
         <section>
-            <x-checkbox name="show_email" label="Show my email address on my public profile" :checked="$user->show_email" />
-            <x-checkbox name="show_signature" label="Show my signature on forum posts by default" :checked="$user->show_signature" />
-            <x-checkbox name="subscribe_topics" label="Send me emails for replies to subscribed forum topics" :checked="$user->subscribe_topics" />
-            <x-checkbox name="notify_messages" label="Send me emails for private messages" :checked="$user->notify_messages" />
+            <div class="row">
+                <div class="col-md-6">
+                    <x-checkbox name="show_email" label="Show my email address on my public profile" :checked="$user->show_email" />
+                    <x-checkbox name="show_signature" label="Show my signature on forum posts by default" :checked="$user->show_signature" />
+                    <x-checkbox name="subscribe_topics" label="Send me emails for replies to subscribed forum topics" :checked="$user->subscribe_topics" />
+                    <x-checkbox name="notify_messages" label="Send me emails for private messages" :checked="$user->notify_messages" />
+                </div>
+                <div class="col-md-6">
+                    @can('admin')
+                        For admins:
+                        <x-checkbox name="notify_article_review" label="Send me an email when an article is posted for review" :checked="$user->notify_article_review" />
+                        <x-checkbox name="notify_forum_posts" label="Send me an email when any forum post is made" :checked="$user->notify_forum_posts" />
+                        <x-checkbox name="notify_forum_threads" label="Send me an email when a forum topic is created" :checked="$user->notify_forum_threads" />
+                        <x-checkbox name="notify_journals" label="Send me an email when a journal is posted" :checked="$user->notify_journals" />
+                        <x-checkbox name="notify_downloads" label="Send me an email when a download is posted" :checked="$user->notify_downloads" />
+                        <x-checkbox name="notify_news" label="Send me an email when news is posted" :checked="$user->notify_news" />
+                        <x-checkbox name="notify_maps" label="Send me an email when a map is posted" :checked="$user->notify_maps" />
+                    @endcan
+                </div>
+            </div>
             <x-select name="timezone" label="Time zone:" :items="$zones" :value="$user->timezone" required />
             <div class="form-text">
                 If you're not sure what time zone you live in, <a href="https://www.timeanddate.com/time/map/" target="_blank" rel="noopener noreferrer"><strong>use this map</strong></a> to find out.

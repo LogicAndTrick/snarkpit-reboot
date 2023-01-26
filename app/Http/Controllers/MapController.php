@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MapCreatedEvent;
 use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
@@ -225,6 +226,8 @@ class MapController extends Controller
             $map->thread_id = $thread->id;
             $map->save();
         }
+
+        MapCreatedEvent::dispatch($map);
 
         return redirect('map/view/'.$map->id);
     }
