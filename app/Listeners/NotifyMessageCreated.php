@@ -3,13 +3,11 @@
 namespace App\Listeners;
 
 use App\Events\MessageCreatedEvent;
-use App\Mail\ArticleApprovedEmail;
 use App\Mail\MessageCreatedEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyMessageCreated
+class NotifyMessageCreated implements ShouldQueue
 {
     /**
      * Create the event listener.

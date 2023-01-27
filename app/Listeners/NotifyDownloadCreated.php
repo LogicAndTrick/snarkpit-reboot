@@ -5,9 +5,10 @@ namespace App\Listeners;
 use App\Events\DownloadCreatedEvent;
 use App\Mail\DownloadCreatedEmail;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyDownloadCreated
+class NotifyDownloadCreated implements ShouldQueue
 {
     public function __construct()
     {

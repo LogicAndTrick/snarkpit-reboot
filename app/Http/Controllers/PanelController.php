@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RecalculateSnarkmarksEvent;
 use App\Helpers\Image;
 use App\Models\Ban;
+use App\Models\BonusSnarkmark;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -249,6 +251,47 @@ class PanelController extends Controller
 
         $user->update([ 'name' => $request->input('new_name') ]);
         return redirect('panel/index/'.$id);
+    }
+
+    public function getEditSnarks($id = 0) {
+        $this->admin();
+        $user = $this->getUser($id);
+        $snarks = BonusSnarkmark::with('added_user')->whereUserId($id)->get();
+        return view('panel.edit-snarks', [
+            'user' => $user,
+            'snarks' => $snarks
+        ]);
+    }
+
+    public function postAddSnark(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+        $user = $this->getUser($id);
+
+        $this->validate($request->instance(), [
+            'description' => 'required|max:255',
+            'snarkmarks' => 'required|integer',
+        ]);
+
+        $snark = BonusSnarkmark::create([
+            'user_id' => $user->id,
+            'snarkmarks' => $request->integer('snarkmarks'),
+            'added_user_id' => Auth::id(),
+            'description' => $request->string('description')
+        ]);
+
+        RecalculateSnarkmarksEvent::dispatch($snark->user_id);
+
+        return redirect('panel/edit-snarks/'.$id);
+    }
+
+    public function postDeleteSnark(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+        $snark = BonusSnarkmark::findOrFail($id);
+        $snark->delete();
+        RecalculateSnarkmarksEvent::dispatch($snark->user_id);
+        return redirect('panel/edit-snarks/'.$snark->user_id);
     }
 
     public function getEditBans($id = 0) {

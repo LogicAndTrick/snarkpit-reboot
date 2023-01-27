@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\RecalculateSnarkmarksEvent;
 use App\Listeners\NotifyArticleStatusChanged;
 use App\Listeners\NotifyDownloadCreated;
 use App\Listeners\NotifyForumPostCreated;
@@ -10,10 +11,10 @@ use App\Listeners\NotifyJournalCreated;
 use App\Listeners\NotifyMapCreated;
 use App\Listeners\NotifyMessageCreated;
 use App\Listeners\NotifyNewsCreated;
+use App\Listeners\NotifyRecalculateSnarkmarks;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 use App\Events\ArticleStatusChangedEvent;
 use App\Events\DownloadCreatedEvent;
@@ -59,6 +60,9 @@ class EventServiceProvider extends ServiceProvider
         NewsCreatedEvent::class => [
             NotifyNewsCreated::class,
         ],
+        RecalculateSnarkmarksEvent::class => [
+            NotifyRecalculateSnarkmarks::class
+        ]
     ];
 
     /**

@@ -5,9 +5,10 @@ namespace App\Listeners;
 use App\Events\JournalCreatedEvent;
 use App\Mail\JournalCreatedEmail;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyJournalCreated
+class NotifyJournalCreated implements ShouldQueue
 {
     public function __construct()
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ForumPostCreatedEvent;
+use App\Events\RecalculateSnarkmarksEvent;
 use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
@@ -29,6 +30,7 @@ class PostController extends Controller
         ]);
 
         ForumPostCreatedEvent::dispatch($post);
+        RecalculateSnarkmarksEvent::dispatch($post->user_id);
 
         return redirect('thread/view/'.$thread->id.'?page=last');
     }
@@ -69,6 +71,7 @@ class PostController extends Controller
         $id = intval($request->input('id'));
         $post = ForumPost::with(['thread'])->findOrFail($id);
         $post->delete();
+        RecalculateSnarkmarksEvent::dispatch($post->user_id);
         return redirect('thread/view/'.$post->thread_id);
     }
 }

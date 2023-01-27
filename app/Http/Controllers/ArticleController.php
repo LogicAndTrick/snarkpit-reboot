@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ArticleStatusChangedEvent;
+use App\Events\RecalculateSnarkmarksEvent;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ArticleVersion;
@@ -10,14 +11,12 @@ use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
 use App\Models\Game;
-use App\Models\MapImage;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -237,6 +236,7 @@ class ArticleController extends Controller
         $version->save();
 
         ArticleStatusChangedEvent::dispatch($article, $version);
+        RecalculateSnarkmarksEvent::dispatch($article->user_id);
 
         if ($status == ArticleVersion::STATUS_APPROVED) return redirect('article/view/'.$version->slug);
         return redirect('article/view/'.$version->id);
@@ -369,6 +369,7 @@ class ArticleController extends Controller
         }
 
         $version->save();
+        RecalculateSnarkmarksEvent::dispatch($article->user_id);
 
         // Don't create forum thread yet - article isn't approved
         return redirect('article/view/'.$version->id);

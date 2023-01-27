@@ -4,17 +4,14 @@ namespace App\Listeners;
 
 use App\Events\ForumPostCreatedEvent;
 use App\Mail\ForumPostCreatedEmail;
-use App\Mail\NewsCreatedEmail;
 use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserSubscription;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 
-class NotifyForumPostCreated
+class NotifyForumPostCreated implements ShouldQueue
 {
     /**
      * Create the event listener.

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MapCreatedEvent;
+use App\Events\RecalculateSnarkmarksEvent;
 use App\Models\Forum;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
@@ -228,6 +229,7 @@ class MapController extends Controller
         }
 
         MapCreatedEvent::dispatch($map);
+        RecalculateSnarkmarksEvent::dispatch($map->user_id);
 
         return redirect('map/view/'.$map->id);
     }
@@ -356,6 +358,7 @@ class MapController extends Controller
         if (!$map->isEditable()) abort(403);
 
         $map->delete();
+        RecalculateSnarkmarksEvent::dispatch($map->user_id);
 
         return redirect('map');
     }

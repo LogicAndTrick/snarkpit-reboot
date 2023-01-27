@@ -5,9 +5,10 @@ namespace App\Listeners;
 use App\Events\ForumThreadCreatedEvent;
 use App\Mail\ForumThreadCreatedEmail;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyForumThreadCreated
+class NotifyForumThreadCreated implements ShouldQueue
 {
     public function __construct()
     {

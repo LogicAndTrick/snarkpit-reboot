@@ -5,9 +5,10 @@ namespace App\Listeners;
 use App\Events\MapCreatedEvent;
 use App\Mail\MapCreatedEmail;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyMapCreated
+class NotifyMapCreated implements ShouldQueue
 {
     public function __construct()
     {

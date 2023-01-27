@@ -5,6 +5,9 @@
     <h1>
         <span class="fa fa-user"></span>
         User profile
+        @can('admin')
+            <a href="{{ url('panel/index', [ $user->id ]) }}" class="btn btn-outline-primary">Control panel</a>
+        @endcan
     </h1>
 
 <?php
@@ -37,7 +40,9 @@ $attribs = [
 
     <div class="row g-1">
         <div class="col-md-6">
-            <h1>{{$user->name}}</h1>
+            <h1>
+                {{$user->name}}
+            </h1>
             <section>
                 <x-user-avatar-details :user="$user" :name="false" :details="false" :link="false" />
                 @auth

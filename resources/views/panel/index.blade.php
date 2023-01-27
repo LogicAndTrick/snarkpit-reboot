@@ -47,6 +47,7 @@
                         @can('super-admin')
                             <li><a href="{{ url('panel/edit-level', [$user->id]) }}"><span class="fa fa-key"></span> Change User's Access Level</a></li>
                         @endcan
+                        <li><a href="{{ url('panel/edit-snarks', [$user->id]) }}"><span class="fa fa-award"></span> Manage User's Snarkmarks</a></li>
                         <li><a href="{{ url('panel/edit-bans', [$user->id]) }}"><span class="fa fa-ban"></span> Manage User's Bans</a></li>
                         @if ($user->id != Auth::id())
                             <li><a class="text-danger" href="{{ url('panel/remove', [$user->id]) }}"><span class="fa fa-user-times"></span> Delete User Account</a></li>

@@ -4,7 +4,7 @@
 @section('content')
     <h1>
         <span class="fa fa-ban"></span>
-        Update access level: {{ $user->name }}
+        Manage bans: {{ $user->name }}
     </h1>
 
     <nav class="nav-header">
