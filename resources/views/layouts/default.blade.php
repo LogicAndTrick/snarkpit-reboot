@@ -35,7 +35,33 @@
             };
         </script>
         <script src="{{ asset('js/app.js') }}" defer></script>
-        <title>@yield('title') - The Snarkpit</title>
+        <?php $page_title = \Illuminate\Support\Facades\View::yieldContent('title'); ?>
+        <title>{{$page_title}} - The SnarkPit</title>
+        <meta content="The SnarkPit" property="og:site_name">
+        @if (isset($meta_description) && strlen($meta_description) > 0)
+            <?php $meta_description = str_replace("\n", ' ', substr($meta_description, 0, 300)) . (strlen($meta_description) > 300 ? '...' : ''); ?>
+            <meta property="og:description" content="{{$meta_description}}">
+        @else
+            <meta property="og:description" content="View this page on The SnarkPit">
+        @endif
+        <meta property="og:type" content="website">
+        @if (isset($meta_title) && strlen($meta_title) > 0)
+            <meta property="og:title" content="{{$meta_title}}">
+        @else
+            <meta property="og:title" content="{{$page_title}}">
+        @endif
+        @if (isset($meta_images) && count($meta_images) > 0)
+            @foreach ($meta_images as $img)
+                <meta property="og:image" content="{{asset($img)}}">
+            @endforeach
+            <meta name="twitter:card" content="summary_large_image">
+        @else
+            <meta property="og:image" content="{{asset('images/snark-logo.png')}}">
+        @endif
+        <meta property="og:url" content="{{Request::url()}}">
+        <meta name="theme-color" content="#B0281B">
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="search" type="application/opensearchdescription+xml" href="{{ url('/opensearch.xml') }}" title="The SnarkPit">
     </head>
     <body>
         @include('layouts.header')
