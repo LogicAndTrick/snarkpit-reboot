@@ -20,8 +20,8 @@ class UserSubscription extends Model
 
         $ty = $item_type;
         $sub = UserSubscription::whereUserId($user->id)
-            ->whereArticleType($ty)
-            ->whereArticleId($item_id)
+            ->whereItemType($ty)
+            ->whereItemId($item_id)
             ->first();
         if ($sub && $clear) {
             DB::statement('CALL clear_user_notifications(?, ?, ?);', [$user->id, $ty, $item_id]);

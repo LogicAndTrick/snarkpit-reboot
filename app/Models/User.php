@@ -167,6 +167,16 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
+    public function unreadPrivateMessageCount() {
+        return Message::where('to_user_id', '=', $this->id)
+            ->where('is_read', '=', false)
+            ->count();
+    }
+
+    public function unreadNotificationCount() {
+        return UserNotification::whereUserId($this->id)->whereIsUnread(true)->count();
+    }
+
     public function deleteAvatar() {
         if ($this->avatar_custom && is_file(public_path('uploads/avatars/'.$this->avatar_file))) {
             unlink(public_path('uploads/avatars/'.$this->avatar_file));

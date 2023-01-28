@@ -31,17 +31,13 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('latest_user', User::query()->orderByDesc('id')->first());
 
             $num_unread = 0;
+            $num_notifications = 0;
             if (Auth::check()) {
-                // Check if the user has any unread private messages
-                $num_unread = DB::selectOne('
-                    select count(*) c
-                    from messages m
-                    where m.deleted_at is null
-                    and m.to_user_id = ?
-                    and m.is_read = 0
-                ', [Auth::id()])->c;
+                $num_unread = Auth::user()->unreadPrivateMessageCount();
+                $num_notifications = Auth::user()->unreadNotificationCount();
             }
             $view->with('num_unread_messages', $num_unread);
+            $view->with('num_unread_notifications', $num_notifications);
         });
     }
 }

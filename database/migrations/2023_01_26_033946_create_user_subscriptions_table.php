@@ -85,7 +85,7 @@ return new class extends Migration
             BEGIN
                 UPDATE user_notifications
                 SET is_unread = 0
-                WHERE user_id = uid AND item_type = ity AND item_id = iid AND is_unread = 1;
+                WHERE user_id = uid AND item_type = ity collate utf8mb4_unicode_ci AND item_id = iid AND is_unread = 1;
             END;
         ");
     }

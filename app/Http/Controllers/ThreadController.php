@@ -9,6 +9,7 @@ use App\Models\ForumPollItem;
 use App\Models\ForumPollItemVote;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
+use App\Models\UserSubscription;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -50,9 +51,42 @@ class ThreadController extends Controller
             'thread' => $thread,
             'posts' => $pag,
             'poll' => $poll,
-            'poll_vote' => $poll_vote
-            //'subscription' => UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id, true)
+            'poll_vote' => $poll_vote,
+            'subscription' => UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id, true)
         ]);
+    }
+
+    public function getSubscribeEmailToggle($id)
+    {
+        $sub = UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id);
+        if ($sub) {
+            $sub->send_email = !$sub->send_email;
+            $sub->save();
+        }
+        return redirect('thread/view/'.$id);
+    }
+
+    public function getSubscribe($id)
+    {
+        $sub = UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id);
+        if (!$sub) {
+            $sub = UserSubscription::Create([
+                'user_id' => Auth::id(),
+                'item_type' => UserSubscription::FORUM_THREAD,
+                'item_id' => intval($id, 10),
+                'send_email' => Auth::user()->subscribe_topics
+            ]);
+        }
+        return redirect('thread/view/'.$id);
+    }
+
+    public function getUnsubscribe($id)
+    {
+        $sub = UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $id);
+        if ($sub) {
+            $sub->delete();
+        }
+        return redirect('thread/view/'.$id);
     }
 
     public function postVote(Request $request) {
@@ -131,6 +165,12 @@ class ThreadController extends Controller
             'user_id' => Auth::user()->id,
             'content_text' => $request->input('text'),
             'content_html' => bbcode($request->input('text')),
+        ]);
+        $sub = UserSubscription::Create([
+            'user_id' => Auth::id(),
+            'item_type' => UserSubscription::FORUM_THREAD,
+            'item_id' => $thread->id,
+            'send_email' => Auth::user()->subscribe_topics
         ]);
 
         if ($is_poll) {

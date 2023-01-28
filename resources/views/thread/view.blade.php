@@ -110,6 +110,19 @@
             @endauth
         </div>
         {{ $posts->render() }}
+        @auth
+            <div class="btn-group">
+                @if ($subscription)
+                    <a href="{{ url('thread/unsubscribe', [$thread->id]) }}" class="btn"><span class="fa fa-bell-slash"></span> Unsubscribe</a>
+                    <a href="{{ url('thread/subscribe-email-toggle', [$thread->id]) }}" class="btn">
+                        <span class="fa {{$subscription->send_email ? 'fa-check' : 'fa-times'}}"></span>
+                        Currently {{$subscription->send_email ? 'sending' : 'not sending'}} emails
+                    </a>
+                @else
+                    <a href="{{ url('thread/subscribe', [$thread->id]) }}" class="btn"><span class="fa fa-bell"></span> Subscribe</a>
+                @endif
+            </div>
+        @endauth
     </nav>
 
     @foreach ($posts as $post)

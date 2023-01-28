@@ -7,9 +7,13 @@ use App\Helpers\Image;
 use App\Models\Ban;
 use App\Models\BonusSnarkmark;
 use App\Models\User;
+use App\Models\UserNotificationDetails;
+use App\Models\UserSubscription;
+use App\Models\UserSubscriptionDetails;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -208,29 +212,29 @@ class PanelController extends Controller
         return redirect('panel/index/'.$id);
     }
 
-//    public function getNotifications($id = 0) {
-//        $user = $this->getUser($id);
-//        $notifications = UserNotificationDetails::whereUserId($user->id)->whereIsUnread(true)->get();
-//        $subscriptions = UserSubscriptionDetails::whereUserId($user->id)->whereIsOwnArticle(0)->get();
-//        return view('user/panel/notifications', [
-//            'user' => $user,
-//            'notifications' => $notifications,
-//            'subscriptions' => $subscriptions
-//        ]);
-//    }
-//
-//    public function getClearNotifications($id = 0) {
-//        $user = $this->getUser($id);
-//        DB::statement("UPDATE user_notifications SET is_unread = 0 WHERE user_id = ? AND is_unread = 1", [ $user->id ]);
-//        return redirect('panel/notifications/'.$id);
-//    }
-//
-//    public function getDeleteSubscription($id) {
-//        $sub = UserSubscription::findOrFail($id);
-//        $user = $this->getUser($sub->user_id);
-//        $sub->delete();
-//        return redirect('panel/notifications/'.$user->id);
-//    }
+    public function getNotifications($id = 0) {
+        $user = $this->getUser($id);
+        $notifications = UserNotificationDetails::whereUserId($user->id)->whereIsUnread(true)->get();
+        $subscriptions = UserSubscriptionDetails::whereUserId($user->id)->get();
+        return view('panel.notifications', [
+            'user' => $user,
+            'notifications' => $notifications,
+            'subscriptions' => $subscriptions
+        ]);
+    }
+
+    public function getClearNotifications($id = 0) {
+        $user = $this->getUser($id);
+        DB::statement("UPDATE user_notifications SET is_unread = 0 WHERE user_id = ? AND is_unread = 1", [ $user->id ]);
+        return redirect('panel/notifications/'.$id);
+    }
+
+    public function getDeleteSubscription($id) {
+        $sub = UserSubscription::findOrFail($id);
+        $user = $this->getUser($sub->user_id);
+        $sub->delete();
+        return redirect('panel/notifications/'.$user->id);
+    }
 
     public function getEditName($id = 0) {
         $this->admin();

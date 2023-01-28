@@ -1,4 +1,3 @@
-
 <header class="container site-header-mobile px-0 d-lg-none">
     <nav class="navbar navbar-dark bg-dark p-0">
         <div class="container-fluid p-0 m-0">
@@ -29,7 +28,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">updates</a>
+                                <a class="nav-link" href="{{ url('panel/notifications') }}">
+                                    @if ($num_unread_notifications > 0)
+                                        <strong class="text-danger">updates ({{$num_unread_notifications}})</strong>
+                                    @else
+                                        updates
+                                    @endif
+                                </a>
                             </li>
                             @can('admin')
                                 <li class="nav-item">
@@ -100,7 +105,13 @@
                                 messages
                             @endif
                         </a>
-                        <a href="#">updates</a>
+                        <a href="{{ url('panel/notifications') }}">
+                            @if ($num_unread_notifications > 0)
+                                <strong class="text-danger">updates ({{$num_unread_notifications}})</strong>
+                            @else
+                                updates
+                            @endif
+                        </a>
                         @can('admin')
                             <a href="{{ url('admin') }}">admin</a>
                         @endcan
