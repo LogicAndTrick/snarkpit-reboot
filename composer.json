@@ -5,13 +5,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
+        "ext-gd": "*",
+        "biscolab/laravel-recaptcha": "^5.4",
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/breeze": "^1.8",
         "laravel/framework": "^9.0",
         "laravel/tinker": "^2.5",
-        "logicandtrick/wikicodeparser": "^0.9.2",
-        "ext-gd": "*"
+        "logicandtrick/wikicodeparser": "^0.9.2"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^1.0",

@@ -1,5 +1,9 @@
 @extends('layouts.default')
 
+@section('scripts')
+    {!! ReCaptcha::htmlScriptTagJsApi() !!}
+@endsection
+
 @section('content')
     <h1>User account registration</h1>
     <section>
@@ -17,7 +21,13 @@
                     </p>
                     <x-text type="email" label="Email address:" name="email" required />
                     <x-text type="email" label="Confirm email address:" name="email_confirmation" required />
-                    TODO: security code/captcha
+
+                    <div class="d-flex justify-content-center my-3">
+                        {!! ReCaptcha::htmlFormSnippet() !!}
+                    </div>
+                    @error('g-recaptcha-response')
+                        <p class="help-block text-danger">Please check the box to prove that you're not a robot.</p>
+                    @enderror
                     <button type="submit">Register</button>
                 </form>
             </div>

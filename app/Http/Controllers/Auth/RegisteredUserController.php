@@ -37,6 +37,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'confirmed', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            recaptchaFieldName() => recaptchaRuleName()
         ]);
 
         $user = User::create([
