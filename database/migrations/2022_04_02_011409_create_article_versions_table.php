@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -39,6 +40,8 @@ return new class extends Migration
 
             $table->index(['deleted_at', 'status', 'slug']);
         });
+
+        DB::unprepared('ALTER TABLE article_versions ADD FULLTEXT article_versions_title_content_text_fulltext (title, description, content_text);');
     }
 
     /**

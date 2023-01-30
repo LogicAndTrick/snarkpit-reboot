@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -44,6 +45,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::unprepared('ALTER TABLE maps ADD FULLTEXT maps_name_content_text_fulltext (name, content_text);');
 
         Schema::create('map_images', function (Blueprint $table) {
             $table->id();

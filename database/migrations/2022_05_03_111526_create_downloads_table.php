@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -28,6 +29,8 @@ return new class extends Migration
             $table->string('mirrors', 1000);
             $table->timestamps();
         });
+
+        DB::unprepared('ALTER TABLE downloads ADD FULLTEXT downloads_name_content_text_fulltext (name, content_text);');
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 function reverse_snarkpit_format($text)
 {
@@ -19,6 +20,9 @@ function reverse_snarkpit_format($text)
     $text = preg_replace('/<BR>/i', "\n", $text);
     $text = str_replace("<br>", "\n", $text);
     $text = preg_replace('/\s*\[addsig\]\s*/', '', $text);
+
+    $text = preg_replace('/<div class="pre"><pre>\s*/i', "[pre]\n", $text);
+    $text = preg_replace('/\s*<\/pre><\/div>/i', "\n[/pre]", $text);
 
     // size tags
     $text = preg_replace_callback('%\[size=(.*?)\](.*?)\[/size\]%im', function ($matches) {
@@ -44,6 +48,15 @@ function reverse_snarkpit_format($text)
     // mapthumbs -> mthumb
     $text = str_ireplace("[mapthumbs]", "[mthumb]", $text);
     $text = str_ireplace("[/mapthumbs]", "[/mthumb]", $text);
+
+    // Stuff used in articles that I missed...
+    $text = str_replace('[pr]','[color=#86c76a]',$text);
+    $text = str_replace("[/pr]","[/color]",$text);
+    $text = str_replace('[pv]','[color=#3d9eff]',$text);
+    $text = str_replace("[/pv]","[/color]",$text);
+    $text = preg_replace('/\[title\](.*?)\[\/title\]\s*/si',"= \\1\n\n",$text);
+    $text = preg_replace("#\[e\](.*?)\[/e\]#si","[color=#ff3f6f]\\1[/color]",$text);
+    $text = preg_replace("#\[e:(.*?)\](.*?)\[/e\]#si","[color=#ff3f6f]\\2[/color]",$text);
 
     if (str_contains($text, '<')) {
         // The text probably contains html...
@@ -101,8 +114,8 @@ function reverse_snarkpit_format($text)
                 $color = '';
                 foreach ($props as $prop) {
                     if (preg_match('/(.*?)=([\'"]*)(.*)\g{2}/sim', $prop, $m)) {
-                        if ($m[1] == 'color') $color = $m[3];
-                        else if ($m[1] == 'size') $size = $m[3];
+                        if (strtolower($m[1]) == 'color') $color = $m[3];
+                        else if (strtolower($m[1]) == 'size') $size = $m[3];
                     }
                 }
                 if ($size && is_numeric($size)) {
@@ -186,6 +199,16 @@ function bbcode_result($text, $scope = '') {
     $parser = app('bbcode');
     $result = $parser->ParseResult($text, $scope);
     return $result;
+}
+
+function bbcode_excerpt($text, $length = 200, $scope = 'excerpt') {
+    /** @var LogicAndTrick\WikiCodeParser\Parser $parser */
+    $parser = app('bbcode');
+    $len = Str::length($text);
+    if ($len > $length) $text = Str::substr($text, 0, $length);
+    $parsed = $parser->ParseResult($text, $scope)->ToHtml();
+    if ($len > $length) $parsed .= '...';
+    return $parsed;
 }
 
 /**
