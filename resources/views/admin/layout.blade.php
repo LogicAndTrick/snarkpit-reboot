@@ -25,6 +25,7 @@
                         <li><a href="{{ url('admin/games') }}">Games</a></li>
                         <li><a href="{{ url('admin/article-categories') }}">Article categories</a></li>
                         <li><a href="{{ url('admin/download-categories') }}">Download categories</a></li>
+                        <li><a href="{{ url('admin/pages') }}">Static pages</a></li>
                     </ul>
                 @endcan
                 {{--        @can('super-admin')--}}

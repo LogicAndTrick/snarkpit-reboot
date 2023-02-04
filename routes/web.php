@@ -20,6 +20,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 Route::get('/opensearch.xml', [\App\Http\Controllers\SearchController::class, 'opensearchdescription']);
+Route::get('/page/{slug}', [\App\Http\Controllers\PageController::class, 'getPage']);
 
 $controllers = [
     'ban' => \App\Http\Controllers\BanController::class,

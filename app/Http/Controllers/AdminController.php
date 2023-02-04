@@ -8,6 +8,7 @@ use App\Models\Ban;
 use App\Models\DownloadCategory;
 use App\Models\Game;
 use App\Models\Map;
+use App\Models\Page;
 use App\Models\Spotlight;
 use App\Models\User;
 use Carbon\Carbon;
@@ -261,6 +262,80 @@ class AdminController extends Controller
         ]);
 
         return redirect('admin/download-categories');
+    }
+
+    public function getPages() {
+        $this->admin();
+        $pages = Page::query()
+            ->orderBy('title', 'asc')
+            ->get();
+        return view('admin.pages', [
+            'pages' => $pages
+        ]);
+    }
+
+    public function getEditPage($id) {
+        $this->admin();
+        $page = Page::query()->findOrFail($id);
+        return view('admin.edit-page', [
+            'page' => $page
+        ]);
+    }
+
+    public function postEditPage(Request $request) {
+        $this->admin();
+        $id = $request->integer('id');
+        $page = Page::query()->findOrFail($id);
+
+        $this->validate($request->instance(), [
+            'title' => 'required|max:200',
+            'slug' => 'required|max:40|alpha_dash:ascii',
+            'text' => 'required|max:10000'
+        ]);
+
+        $page->update([
+            'title' => $request->string('title'),
+            'slug' => $request->string('slug'),
+            'content_text' => $request->string('text'),
+            'content_html' => bbcode($request->string('text')),
+        ]);
+
+        return redirect('page/'.$page->slug);
+    }
+
+    public function postCreatePage(Request $request) {
+        $this->admin();
+
+        $this->validate($request->instance(), [
+            'title' => 'required|max:200',
+            'slug' => 'required|max:40|alpha_dash:ascii',
+            'text' => 'required|max:10000'
+        ]);
+
+        $page = Page::create([
+            'title' => $request->string('title'),
+            'slug' => $request->string('slug'),
+            'content_text' => $request->string('text'),
+            'content_html' => bbcode($request->string('text')),
+        ]);
+
+        return redirect('page/'.$page->slug);
+    }
+
+    public function getDeletePage($id) {
+        $this->admin();
+        $page = Page::query()->findOrFail($id);
+        return view('admin.delete-page', [
+            'page' => $page
+        ]);
+    }
+
+    public function postDeletePage(Request $request) {
+        $this->admin();
+        $id = $request->integer('id');
+        $page = Page::query()->findOrFail($id);
+        $page->delete();
+        return redirect('admin/pages');
     }
 
     public function getDeployment() {
