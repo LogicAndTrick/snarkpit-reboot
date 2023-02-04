@@ -1,16 +1,10 @@
-@extends('layouts.default')
+@extends('admin.layout')
 
 @section('title', 'Admin Panel')
 
-@section('content')
-    <h1>Admin Panel</h1>
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Admin Panel</li>
-    </ol>
+@section('admin-content')
     <section>
-        @can('super-admin')
-            <h2>Super admin options</h2>
-            <a href="{{ url('admin/deployment') }}">Deploy updates</a>
-        @endcan
+        Welcome to the admin page!
+        Choose a section from the left to get started.
     </section>
 @endsection
