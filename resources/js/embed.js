@@ -24,6 +24,15 @@ function attr_esc(text) {
 }
 
 const embed_callbacks = {
+    error: function(element, json) {
+        const template = `<div class="text-center">
+            <h2><span class="fa fa-warning"></span> Error: Unable to load ${json.type}.</h2>
+        </div>`;
+        console.log(template);
+        const embed = document.createElement('div');
+        embed.innerHTML = template;
+        element.replaceWith(embed.children[0]);
+    },
     article: function(element, json) {
         const thread_link = json.forum_thread_id ?
             `<li><a href="${attr_esc(window.urls.view.thread.replace('{id}', json.forum_thread_id))}">Discussion topic &raquo;</a></li>`
@@ -123,7 +132,7 @@ const embed_cache = {};
 async function load_embed(el) {
     el.textContent = 'Loading...';
     const par = el.parentElement;
-    const typ = el.getAttribute('data-embed-type');
+    let typ = el.getAttribute('data-embed-type');
     const id = el.getAttribute('data-' + typ + '-id');
     const url = window.urls.embed[typ];
 
@@ -141,8 +150,14 @@ async function load_embed(el) {
             body: JSON.stringify({ id }),
             headers: { 'Content-Type': 'application/json' }
         });
-        json = await resp.json();
-        embed_cache[cacheKey] = json;
+        if (resp.ok) {
+            json = await resp.json();
+            embed_cache[cacheKey] = json;
+        } else {
+            json = { resp, type: typ };
+            embed_cache[cacheKey] = json;
+            typ = 'error';
+        }
     }
     embed_callbacks[typ].call(window, el, json);
     init_all_image_cyclers(document);

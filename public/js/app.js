@@ -692,6 +692,13 @@ function attr_esc(text) {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 var embed_callbacks = {
+  error: function error(element, json) {
+    var template = "<div class=\"text-center\">\n            <h2><span class=\"fa fa-warning\"></span> Error: Unable to load ".concat(json.type, ".</h2>\n        </div>");
+    console.log(template);
+    var embed = document.createElement('div');
+    embed.innerHTML = template;
+    element.replaceWith(embed.children[0]);
+  },
   article: function article(element, json) {
     var thread_link = json.forum_thread_id ? "<li><a href=\"".concat(attr_esc(window.urls.view.thread.replace('{id}', json.forum_thread_id)), "\">Discussion topic &raquo;</a></li>") : '';
     var template = "\n            <div class=\"row\">\n                <div class=\"col-3 text-center\">\n                    <img class=\"img-fluid\" src=\"".concat(attr_esc(window.urls.images.root)).concat(attr_esc(json.current_version.thumbnail_file || 'images/no_image.png'), "\" alt=\"Article thumbnail\" />\n                </div>\n                <div class=\"col-6\">\n                    <h2>\n                        <a href=\"").concat(attr_esc(window.urls.view.article.replace('{slug}', json.current_version.slug)), "\">").concat(esc(json.current_version.title), "</a>\n                    </h2>\n                    <div class=\"bbcode\">").concat(esc(json.current_version.description), "</div>\n                </div>\n                <div class=\"col-3\">\n                    <ul class=\"list-unstyled\">\n                        <li>by <a href=\"").concat(attr_esc(window.urls.view.user.replace('{id}', json.user_id)), "\">").concat(json.user.name, "</a></li>\n                        <li>in <a href=\"").concat(attr_esc(window.urls.list.article), "?game=").concat(attr_esc(json.game_id), "&cat=").concat(attr_esc(json.article_category_id), "\">").concat(esc(json.game.name), " &raquo; ").concat(esc(json.category.name), "</a></li>\n                        <li>updated ").concat(esc(new Date(json.created_at).toLocaleDateString()), "</li>\n                        <li>viewed ").concat(esc(json.stat_views), " time").concat(json.stat_views == 1 ? '' : 's', "</li>\n                        ").concat(thread_link, "\n                    </ul>\n                </div>\n            </div>\n        ").trim();
@@ -749,7 +756,7 @@ function _load_embed() {
               break;
             }
             json = embed_cache[cacheKey];
-            _context.next = 21;
+            _context.next = 27;
             break;
           case 14:
             _context.next = 16;
@@ -764,15 +771,28 @@ function _load_embed() {
             });
           case 16:
             resp = _context.sent;
-            _context.next = 19;
+            if (!resp.ok) {
+              _context.next = 24;
+              break;
+            }
+            _context.next = 20;
             return resp.json();
-          case 19:
+          case 20:
             json = _context.sent;
             embed_cache[cacheKey] = json;
-          case 21:
+            _context.next = 27;
+            break;
+          case 24:
+            json = {
+              resp: resp,
+              type: typ
+            };
+            embed_cache[cacheKey] = json;
+            typ = 'error';
+          case 27:
             embed_callbacks[typ].call(window, el, json);
             init_all_image_cyclers(document);
-          case 23:
+          case 29:
           case "end":
             return _context.stop();
         }

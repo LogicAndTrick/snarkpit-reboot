@@ -9,6 +9,7 @@ use App\Models\ForumPollItem;
 use App\Models\ForumPollItemVote;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
+use App\Models\User;
 use App\Models\UserSubscription;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,6 +20,35 @@ use Illuminate\Validation\Rule;
 
 class ThreadController extends Controller
 {
+    public function getIndex(Request $request)
+    {
+        $query = ForumThread::with(['last_post', 'last_post.user', 'forum', 'user'])
+            ->orderBy('created_at', 'desc');
+
+        $uid = $request->integer('user');
+        if ($uid) $query = $query->where('user_id', '=', $uid);
+
+        $threads = $query->paginate(50)->appends($request->except('page'));
+
+        return view('thread.index', [
+            'threads' => $threads
+        ]);
+    }
+
+    public function getLocatePost($id) {
+        $post = ForumPost::findOrFail($id);
+        $thread = ForumThread::findOrFail($post->thread_id);
+        $forum = Forum::findOrFail($thread->forum_id);
+        $all_posts = $thread->posts;
+        $index = 0;
+        for ($index = 0; $index < $all_posts->count(); $index++) {
+            $p = $all_posts[$index];
+            if ($p->id == $id) break;
+        }
+        $page = ceil(($index+1) / 50);
+        return redirect('thread/view/'.$thread->id.'?page='.$page.'#post-'.$id);
+    }
+
     public function getView(Request $request, $id) {
         $thread = ForumThread::with(['user'])->findOrFail($id);
         $forum = Forum::findOrFail($thread->forum_id);

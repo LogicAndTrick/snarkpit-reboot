@@ -73,7 +73,7 @@
                         </div>
                         <div class="flex-fill" style="min-width: 0;">
                             <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
-                                <a href="{{ url('thread/view', [ $thread->id ]) }}">{{ $thread->title }}</a>
+                                <a href="{{ url('thread/view', [ $thread->id ]) }}?page=last">{{ $thread->title }}</a>
                             </span>
                             <small class="d-flex justify-content-between flex-row flex-md-column flex-xxl-row">
                                 <span>in {{ $thread->forum->name }}</span>
@@ -92,7 +92,7 @@
                     <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
                         <span class="text-danger">[{{$update->type}}]</span>
                         @if ($update->type == 'download')
-                            <a href="{{ url('thread/view', [ $update->thread_id ]) }}">{{ $update->name }}</a>
+                            <a href="{{ url('download/view', [ $update->id ]) }}">{{ $update->name }}</a>
                         @elseif ($update->type == 'article')
                             <a href="{{ url('article/view', [ $update->slug ]) }}">{{ $update->name }}</a>
                         @else

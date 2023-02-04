@@ -19837,6 +19837,12 @@ button[type=submit]:not(.not-submit):disabled {
   flex: 0 0 10rem;
   border-right: 1px solid rgba(204, 204, 204, 0.25);
 }
+.forum-post .post-id {
+  opacity: 0.8;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
 
 .user-avatar-details {
   font-size: 90%;

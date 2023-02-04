@@ -16,7 +16,7 @@
             <div class="d-flex flex-row my-3">
                 <span class="align-self-center mx-3"><span class="fa fa-search"></span></span>
                 <div class="flex-fill">
-                    <input type="text" class="form-control" name="search" placeholder="Search" value="{{ $search }}">
+                    <input type="search" class="form-control" name="search" placeholder="Search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="mx-3 btn">Search</button>
             </div>

@@ -77,8 +77,8 @@
                             <a class="nav-link" href="{{ url('link') }}">Links</a>
                         </li>
                     </ul>
-                    <form class="d-flex mt-3" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <form action="{{ url('search/index') }}" method="get">
+                        <input class="form-control me-2" name="search" type="search" placeholder="Search">
                         <button class="btn btn-success" type="submit">Search</button>
                     </form>
                 </div>

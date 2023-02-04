@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+    public function getIndex(Request $request)
+    {
+        $query = ForumPost::with(['thread'])
+            ->orderBy('created_at', 'desc');
+
+        $uid = $request->integer('user');
+        if ($uid) $query = $query->where('user_id', '=', $uid);
+
+        $posts = $query->paginate(50)->appends($request->except('page'));
+
+        return view('post.index', [
+            'posts' => $posts
+        ]);
+    }
+
     public function postCreate(Request $request) {
         $id = intval($request->input('thread_id'));
         $thread = ForumThread::findOrFail($id);

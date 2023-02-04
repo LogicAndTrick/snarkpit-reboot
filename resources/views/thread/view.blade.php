@@ -1,4 +1,4 @@
-@section('title', 'Forum posts')
+@section('title', $thread->title)
 @extends('layouts.default')
 
 @section('scripts')
@@ -102,7 +102,7 @@
     @endif
 
     <nav class="nav-header bg-body">
-        <div class="btn-group">
+        <div class="btn-group me-auto">
             @auth
                 <a class="btn" href="#reply">
                     <span class="fa fa-plus"></span> Post Reply
@@ -111,7 +111,7 @@
         </div>
         {{ $posts->render() }}
         @auth
-            <div class="btn-group">
+            <div class="btn-group ms-2">
                 @if ($subscription)
                     <a href="{{ url('thread/unsubscribe', [$thread->id]) }}" class="btn"><span class="fa fa-bell-slash"></span> Unsubscribe</a>
                     <a href="{{ url('thread/subscribe-email-toggle', [$thread->id]) }}" class="btn">
@@ -126,13 +126,16 @@
     </nav>
 
     @foreach ($posts as $post)
-        <section class="forum-post">
+        <section class="forum-post" id="post-{{$post->id}}">
             <header>
                 <div class="me-auto">
                     <small>Re: {{$thread->title}}</small>
                     <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on {{$post->created_at->format('D M jS Y \a\\t g:ia')}}</small>
                 </div>
                 <div class="mt-1">
+                    <span class="post-id">
+                        <a href="{{ url('thread/locate-post', [$post->id]) }}">Post #{{$post->id}}</a>
+                    </span>
                     <a href="#" class="btn" title="Quote post"><span class="fas fa-quote-left"></span></a>
                     @can('edit-post', $post, $thread)
                         <a href="{{ url('post/edit', $post->id) }}" class="btn btn-outline-primary" title="Edit post"><span class="fas fa-pencil"></span></a>
