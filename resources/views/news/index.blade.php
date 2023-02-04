@@ -21,7 +21,9 @@
 
     @foreach ($newses as $news)
         <section id="news-{{ $news->id }}">
-            <h2>{{ $news->subject }}</h2>
+            <h2>
+                <a href="{{ url('news/view', [$news->id]) }}">{{ $news->subject }}</a>
+            </h2>
             <h3 class="small">
                 {{ $news->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="{{ url('user/view', [ $news->user->id ]) }}">{{ $news->user->name }}</a>
                 @can('moderator')

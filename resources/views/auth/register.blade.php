@@ -1,5 +1,5 @@
 @extends('layouts.default')
-
+@section('title', 'Register account')
 @section('scripts')
     {!! ReCaptcha::htmlScriptTagJsApi() !!}
 @endsection

@@ -1,4 +1,5 @@
 @extends('layouts.default')
+@section('title', 'Account activation')
 
 @section('content')
     <h1>Account activation</h1>

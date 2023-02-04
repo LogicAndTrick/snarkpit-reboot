@@ -374,4 +374,29 @@ class ArticleController extends Controller
         // Don't create forum thread yet - article isn't approved
         return redirect('article/view/'.$version->id);
     }
+
+    public function getDelete($id) {
+        $this->loggedIn();
+        $article = Article::findOrFail($id);
+        $version = $article->current_version;
+        if (!$version) $version = ArticleVersion::query()->where('article_id', '=', $id)->orderByDesc('id')->firstOrFail();
+        abort_unless($version->canDelete(), 403);
+
+        return view('article.delete', [
+            'article' => $article,
+            'version' => $version
+        ]);
+    }
+
+    public function postDelete(Request $request) {
+        $this->loggedIn();
+        $id = $request->integer('id');
+        $article = Article::findOrFail($id);
+        $version = $article->current_version;
+        if (!$version) $version = ArticleVersion::query()->where('article_id', '=', $id)->orderByDesc('id')->firstOrFail();
+        abort_unless($version->canDelete(), 403);
+        $article->is_active = false;
+        $article->save();
+        return redirect('article');
+    }
 }

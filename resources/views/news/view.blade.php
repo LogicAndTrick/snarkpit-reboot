@@ -1,4 +1,4 @@
-@section('title', 'News posts')
+@section('title', $news->subject)
 @extends('layouts.default')
 
 @section('content')

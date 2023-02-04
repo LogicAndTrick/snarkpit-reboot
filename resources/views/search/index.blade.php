@@ -1,4 +1,4 @@
-@section('title', $searched ? 'Search results' : 'Search The SnarkPit')
+@section('title', $searched ? 'Search results' : 'Search')
 @extends('layouts.default')
 
 @section('content')

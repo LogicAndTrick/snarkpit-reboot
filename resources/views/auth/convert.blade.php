@@ -1,4 +1,5 @@
 @extends('layouts.default')
+@section('title', 'First time login')
 
 @section('content')
     <h1>Welcome to Snarkpit v7!</h1>

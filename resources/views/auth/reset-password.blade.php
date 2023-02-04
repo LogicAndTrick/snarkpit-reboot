@@ -1,5 +1,5 @@
 @extends('layouts.default')
-
+@section('title', 'Reset password')
 @section('content')
 
     <form method="POST" action="{{ route('password.update') }}">

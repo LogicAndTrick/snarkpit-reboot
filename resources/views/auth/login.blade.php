@@ -1,5 +1,5 @@
 @extends('layouts.default')
-
+@section('title', 'Login')
 @section('content')
     <h1>User login</h1>
     <section>

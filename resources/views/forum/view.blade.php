@@ -1,4 +1,4 @@
-@section('title', 'Forum posts')
+@section('title', $forum->name)
 @extends('layouts.default')
 
 @section('content')

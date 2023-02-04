@@ -35,8 +35,8 @@
             };
         </script>
         <script src="{{ asset('js/app.js') }}" defer></script>
-        <?php $page_title = \Illuminate\Support\Facades\View::yieldContent('title'); ?>
-        <title>{{$page_title}} - The SnarkPit</title>
+        <?php $page_title = htmlspecialchars_decode(\Illuminate\Support\Facades\View::yieldContent('title')); ?>
+        <title>{{$page_title ? $page_title.' - ' : ''}}The SnarkPit - Half-Life maps, downloads, tutorials</title>
         <meta content="The SnarkPit" property="og:site_name">
         @if (isset($meta_description) && strlen($meta_description) > 0)
             <?php $meta_description = str_replace("\n", ' ', substr($meta_description, 0, 300)) . (strlen($meta_description) > 300 ? '...' : ''); ?>

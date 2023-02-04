@@ -1,4 +1,4 @@
-@section('title', 'View message')
+@section('title', 'View message: ' . $message->title)
 @extends('layouts.default')
 
 @section('content')

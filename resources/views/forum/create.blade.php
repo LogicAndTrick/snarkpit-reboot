@@ -1,4 +1,4 @@
-@section('title', 'Create forum post')
+@section('title', 'Create forum')
 
 @extends('layouts.default')
 

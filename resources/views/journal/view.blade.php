@@ -1,4 +1,4 @@
-@section('title', $journal->name)
+@section('title', $journal->title)
 @extends('layouts.default')
 
 @section('content')
