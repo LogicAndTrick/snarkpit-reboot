@@ -36,6 +36,12 @@ class DeployPages extends Command
             'content_text' => self::ABOUT_US_PAGE,
             'content_html' => bbcode(self::ABOUT_US_PAGE)
         ]);
+        Page::create([
+            'title' => 'Contact us',
+            'slug' => 'contact',
+            'content_text' => 'If you are having any troubles with the site, please contact the site admin, Riven, at <EMAIL_HERE>.',
+            'content_html' => 'If you are having any troubles with the site, please contact the site admin, Riven, at &lt;EMAIL_HERE&gt;.'
+        ]);
 
         return Command::SUCCESS;
     }

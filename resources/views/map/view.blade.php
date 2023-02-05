@@ -90,7 +90,7 @@
                             <li>{{ $map->stat_ratings }} rating{{ $map->stat_ratings == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_views }} view{{ $map->stat_views == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_downloads }} download{{ $map->stat_downloads == 1 ? '' : 's' }}</li>
-                            <li>game: <a href="#">{{$map->game->name}}</a></li>
+                            <li>game: <a href="{{ url('map') }}?game={{$map->game_id}}">{{$map->game->name}}</a></li>
                             <li>added <x-date :date="$map->created_at" format="date" /></li>
                             <li>updated <x-date :date="$map->updated_at" format="date" /></li>
                         </ul>

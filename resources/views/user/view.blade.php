@@ -201,7 +201,7 @@ $attribs = [
                             <div class="col-9">
                                 <h2>{{ $download->name }}</h2>
                                 <h3 class="small">
-                                    in <a href="#">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a>
+                                    in <a href="{{ url("download?game=$download->game_id&cat=$download->download_category_id") }}">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a>
                                 </h3>
                                 <div class="bbcode">{!! $download->content_html !!}</div>
                             </div>

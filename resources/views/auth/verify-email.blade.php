@@ -24,7 +24,7 @@
                     <button type="submit">Log Out</button>
                 </form>
 
-                <p>If you continue to experience difficulties, please <a href="#">contact</a> a site admin for further assistance.</p>
+                <p>If you continue to experience difficulties, please <a href="{{ url('page/contact') }}">contact</a> a site admin for further assistance.</p>
             </div>
         </div>
     </section>
