@@ -19599,6 +19599,14 @@ dd {
   font-size: 2rem;
 }
 
+.nice-date {
+  border-bottom: 1px dashed rgba(127, 127, 127, 0.5);
+  cursor: default;
+}
+.nice-date:hover {
+  border-bottom: 1px dashed rgba(127, 127, 127, 0.75);
+}
+
 h1, .h1 {
   border-top: 1px solid #900;
   border-bottom: 1px solid #900;

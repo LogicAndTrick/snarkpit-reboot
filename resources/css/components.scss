@@ -26,3 +26,12 @@
     }
   }
 }
+
+.nice-date {
+  border-bottom: 1px dashed rgba(127, 127, 127, 0.5);
+  cursor: default;
+
+  &:hover {
+    border-bottom: 1px dashed rgba(127, 127, 127, 0.75);
+  }
+}

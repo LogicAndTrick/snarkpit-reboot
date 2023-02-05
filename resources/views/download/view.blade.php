@@ -39,7 +39,7 @@
                     @endif
                     <li>by <a href="{{ url('user/view', [ $download->user->id ]) }}">{{ $download->user->name }}</a></li>
                     <li>in <a href="{{ url("download?game=$download->game_id&cat=$download->download_category_id") }}">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a></li>
-                    <li>updated {{ $download->created_at->format("D M jS Y") }}</li>
+                    <li>updated <x-date :date="$download->created_at" format="date" /></li>
                     <li>downloaded {{ $download->stat_downloads }} time{{ $download->stat_downloads == 1 ? '' : 's' }}</li>
                     <li><a href="{{ url('thread/view', $download->thread_id) }}">Discussion topic &raquo;</a></li>
                 </ul>
@@ -62,7 +62,7 @@
             <section>
                 <div class="d-flex justify-content-between">
                     <div>
-                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on <x-date :date="$post->created_at" format="full" />
                     </div>
                     <div>
                         @if ($post->user_id == $download->user_id)

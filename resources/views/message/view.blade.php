@@ -31,7 +31,7 @@
                 To <a href="{{ url('user/view', [$message->to_user_id]) }}">{{ $message->to_user->name }}</a>
             @endif
             &bull;
-            {{$message->created_at->format("D M jS Y \a\\t g:ia")}}
+            <x-date :date="$message->created_at" format="full" />
         </h3>
         <div class="card my-3">
             <div class="card-body bbcode">

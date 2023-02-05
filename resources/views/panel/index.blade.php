@@ -63,10 +63,10 @@
     use Illuminate\Support\Facades\Gate;
     $split = [];
     $attribs = [
-        'Registered' => $user->created_at->format('M jS Y'),
+        'Registered' => $user->created_at,
         'Email' => $user->show_email || Gate::allows('admin') ? $user->email : false,
         'Website' => $user->info_website,
-        'Last seen' => $user->last_access_time ? $user->last_access_time->format('M jS Y') : false,
+        'Last seen' => $user->last_access_time,
         'Location' => $user->info_location,
         'Occupation' => $user->info_occupation,
         'Interests' => $user->info_interests,
@@ -100,6 +100,12 @@
                         <dt class="col-sm-3 text-sm-end">{{$label}}:</dt>
                         <dd class="col-sm-9">
                             @switch($label)
+                                @case('Registered')
+                                    <x-date :date="$value" format="date" />
+                                    @break
+                                @case('Last seen')
+                                    <x-date :date="$value" format="date" />
+                                    @break
                                 @case('Website')
                                     <a href="{{$value}}">{{$value}}</a>
                                     @break

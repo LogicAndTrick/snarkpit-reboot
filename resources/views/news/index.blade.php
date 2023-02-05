@@ -25,7 +25,7 @@
                 <a href="{{ url('news/view', [$news->id]) }}">{{ $news->subject }}</a>
             </h2>
             <h3 class="small">
-                {{ $news->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="{{ url('user/view', [ $news->user->id ]) }}">{{ $news->user->name }}</a>
+                <x-date :date="$news->created_at" format="full" /> by <a href="{{ url('user/view', [ $news->user->id ]) }}">{{ $news->user->name }}</a>
                 @can('moderator')
                     | <a href="{{ url('news/edit', [$news->id]) }}">edit</a>
                     | <a href="{{ url('news/delete', [$news->id]) }}">delete</a>

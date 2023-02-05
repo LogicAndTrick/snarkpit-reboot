@@ -91,8 +91,8 @@
                             <li>{{ $map->stat_views }} view{{ $map->stat_views == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_downloads }} download{{ $map->stat_downloads == 1 ? '' : 's' }}</li>
                             <li>game: <a href="#">{{$map->game->name}}</a></li>
-                            <li>added {{ $map->created_at->format("D M jS Y") }}</li>
-                            <li>updated {{ $map->updated_at->format("D M jS Y") }}</li>
+                            <li>added <x-date :date="$map->created_at" format="date" /></li>
+                            <li>updated <x-date :date="$map->updated_at" format="date" /></li>
                         </ul>
                     </section>
                 </div>
@@ -119,7 +119,7 @@
             <section>
                 <div class="d-flex justify-content-between">
                     <div>
-                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on <x-date :date="$post->created_at" format="full" />
                     </div>
                     <div>
                         @if ($post->user_id == $map->user_id)

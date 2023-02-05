@@ -15,7 +15,11 @@
             @endif
             @if ($ban->ends_at)
                 <br/>
-                You will remain banned until: <strong>{{ $ban->ends_at->format('Y-m-d H:i:s') }} UTC ({{ $ban->ends_at->diffForHumans() }})</strong>
+                You will remain banned until:
+                <strong>
+                    <x-date :date="$ban->ends_at" format="raw" zone="utc" />
+                    (<x-date :date="$ban->ends_at" />)
+                </strong>
             @endif
         </p>
         <form action="{{ url('account/logout') }}" method="post">

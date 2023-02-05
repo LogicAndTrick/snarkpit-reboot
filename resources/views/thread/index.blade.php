@@ -60,7 +60,7 @@
                     <td class="col-stat text-muted">{{ $thread->stat_views }}</td>
                     <td class="col-last-post">
                         @if ($thread->last_post)
-                            <span class="d-block">{{ $thread->last_post->created_at->format("D M jS Y \a\\t g:ia") }}</span>
+                            <span class="d-block"><x-date :date="$thread->last_post->created_at" format="full" /></span>
                             <span>by <a href="{{ url('user/view', [ $thread->last_post->user->id ]) }}">{{ $thread->last_post->user->name }}</a></span>
                         @endif
                     </td>

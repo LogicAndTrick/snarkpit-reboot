@@ -24,7 +24,7 @@
             <header>
                 <div class="me-auto">
                     <small>Re: <a href="{{ url('thread/view', [$post->thread_id]) }}">{{$post->thread->title}}</a></small>
-                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on {{$post->created_at->format('D M jS Y \a\\t g:ia')}}</small>
+                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
                 </div>
                 <div class="mt-1">
                     <span class="post-id">

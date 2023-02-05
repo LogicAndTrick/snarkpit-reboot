@@ -41,7 +41,7 @@
                             {{ $notify->type_description }}
                         </td>
                         <td><a href="{{ $notify->link }}">{{ $notify->title && strlen($notify->title) > 0 ? $notify->title : '[No title]' }}</a></td>
-                        <td>{{ $notify->created_at->format('Y-m-d H:i:s') }}Z ({{ $notify->created_at->diffForHumans() }})</td>
+                        <td><x-date :date="$notify->created_at" /></td>
                     </tr>
                 @endforeach
             </tbody>

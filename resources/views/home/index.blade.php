@@ -76,7 +76,7 @@
                             <small class="d-flex justify-content-between flex-row flex-md-column flex-xxl-row">
                                 <span>in {{ $thread->forum->name }}</span>
                                 <span>
-                                    {{$thread->last_post->created_at->fromNow(null, true)}}
+                                    <x-date :date="$thread->last_post->created_at" format="short" />
                                     by <a href="{{ url('user/view', [ $thread->last_post->user->id ]) }}">{{$thread->last_post->user->name}}</a>
                                 </span>
                             </small>
@@ -99,7 +99,7 @@
                     </span>
                     <div class="text-end">
                         <small>
-                            {{$update->updated_at->fromNow(null, true)}}
+                            <x-date :date="$update->updated_at" format="short" />
                             by <a href="{{ url('user/view', [ $update->user_id ]) }}">{{$update->user->name}}</a>
                         </small>
                     </div>
@@ -112,7 +112,7 @@
                 <section>
                     <h2>{{ $n->subject }}</h2>
                     <h3 class="small">
-                        {{ $n->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="{{ url('user/view', [ $n->user->id ]) }}">{{ $n->user->name }}</a>
+                        <x-date :date="$n->created_at" format="full" /> by <a href="{{ url('user/view', [ $n->user->id ]) }}">{{ $n->user->name }}</a>
                         @can('moderator')
                             | <a href="{{ url('news/edit', [$n->id]) }}">edit</a>
                             | <a href="{{ url('news/delete', [$n->id]) }}">delete</a>
@@ -133,7 +133,7 @@
                     </span>
                     <div>
                         <small>
-                            {{$journal->updated_at->fromNow(null, true)}}
+                            <x-date :date="$journal->updated_at" format="short" />
                             by <a href="{{ url('user/view', [ $journal->user_id ]) }}">{{$journal->user->name}}</a>
                         </small>
                     </div>

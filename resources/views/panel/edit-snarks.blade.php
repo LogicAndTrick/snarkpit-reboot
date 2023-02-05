@@ -21,7 +21,7 @@
                 <th>Snarkmarks</th>
                 <th>Description</th>
                 <th>Added by</th>
-                <th>Added on</th>
+                <th>Added</th>
                 <th></th>
             </tr>
             @foreach ($snarks as $snark)
@@ -29,7 +29,7 @@
                     <td>{{ $snark->snarkmarks }}</td>
                     <td>{{ $snark->description }}</td>
                     <td>{{ $snark->added_user->name }}</td>
-                    <td>{{ $snark->created_at->format('Y-m-d H:i:s') }}Z ({{ $snark->created_at->diffForHumans() }})</td>
+                    <td><x-date :date="$snark->created_at" format="nice" /></td>
                     <td>
                         <form action="{{ url('panel/delete-snark') }}" method="post">
                             @csrf

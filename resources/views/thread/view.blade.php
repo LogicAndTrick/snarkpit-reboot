@@ -54,9 +54,9 @@
             <div class="text-center mb-2">
                 <h4 class="mb-0">{{$poll->title}}</h4>
                 @if ($poll->isClosed())
-                    <small>(poll ended on {{$poll->close_date->format('D M jS Y \a\\t g:ia')}})</small>
+                    <small>(poll ended on <x-date :date="$poll->close_date" format="full" />)</small>
                 @else
-                    <small>(poll open until {{$poll->close_date->format('D M jS Y \a\\t g:ia')}})</small>
+                    <small>(poll open until <x-date :date="$poll->close_date" format="full" />)</small>
                 @endif
             </div>
             <form method="POST" action="{{ url('thread/vote') }}">
@@ -130,7 +130,7 @@
             <header>
                 <div class="me-auto">
                     <small>Re: {{$thread->title}}</small>
-                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on {{$post->created_at->format('D M jS Y \a\\t g:ia')}}</small>
+                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
                 </div>
                 <div class="mt-1">
                     <span class="post-id">

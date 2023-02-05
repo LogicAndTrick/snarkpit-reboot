@@ -23,7 +23,7 @@
         <section id="journal-{{ $journal->id }}">
             <h2><a href="{{ url('journal/view', [ $journal->id ]) }}">{{ $journal->title }}</a></h2>
             <h3 class="small">
-                Posted {{$journal->updated_at->fromNow(null, true)}}
+                <x-date :date="$journal->updated_at" />
                 by <a href="{{ url('user/view', [ $journal->user_id ]) }}">{{$journal->user->name}}</a>
                 @if($journal->canEdit())
                     | <a href="{{ url('journal/edit', [$journal->id]) }}">edit</a>

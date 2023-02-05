@@ -90,7 +90,7 @@
                         @endif
                         <li>by <a href="{{ url('user/view', [ $download->user->id ]) }}">{{ $download->user->name }}</a></li>
                         <li>in <a href="{{ url("download?game=$download->game_id&cat=$download->download_category_id") }}">{{ $download->game->name }} &raquo; {{ $download->category->name }}</a></li>
-                        <li>updated {{ $download->created_at->format("D M jS Y") }}</li>
+                        <li>updated <x-date :date="$download->created_at" format="date" /></li>
                         <li>downloaded {{ $download->stat_downloads }} time{{ $download->stat_downloads == 1 ? '' : 's' }}</li>
                         <li><a href="{{ url('thread/view', $download->thread_id) }}">Discussion topic &raquo;</a></li>
                     </ul>

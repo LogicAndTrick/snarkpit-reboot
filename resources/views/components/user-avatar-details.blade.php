@@ -44,7 +44,7 @@
     @if ($details)
         <span>{{$user->stat_forum_posts}} post{{ $user->stat_forum_posts === 1 ? '' : 's' }}</span>
         <span><span class="text-success">{{ $user->stat_snarks }}</span> snarkmarks</span>
-        <span><span class="text-muted">Registered:</span> {{$user->created_at->format('M jS Y')}}</span>
+        <span><span class="text-muted">Registered:</span> <x-date :date="$user->created_at" format="short-date" /></span>
         @if ($user->info_occupation)
             <span><span class="text-muted">Occupation:</span> {{$user->info_occupation}}</span>
         @endif

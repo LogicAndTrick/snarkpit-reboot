@@ -17,7 +17,7 @@
             <div class="well">
                 <h2>{{ $news->subject }}</h2>
                 <h3 class="small">
-                    {{ $news->created_at->format("D M jS Y \a\\t g:ia") }} by <a href="{{ url('user/view', [ $news->user->id ]) }}">{{ $news->user->name }}</a>
+                    <x-date :date="$news->created_at" format="full" /> by <a href="{{ url('user/view', [ $news->user->id ]) }}">{{ $news->user->name }}</a>
                 </h3>
                 <div class="bbcode">{!! $news->content_html !!}</div>
             </div>

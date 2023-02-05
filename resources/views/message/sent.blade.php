@@ -47,7 +47,7 @@
                         <a href="{{ url('message/view', [ $message->id ]) }}">{{$message->title}}</a>
                     </td>
                     <td><a href="{{ url('user/view', [ $message->to_user->id ]) }}">{{ $message->to_user->name }}</a></td>
-                    <td>{{$message->created_at->format("D M jS Y \a\\t g:ia")}}</td>
+                    <td><x-date :date="$message->created_at" format="full" /></td>
                 </tr>
             @endforeach
             </tbody>

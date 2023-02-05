@@ -104,7 +104,7 @@
                 <ul class="list-unstyled">
                     <li>by <a href="{{ url('user/view', [ $version->article->user->id ]) }}">{{ $version->article->user->name }}</a></li>
                     <li>in <a href="{{ url("article?game={$version->article->game_id}&cat={$version->article->article_category_id}") }}">{{ $version->article->game->name }} &raquo; {{ $version->article->category->name }}</a></li>
-                    <li>updated {{ $version->article->created_at->format("D M jS Y") }}</li>
+                    <li>updated <x-date :date="$version->article->created_at" format="date" /></li>
                     <li>viewed {{ $version->article->stat_views }} time{{ $version->article->stat_views == 1 ? '' : 's' }}</li>
                     @if ($version->article->forum_thread_id)
                         <li><a href="{{ url('thread/view', $version->article->forum_thread_id) }}">Discussion topic &raquo;</a></li>
@@ -142,7 +142,7 @@
             <section>
                 <div class="d-flex justify-content-between">
                     <div>
-                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on {{ $post->created_at->format("D M jS Y \a\\t g:ia") }}
+                        Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{$post->user->name}}</a> on <x-date :date="$post->created_at" format="full" />
                     </div>
                     <div>
                         @if ($post->user_id == $version->article->user_id)

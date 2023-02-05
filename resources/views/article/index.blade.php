@@ -92,7 +92,7 @@
                     <ul class="list-unstyled">
                         <li>by <a href="{{ url('user/view', [ $article->user->id ]) }}">{{ $article->user->name }}</a></li>
                         <li>in <a href="{{ url("article?game=$article->game_id&cat=$article->article_category_id") }}">{{ $article->game->name }} &raquo; {{ $article->category->name }}</a></li>
-                        <li>updated {{ $article->created_at->format("D M jS Y") }}</li>
+                        <li>updated <x-date :date="$article->created_at" format="date" /></li>
                         <li>viewed {{ $article->stat_views }} time{{ $article->stat_views == 1 ? '' : 's' }}</li>
                         @if ($article->forum_thread_id)
                             <li><a href="{{ url('thread/view', $article->forum_thread_id) }}">Discussion topic &raquo;</a></li>

@@ -42,7 +42,7 @@
                             @if ($forum->last_post)
                                 <span class="d-block">in <a href="{{ url('thread/view', [$forum->last_post->thread_id]) }}">{{ $forum->last_post->thread->title }}</a></span>
                                 <span class="d-block">
-                                    {{ $forum->last_post->created_at->format("D M jS Y \a\\t g:ia") }}
+                                    <x-date :date="$forum->last_post->created_at" format="full" />
                                     by <a href="{{ url('user/view', [ $forum->last_post->user->id ]) }}">{{ $forum->last_post->user->name }}</a>
                                 </span>
                             @else

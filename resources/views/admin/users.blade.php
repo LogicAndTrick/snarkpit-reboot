@@ -55,8 +55,8 @@
                     </td>
                     <td>{{$ban->reason}}</td>
                     <td>{{ $ban->ip }}</td>
-                    <td>{{ $ban->created_at->format('Y-m-d H:i:s') }}Z ({{ $ban->created_at->diffForHumans() }})</td>
-                    <td>{{ !$ban->ends_at ? 'Never' : $ban->ends_at->format('Y-m-d H:i:s') . 'Z (' . $ban->ends_at->diffForHumans() . ')' }}</td>
+                    <td><x-date :date="$ban->created_at" /></td>
+                    <td><x-date :date="$ban->ends_at" /></td>
                     <td>
                         <form action="{{ url('admin/delete-ban') }}" method="post">
                             @csrf
