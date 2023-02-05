@@ -192,8 +192,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function remove($confirmation)
     {
-        // TODO
-        throw new \Exception('Not fully implemented yet.');
         if ($confirmation != User::DEFINITELY_REMOVE_THIS_USER) return false;
 
         $deleted = Carbon::now();
@@ -206,19 +204,15 @@ class User extends Authenticatable implements MustVerifyEmail
             'forum_posts',
             'forum_threads',
             'maps',
-            // journals
+            'journals'
         ];
         $tables = [
             'downloads',
+            'bonus_snarkmarks',
         ];
 
-        // Clean up PM threads
-
-        // todo
-        // DB::statement("delete u from message_users u where u.message_id IN ( select m.id from messages m where m.user_id = ? )", [$id]);
-        // DB::statement("delete u from message_users u where u.thread_id IN ( select t.id from message_threads t where t.user_id = ? )", [$id]);
-        // DB::statement("delete u from message_thread_users u where u.thread_id IN ( select m.id from message_threads m where m.user_id = ? )", [$id]);
-        // DB::statement("delete m from messages m where m.thread_id IN ( select t.id from message_threads t where t.user_id = ? )", [$id]);
+        // Clean up messages
+        DB::statement("delete m from messages m where m.from_user_id = ?", [$id]);
 
         foreach ($soft_delete_tables as $t) {
             DB::statement("UPDATE $t SET deleted_at = ? WHERE user_id = ? and deleted_at is null", [$deleted, $id]);
@@ -232,7 +226,8 @@ class User extends Authenticatable implements MustVerifyEmail
             name = ?, email = ?, email_verified_at = null, password = 'removed',
             legacy_password = '', level = 1, remember_token = '',
             last_login_time = null, last_access_time = null, last_access_page = '', last_access_ip = '',
-            timezone = 0, show_email = 0, show_signature = 0, subscribe_topics = 0, notify_messages = 0, snow_snarks = 0, has_pit = 0,
+            timezone = 0, show_email = 0, show_signature = 0, subscribe_topics = 0, snow_snarks = 0, has_pit = 0,
+            notify_messages = 0, notify_article_review = 0, notify_forum_posts = 0, notify_forum_threads = 0, notify_journals = 0, notify_downloads = 0, notify_news = 0, notify_maps = 0,
             avatar_custom = 0, avatar_file = '',
             title_custom = 0, title_text = '',
             info_name = '', info_website = '', info_occupation = '', info_interests = '', info_location = '', info_languages = '', info_steam_profile = '', info_birthday = 0, info_biography_text = '', info_biography_html = '', info_signature_text = '', info_signature_html = '',
@@ -251,8 +246,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function obliterate($confirmation)
     {
-        // TODO
-        throw new \Exception('Not fully implemented yet.');
         if ($confirmation != User::DEFINITELY_OBLITERATE_THIS_USER) return false;
 
         $deleted = Carbon::now();
@@ -264,21 +257,19 @@ class User extends Authenticatable implements MustVerifyEmail
             'forum_posts',
             'forum_threads',
             'maps',
-            //'journals',
-            'news',
+            'journals',
         ];
         $tables = [
             'downloads',
             'forum_poll_item_votes',
             'map_ratings',
+            'news',
+            'bonus_snarkmarks',
         ];
 
-        // Clean up PM threads
-        // todo
-        // DB::statement("delete u from message_users u where u.message_id IN ( select m.id from messages m where m.user_id = ? )", [$id]);
-        // DB::statement("delete u from message_users u where u.thread_id IN ( select t.id from message_threads t where t.user_id = ? )", [$id]);
-        // DB::statement("delete u from message_thread_users u where u.thread_id IN ( select m.id from message_threads m where m.user_id = ? )", [$id]);
-        // DB::statement("delete m from messages m where m.thread_id IN ( select t.id from message_threads t where t.user_id = ? )", [$id]);
+        // Clean up messages
+        DB::statement("delete m from messages m where m.from_user_id = ?", [$id]);
+        DB::statement("delete m from messages m where m.to_user_id = ?", [$id]);
 
         foreach ($soft_delete_tables as $t) {
             DB::statement("UPDATE $t SET deleted_at = ? WHERE user_id = ?", [$deleted, $id]);
@@ -290,7 +281,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         Ban::create([
             'user_id' => $id,
-            'ip' => $this->last_access_ip ? $this->last_access_ip : null,
+            'ip' => $this->last_access_ip,
             'ends_at' => null,
             'reason' => 'You have been banned for spamming.'
         ]);
