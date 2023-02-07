@@ -402,4 +402,25 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         active.value = text;
     });
+
+    const replybox = document.querySelector('#reply textarea');
+    if (replybox) {
+        document.querySelectorAll('.quote-post').forEach(qp => {
+            const id = parseInt(qp.getAttribute('data-post-id'), 10);
+            if (!id) return;
+
+            qp.addEventListener('click', async () => {
+                const resp = await fetch(window.urls.api.get_post, {
+                    method: 'post',
+                    body: JSON.stringify({id, _token: document.head.querySelector('meta[name="csrf-token"]').content}),
+                    headers: {'Content-Type': 'application/json'}
+                });
+                if (!resp.ok) return;
+
+                const json = await resp.json();
+                const text = `[quote=${json.user.name}]\n${json.content_text}\n[/quote]`;
+                insertIntoInput(replybox, text + '\n\nCUR1', '', '');
+            });
+        });
+    }
 });

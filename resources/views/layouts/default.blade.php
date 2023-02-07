@@ -14,7 +14,8 @@
                     smiley_folder: '{{ asset('images/smilies') }}'
                 },
                 api: {
-                    format: '{{ url("api/format") }}'
+                    format: '{{ url("api/format") }}',
+                    get_post: '{{ url('api/get-post') }}'
                 },
                 embed: {
                     article: '{{ url('article/embed-info') }}',

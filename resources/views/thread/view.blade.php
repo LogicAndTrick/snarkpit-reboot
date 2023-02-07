@@ -136,7 +136,7 @@
                     <span class="post-id">
                         <a href="{{ url('thread/locate-post', [$post->id]) }}">Post #{{$post->id}}</a>
                     </span>
-                    <a href="#" class="btn" title="Quote post"><span class="fas fa-quote-left"></span></a>
+                    <a href="#reply" class="btn quote-post" data-post-id="{{ $post->id }}" title="Quote post"><span class="fas fa-quote-left"></span></a>
                     @can('edit-post', $post, $thread)
                         <a href="{{ url('post/edit', $post->id) }}" class="btn btn-outline-primary" title="Edit post"><span class="fas fa-pencil"></span></a>
                     @endcan

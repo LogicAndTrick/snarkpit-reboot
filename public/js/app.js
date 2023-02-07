@@ -728,6 +728,51 @@ window.addEventListener('DOMContentLoaded', function () {
       return _ref2.apply(this, arguments);
     };
   }());
+  var replybox = document.querySelector('#reply textarea');
+  if (replybox) {
+    document.querySelectorAll('.quote-post').forEach(function (qp) {
+      var id = parseInt(qp.getAttribute('data-post-id'), 10);
+      if (!id) return;
+      qp.addEventListener('click', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var resp, json, text;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return fetch(window.urls.api.get_post, {
+                  method: 'post',
+                  body: JSON.stringify({
+                    id: id,
+                    _token: document.head.querySelector('meta[name="csrf-token"]').content
+                  }),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+              case 2:
+                resp = _context3.sent;
+                if (resp.ok) {
+                  _context3.next = 5;
+                  break;
+                }
+                return _context3.abrupt("return");
+              case 5:
+                _context3.next = 7;
+                return resp.json();
+              case 7:
+                json = _context3.sent;
+                text = "[quote=".concat(json.user.name, "]\n").concat(json.content_text, "\n[/quote]");
+                insertIntoInput(replybox, text + '\n\nCUR1', '', '');
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      })));
+    });
+  }
 });
 
 /***/ }),
