@@ -15,6 +15,7 @@
                 },
                 api: {
                     format: '{{ url("api/format") }}',
+                    image_upload: '{{ url("api/image-upload") }}',
                     get_post: '{{ url('api/get-post') }}'
                 },
                 embed: {

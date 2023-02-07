@@ -691,19 +691,20 @@ window.addEventListener('DOMContentLoaded', function () {
               event.preventDefault();
               form = new FormData();
               form.append('image', fileData, fileName);
+              form.append('_token', document.head.querySelector('meta[name="csrf-token"]').content);
               id = Date.now();
               tempText = 'uploading image ' + id + '...';
               insertIntoInput(active, '[img:' + tempText + ']', '', '', true);
-              _context2.next = 28;
+              _context2.next = 29;
               return fetch(window.urls.api.image_upload, {
                 method: 'post',
                 body: form
               });
-            case 28:
+            case 29:
               response = _context2.sent;
-              _context2.next = 31;
+              _context2.next = 32;
               return response.json();
-            case 31:
+            case 32:
               json = _context2.sent;
               if (!response.ok) {
                 replace = 'Error: ' + json.image[0];
@@ -717,7 +718,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 text += '\n[img:' + replace + ']';
               }
               active.value = text;
-            case 36:
+            case 37:
             case "end":
               return _context2.stop();
           }

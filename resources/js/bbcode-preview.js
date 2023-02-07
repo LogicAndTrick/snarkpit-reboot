@@ -378,6 +378,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const form = new FormData();
         form.append('image', fileData, fileName);
+        form.append('_token', document.head.querySelector('meta[name="csrf-token"]').content);
 
         const id = Date.now();
 
