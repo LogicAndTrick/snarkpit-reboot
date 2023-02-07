@@ -1,10 +1,24 @@
 // Youtube
-$(document).on('click', '.video-content .uninitialised', function(event) {
-    var $t = $(this),
-        ytid = $t.data('youtube-id'),
-        url = 'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0',
-        frame = $('<iframe></iframe>').attr({ src: url, frameborder: 0, allowfullscreen: ''}).addClass('caption-body');
-    $t.replaceWith(frame);
+document.addEventListener('click', event => {
+    const target = event.target;
+    if (!target) return;
+
+    const uninit = event.target.matches('.uninitialised') ? event.target : target.closest('.uninitialised');
+    if (!uninit) return;
+
+    const yt = uninit.closest('.video-content');
+    if (!yt) return;
+
+    const ytid = target.getAttribute('data-youtube-id');
+    const url = 'https://www.youtube.com/embed/' + ytid + '?autoplay=1&rel=0';
+
+    const frame = document.createElement('iframe');
+    frame.setAttribute('src', url);
+    frame.setAttribute('frameborder', '0');
+    frame.setAttribute('allowfullscreen', '');
+    frame.classList.add('caption-body');
+
+    target.replaceWith(frame);
 });
 
 // Articles & Maps

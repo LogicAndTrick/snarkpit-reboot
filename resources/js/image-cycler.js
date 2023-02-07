@@ -54,7 +54,7 @@ function init_image_cycler(element) {
     if (element.classList.contains('image-cycler-clickable')) {
         const containers = Array.from(element.parentElement.children);
         element.addEventListener('click', event => {
-            if (event.target && event.target.tagName == 'IMG') {
+            if (event.target && (''+event.target.tagName).toUpperCase() == 'IMG') {
                 containers.forEach(c => {
                     c.classList.toggle('col-md-12');
                     c.classList.toggle('enlarged');

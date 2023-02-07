@@ -1,5 +1,4 @@
-window.$ = require('jquery');
-
+require('./parser');
 require('./bbcode-preview');
 require('./image-cycler');
 require('./images-form');

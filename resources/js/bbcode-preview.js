@@ -1,23 +1,48 @@
+const parser = window.parser;
 
+/**
+ * Cheap jquery replacement
+ * @param type String
+ * @param cls String | undefined
+ * @param contents HTMLElement | undefined
+ * @param cback function
+ * @returns HTMLElement
+ */
+function el(type, cls, contents = undefined, cback = undefined) {
+    const element = document.createElement(type);
+    if (cls) element.className = cls;
+    if (contents) element.append(contents);
+    if (cback) cback(element);
+    return element;
+}
+
+/**
+ *
+ * @param textarea HTMLTextAreaElement
+ * @param template String
+ * @param cursor String
+ * @param cursor2 String
+ * @param force_newline Boolean
+ */
 function insertIntoInput(textarea, template, cursor, cursor2, force_newline) {
-    var val = textarea.val() || '',
-        st = textarea[0].selectionStart || 0,
-        end = textarea[0].selectionEnd || 0,
-        prev = val.substr(0, st),
+    let val = textarea.value || '',
+        st = textarea.selectionStart || 0,
+        end = textarea.selectionEnd || 0,
+        prev = val.substring(0, st),
         is_newline = prev.length === 0 || prev[prev.length] === '\n',
         before = force_newline === true && !is_newline ? prev + '\n' : prev,
         between = val.substring(st, end),
         curVal = between || cursor,
-        after = val.substr(end),
+        after = val.substring(end),
         c1i = template.indexOf('CUR1'),
         c2i = template.indexOf('CUR2'),
-        cur = template.replace('CUR1', curVal).replace('CUR2', cursor2),
-        newVal = before + cur + after;
-    textarea.val(newVal).focus();
+        cur = template.replace('CUR1', curVal).replace('CUR2', cursor2);
+    textarea.value = before + cur + after;
+    textarea.focus();
 
     if (c2i < 0) c2i = Number.MAX_VALUE;
 
-    var cstart = before.length + c1i + (c2i < c1i ? cursor2.length - 4 : 0),
+    let cstart = before.length + c1i + (c2i < c1i ? cursor2.length - 4 : 0),
         cend = cstart + curVal.length;
 
     if (between && c2i <= val.length) {
@@ -25,7 +50,8 @@ function insertIntoInput(textarea, template, cursor, cursor2, force_newline) {
         cend = cstart + cursor2.length;
     }
 
-    textarea[0].setSelectionRange(cstart, cend);
+    textarea.setSelectionRange(cstart, cend);
+    textarea.dispatchEvent(new Event('change', { bubbles: true }))
 }
 
 var buttons = [
@@ -35,6 +61,7 @@ var buttons = [
         { icon: 'underline', title: 'Underline text', template: '_CUR1_', cur1: 'underline text', cur2: '' },
         { icon: 'strikethrough', title: 'Strikethrough text', template: '~CUR1~', cur1: 'strikethrough text', cur2: '' },
         { icon: 'code', title: 'Code', template: '`CUR1`', cur1: 'code', cur2: '' },
+        { icon: 'palette', title: 'Colour', template: '[color=CUR2]CUR1[/color]', cur1: 'text', cur2: 'red' }
     ], [
         { icon: 'header', text: '1', title: 'Header 1', template: '= CUR1', cur1: 'Header', cur2: '' },
         { icon: 'header', text: '2', title: 'Header 2', template: '== CUR1', cur1: 'Header', cur2: '' },
@@ -150,119 +177,179 @@ const more_smilies = [
 
 function addButtons(container, textarea) {
 
-    var toolbar = $('<div class="btn-toolbar hidden-xs-only"></div>').appendTo(container);
+    const toolbar = el('div', 'btn-toolbar d-none d-md-flex');
+    container.append(toolbar);
 
-    for (var j = 0; j < buttons.length; j++) {
-        var group = $('<div class="btn-group btn-group-xs mr-2"></div>').appendTo(toolbar);
-        var a = buttons[j];
-        for (var i = 0; i < a.length; i++) {
-            var btn = a[i];
-            var b = $('<button type="button" class="btn btn-outline-dark btn-xs"></button>');
-            b.attr('title', btn.title);
-            if (btn.icon) b.append($('<span></span>').addClass('fa fa-' + btn.icon));
-            if (btn.text) b.append($('<span></span>').text(' ' + btn.text));
+    for (let j = 0; j < buttons.length; j++) {
+        const group = el('div', 'btn-group btn-group-xs mr-2');
+        toolbar.append(group);
+        const a = buttons[j];
+        for (let i = 0; i < a.length; i++) {
+            const btn = a[i];
+            const b = el('button', 'btn btn-outline-dark btn-xs');
+            b.setAttribute('title', btn.title);
+            if (btn.icon) b.append(el('span', 'fa fa-' + btn.icon));
+            if (btn.text) b.append(el('span', '',' ' + btn.text));
             group.append(b);
-            b.on('click', insertIntoInput.bind(window, textarea, btn.template, btn.cur1, btn.cur2, btn.force_newline));
+            b.addEventListener('click', event => {
+                insertIntoInput(textarea, btn.template, btn.cur1, btn.cur2, btn.force_newline);
+                event.preventDefault();
+            });
         }
     }
 }
 
 function addSmilies(container, textarea) {
-    const wrap = $('<div class="editor-smilies"></div>').appendTo(container);
-    wrap.append('<h2 class="text-center mb-2">Smilies</h2>');
-    const sec = $('<section></section>').appendTo(wrap);
+    const wrap = el('div', 'editor-smilies');
+    container.append(wrap);
+    wrap.append(el('h2', 'text-center mb-2', 'Smilies'));
+    const sec = el('section', '');
+    wrap.append(sec);
 
-    const visDiv = $('<div></div>').appendTo(sec);
+    const visDiv = el('div', '');
+    sec.append(visDiv);
 
     for (let i = 0; i < smilies.length; i++) {
         const s = smilies[i];
-        const sma = $('<a href="#" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
+
+        const img = document.createElement('img');
+        img.src = window.urls.images.smiley_folder + '/' + s.img + '.gif';
+        img.alt = s.code;
+
+        const sma = document.createElement('a');
+        sma.href = '#';
+        sma.title = s.code;
+
+        sma.append(img);
         visDiv.append(sma);
 
-        sma.on('click', function(event) {
+        sma.addEventListener('click', function(event) {
             event.preventDefault();
-            insertIntoInput(textarea, ' ' + $(event.currentTarget).attr('title') + ' CUR1', '', '');
+            insertIntoInput(textarea, ' ' + event.currentTarget.getAttribute('title') + ' CUR1', '', '');
         });
     }
 
-    const moreLink = $('<a href="#">Show more</a>"');
-    const moreLinkCon = $('<div class="more-link text-center"></div>').append(moreLink).appendTo(sec);
-    const moreDiv = $('<div class="d-none"></div>').appendTo(sec);
+    const moreLink = el('a', '', 'Show more', x => x.href = '#');
+    const moreLinkCon = el('div', 'more-link text-center', moreLink);
+    sec.append(moreLinkCon);
+    const moreDiv = el('div', 'd-none');
+    sec.append(moreDiv);
 
     for (let i = 0; i < more_smilies.length; i++) {
         const s = more_smilies[i];
-        const sma = $('<a href="#" title="' + s.code + '"><img src="' + window.urls.images.smiley_folder + '/' + s.img + '.gif" /></a>');
+
+        const img = document.createElement('img');
+        img.src = window.urls.images.smiley_folder + '/' + s.img + '.gif';
+        img.alt = s.code;
+
+        const sma = document.createElement('a');
+        sma.href = '#';
+        sma.title = s.code;
+
+        sma.append(img);
         moreDiv.append(sma);
 
-        sma.on('click', function(event) {
+        sma.addEventListener('click', function(event) {
             event.preventDefault();
-            insertIntoInput(textarea, ' ' + $(event.currentTarget).attr('title') + ' CUR1', '', '');
+            insertIntoInput(textarea, ' ' + event.currentTarget.getAttribute('title') + ' CUR1', '', '');
         });
     }
 
-    moreLink.on('click', event => {
-        moreLink.text(moreDiv.hasClass('d-none') ? 'Show less' : 'Show more');
-        moreDiv.toggleClass('d-none');
+    moreLink.addEventListener('click', event => {
+        moreLink.textContent = moreDiv.classList.contains('d-none') ? 'Show less' : 'Show more';
+        moreDiv.classList.toggle('d-none');
         event.preventDefault();
     });
 }
 
-$(function() {
-    $('.bbcode-input').each(function() {
-        var $t = $(this),
-            group = $('<div class="form-group"></div>'),
-            heading = $('<h4 class="d-flex"><span class="me-auto">Message preview</span></h4>)'),
-            btn = $('<button type="button" class="btn btn-info btn-xs">Update Preview</button>'),
-            card = $('<div class="card"></div>'),
-            panel = $('<div class="card-body bbcode"></div>'),
-            form = $t.closest('form'),
-            ta = $t.find('textarea'),
-            name = ta.attr('name'),
-            //help = $('<a class="pull-right" target="_blank" href="' + window.urls.wiki.formatting_guide + '">Formatting help</a>'),
-            btnCon = $('<div class="mb-1"></div>'),
-            row = $('<div class="row"></div>'),
-            colLeft = $('<div class="col-9"></div>'),
-            colRight = $('<div class="col-3"></div>');
+window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.bbcode-input').forEach(input => {
+        let group = el('div', 'form-group'),
+            heading = el('div', 'mb-1 d-flex align-items-center', el('h4', 'me-auto', 'Message preview')),
+            btn = el('button', 'btn btn-info btn-xs ms-2', 'Update Preview', x => x.type = 'button'),
+            card = el('div', 'card'),
+            panel = el('div', 'card-body bbcode'),
+            form = input.closest('form'),
+            ta = input.querySelector('textarea'),
+            name = ta.getAttribute('name'),
+            help = el('a', 'float-end btn btn-outline-secondary mb-1', 'Formatting help', x => { x.target = '_blank'; x.href = window.urls.formatting_help; }),
+            btnCon = el('div', 'mb-1'),
+            row = el('div', 'row'),
+            colLeft = el('div', 'col-9'),
+            colRight = el('div', 'col-3'),
+            livePreviewInput = el('input', 'form-check-input', undefined, x => { x.type = 'checkbox'; }),
+            livePreviewLabel = el('label', 'form-check w-auto', 'Live preview');
 
         row.append(colLeft);
         row.append(colRight);
 
-        colLeft.append($t.children());
-        $t.append(row);
+        colLeft.append(...input.children);
+        input.append(row);
 
+        livePreviewInput.checked = !document.cookie.split(';').some(x => x.includes('live_preview=no'));
+        livePreviewLabel.prepend(livePreviewInput);
+
+        heading.append(livePreviewLabel);
         heading.append(btn);
         card.append(panel);
-        group.append(heading).append(card);
+        group.append(heading, card);
         colLeft.append(group);
-        //ta.parent().prepend(help);
+        ta.parentElement.prepend(help);
 
         ta.before(btnCon);
         addButtons(btnCon, ta);
         addSmilies(colRight, ta);
 
-        var refresh = function() {
-            panel.html('Loading...');
-            $.post(window.urls.api.format + '?field=' + name, form.serializeArray(), async function(data) {
-                const event = new CustomEvent('bbcode-preview-updating', {
-                    detail: { html: data, element: panel }
-                });
-                ta[0].dispatchEvent(event);
-                panel.html(await Promise.resolve(event.detail.html));
-                panel.find('pre code').each(function() {
-                    hljs.highlightElement(this);
-                });
-                ta[0].dispatchEvent(new CustomEvent('bbcode-preview-updated', {
-                    detail: { element: panel[0] }
-                }));
+        const refresh = async function() {
+            const formData = new FormData(form);
+            const result = parser.ParseResult(formData.get(name));
+            const data = result.ToHtml();
+
+            // panel.innerText = 'Loading...';
+            // const resp = await fetch(window.urls.api.format + '?field=' + name, {
+            //     method: 'post',
+            //     body: formData
+            // });
+            // const data = await resp.text();
+            const event = new CustomEvent('bbcode-preview-updating', {
+                detail: { html: data, element: panel }
             });
+            ta.dispatchEvent(event);
+            panel.innerHTML = await Promise.resolve(event.detail.html);
+            panel.querySelectorAll('pre code').forEach(x => {
+                hljs.highlightElement(x);
+            });
+            ta.dispatchEvent(new CustomEvent('bbcode-preview-updated', {
+                detail: { element: panel }
+            }));
         };
 
-        btn.on('click', refresh);
+        btn.addEventListener('click', refresh);
+
+        let timeout = undefined;
+        const liveRefresh = function() {
+            clearTimeout(timeout);
+            if (!livePreviewInput.checked) return;
+
+            timeout = setTimeout(() => {
+                refresh();
+            }, 250);
+        };
+        input.addEventListener('input', liveRefresh);
+        input.addEventListener('change', liveRefresh);
+        livePreviewInput.addEventListener('change', () => {
+            btn.classList.toggle('d-none', livePreviewInput.checked);
+            document.cookie = `live_preview=${livePreviewInput.checked?'yes':'no'}; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+            liveRefresh();
+        });
+
+        refresh();
+        btn.classList.toggle('d-none', livePreviewInput.checked);
     });
 
     document.addEventListener('paste', async event => {
         const active = document.activeElement;
-        if (!active || !$(active).closest('.bbcode-input').length) return;
+        if (!active || !active.closest('.bbcode-input')) return;
 
         const data = event.clipboardData;
         if (!data.getData || data.items.length !== 1) return;
@@ -292,11 +379,10 @@ $(function() {
         const form = new FormData();
         form.append('image', fileData, fileName);
 
-        const $t = $(active);
         const id = Date.now();
 
         const tempText = 'uploading image ' + id + '...';
-        insertIntoInput($t, '[img:' + tempText + ']', '', '', true);
+        insertIntoInput(active, '[img:' + tempText + ']', '', '', true);
 
         const response = await fetch(window.urls.api.image_upload, { method: 'post', body: form });
         const json = await response.json();
@@ -308,12 +394,12 @@ $(function() {
         } else {
             replace = json.url;
         }
-        let text = $t.val();
+        let text = active.value;
         if (text.indexOf(tempText) >= 0) {
             text = text.replace(tempText, replace);
         } else {
             text += '\n[img:' + replace + ']';
         }
-        $t.val(text);
+        active.value = text;
     });
 });

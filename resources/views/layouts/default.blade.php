@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <script type="text/javascript">
             window.urls = {
+                formatting_help: '{{ url('page/formatting-help') }}',
                 images: {
                     root: '{{ asset('/') }}',
                     no_image: '{{ asset('images/no_image.png') }}',
