@@ -9,6 +9,7 @@ use App\Mail\ArticleSubmittedForReviewEmail;
 use App\Models\ArticleVersion;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 
 class NotifyArticleStatusChanged implements ShouldQueue
@@ -20,6 +21,9 @@ class NotifyArticleStatusChanged implements ShouldQueue
 
     public function handle(ArticleStatusChangedEvent $event)
     {
+        // Don't do anything if we're not in production
+        if (!App::isProduction()) return;
+
         switch ($event->version->status)
         {
             case ArticleVersion::STATUS_PENDING:

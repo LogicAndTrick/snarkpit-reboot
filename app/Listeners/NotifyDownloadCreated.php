@@ -6,6 +6,7 @@ use App\Events\DownloadCreatedEvent;
 use App\Mail\DownloadCreatedEmail;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 
 class NotifyDownloadCreated implements ShouldQueue
@@ -17,6 +18,9 @@ class NotifyDownloadCreated implements ShouldQueue
 
     public function handle(DownloadCreatedEvent $event)
     {
+        // Don't do anything if we're not in production
+        if (!App::isProduction()) return;
+
         // send email to admins
         $recips = User::query()
             ->where('level', '>=', 3)

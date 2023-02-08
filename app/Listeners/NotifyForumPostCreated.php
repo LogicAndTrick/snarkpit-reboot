@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserSubscription;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,6 +32,9 @@ class NotifyForumPostCreated implements ShouldQueue
      */
     public function handle(ForumPostCreatedEvent $event)
     {
+        // Don't do anything if we're not in production
+        if (!App::isProduction()) return;
+
         UserNotification::AddNotification($event->post->user_id, UserNotification::FORUM_THREAD, $event->post->thread_id);
 
         // send email to admins and thread subscribers

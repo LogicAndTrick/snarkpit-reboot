@@ -6,6 +6,7 @@ use App\Events\NewsCreatedEvent;
 use App\Mail\NewsCreatedEmail;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 
 class NotifyNewsCreated implements ShouldQueue
@@ -17,6 +18,9 @@ class NotifyNewsCreated implements ShouldQueue
 
     public function handle(NewsCreatedEvent $event)
     {
+        // Don't do anything if we're not in production
+        if (!App::isProduction()) return;
+
         // send email to admins
         $recips = User::query()
             ->where('level', '>=', 3)
