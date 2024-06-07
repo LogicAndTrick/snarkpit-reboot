@@ -43,6 +43,8 @@
                 <option value="views.asc" {{request()->get('sort') == 'views.asc' ? 'selected' : ''}}>Fewest views</option>
                 <option value="downloads.desc" {{request()->get('sort') == 'downloads.desc' ? 'selected' : ''}}>Most downloads</option>
                 <option value="downloads.asc" {{request()->get('sort') == 'downloads.asc' ? 'selected' : ''}}>Fewest downloads</option>
+                <option value="rating.desc" {{request()->get('sort') == 'rating.desc' ? 'selected' : ''}}>Best rating</option>
+                <option value="rating.asc" {{request()->get('sort') == 'rating.asc' ? 'selected' : ''}}>Worst rating</option>
                 <option value="name.asc" {{request()->get('sort') == 'name.asc' ? 'selected' : ''}}>Name A-Z</option>
                 <option value="name.desc" {{request()->get('sort') == 'name.desc' ? 'selected' : ''}}>Name Z-A</option>
             </select>
