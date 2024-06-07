@@ -13,7 +13,7 @@ class Journal extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $casts = ['created_at', 'updated_at', 'deleted_at'];
 
     protected $fillable = ['user_id', 'title', 'content_text', 'content_html'];
 

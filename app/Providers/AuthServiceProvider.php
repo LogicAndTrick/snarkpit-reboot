@@ -26,8 +26,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
-
         // Generic permissions
         Gate::define('moderator', function (User $user) {
             return $user->level >= User::LEVEL_MODERATOR;

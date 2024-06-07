@@ -14,7 +14,7 @@ class ForumPost extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $casts = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = [
         'forum_id',
         'thread_id',

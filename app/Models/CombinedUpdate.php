@@ -14,7 +14,7 @@ class CombinedUpdate extends Model
     public const TYPE_ARTICLE = 'article';
 
     // select 'map' as type, m.id, m.user_id, m.name, m.updated_at, m.game_id, null as download_category_id, null as article_category_id
-    protected $dates = [
+    protected $casts = [
         'updated_at'
     ];
 
