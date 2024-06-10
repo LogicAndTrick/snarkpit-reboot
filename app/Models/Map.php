@@ -57,7 +57,7 @@ class Map extends Model
         if ($this->download_file) {
             $files[] = [
                 'url' => url('map/download', $this->id),
-                'text' => 'Download'
+                'text' => 'SnarkPit Download'
             ];
         }
 

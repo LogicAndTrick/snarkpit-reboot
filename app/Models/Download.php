@@ -63,7 +63,7 @@ class Download extends Model
         if ($this->download_file) {
             $files[] = [
                 'url' => url('download/download', $this->id),
-                'text' => 'Download'
+                'text' => 'SnarkPit Download'
             ];
         }
 

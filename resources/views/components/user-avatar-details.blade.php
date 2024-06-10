@@ -39,7 +39,7 @@
         @if ($user->title_custom)
             <div>{{ $user->title_text }}</div>
         @endif
-        <div class="{{ $level_class }}">{{ $level_name }}</div>
+        <div class="mb-1 {{ $level_class }}">{{ $level_name }}</div>
     </div>
     @if ($details)
         <span>{{$user->stat_forum_posts}} post{{ $user->stat_forum_posts === 1 ? '' : 's' }}</span>

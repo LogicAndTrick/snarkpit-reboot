@@ -65,7 +65,7 @@
     </script>
 
     @foreach ($articles as $article)
-        <section id="article-{{ $article->id }}">
+        <section id="article-{{ $article->id }}" class="article">
             <div class="row">
                 <div class="col-3 text-center">
                     @if($article->current_version->thumbnail_file)

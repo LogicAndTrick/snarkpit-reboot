@@ -58,7 +58,7 @@
     </script>
 
     @foreach ($downloads as $download)
-        <section id="download-{{ $download->id }}">
+        <section id="download-{{ $download->id }}" class="download">
             <div class="row">
                 <div class="col-3 text-center">
                     @if($download->image_file)

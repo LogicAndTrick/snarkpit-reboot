@@ -37,8 +37,10 @@
                 @endforeach
             </select>
             <select name="sort">
-                <option value="date.desc" {{request()->get('sort') == 'date.desc' ? 'selected' : ''}}>Newest first</option>
-                <option value="date.asc" {{request()->get('sort') == 'date.asc' ? 'selected' : ''}}>Oldest first</option>
+                <option value="created.desc" {{request()->get('sort') == 'created.desc' ? 'selected' : ''}}>Newest first</option>
+                <option value="created.asc" {{request()->get('sort') == 'created.asc' ? 'selected' : ''}}>Oldest first</option>
+                <option value="modified.desc" {{request()->get('sort') == 'modified.desc' ? 'selected' : ''}}>Recently updated first</option>
+                <option value="modified.asc" {{request()->get('sort') == 'modified.asc' ? 'selected' : ''}}>Recently updated last</option>
                 <option value="views.desc" {{request()->get('sort') == 'views.desc' ? 'selected' : ''}}>Most views</option>
                 <option value="views.asc" {{request()->get('sort') == 'views.asc' ? 'selected' : ''}}>Fewest views</option>
                 <option value="downloads.desc" {{request()->get('sort') == 'downloads.desc' ? 'selected' : ''}}>Most downloads</option>

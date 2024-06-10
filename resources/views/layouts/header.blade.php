@@ -9,7 +9,9 @@
             </button>
             <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="mobile-menu">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title">The Snarkpit</h5>
+                    <h5 class="offcanvas-title">
+                        <img src="{{ asset('images/snark_logofull.svg') }}" alt="The Snarkpit" class="w-100 pe-4">
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div class="offcanvas-body">

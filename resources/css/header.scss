@@ -81,4 +81,9 @@
       background: none;
     }
   }
+  a, button.nav-link {
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
 }

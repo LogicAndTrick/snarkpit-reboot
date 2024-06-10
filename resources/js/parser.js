@@ -78,7 +78,7 @@ class MapEmbedTag extends wcp.Tags.Tag {
 const config = wcp.ParserConfiguration.Snarkpit();
 
 config.Processors.forEach(x => {
-    if (x.constructor.name == 'SmiliesProcessor') {
+    if (x.UrlFormatString) {
         x.UrlFormatString = window.urls.images.smiley_folder + '/{0}.gif';
     }
 });

@@ -111,6 +111,19 @@
                 <a href="{{ url('thread/view', [ $map->thread_id ]) }}" class="btn">View topic</a>
             </div>
             {{ $posts->render() }}
+            @auth
+                <div class="btn-group ms-2">
+                    @if ($subscription)
+                        <a href="{{ url('thread/unsubscribe', [$map->thread_id]) }}" class="btn"><span class="fa fa-bell-slash"></span> Unsubscribe</a>
+                        <a href="{{ url('thread/subscribe-email-toggle', [$map->thread_id]) }}" class="btn">
+                            <span class="fa {{$subscription->send_email ? 'fa-check' : 'fa-times'}}"></span>
+                            Currently {{$subscription->send_email ? 'sending' : 'not sending'}} emails
+                        </a>
+                    @else
+                        <a href="{{ url('thread/subscribe', [$map->thread_id]) }}" class="btn"><span class="fa fa-bell"></span> Subscribe</a>
+                    @endif
+                </div>
+            @endauth
         </nav>
         <h1>
             Discussion

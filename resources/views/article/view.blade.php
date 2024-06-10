@@ -7,7 +7,7 @@
         Snarkpit Articles
     </h1>
 
-    <section>
+    <section class="article">
         @switch($version->status)
             @case(\App\Models\ArticleVersion::STATUS_DRAFT)
                 <div class="border m-2 p-2">

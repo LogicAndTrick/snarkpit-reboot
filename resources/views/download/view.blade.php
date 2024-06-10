@@ -7,7 +7,7 @@
         Snarkpit Downloads Archive
     </h1>
 
-    <section>
+    <section class="download">
         <div class="row">
             <div class="col-3 text-center">
                 @if($download->image_file)

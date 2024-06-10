@@ -12,6 +12,7 @@ use App\Models\Map;
 use App\Models\MapImage;
 use App\Models\MapRating;
 use App\Models\MapStatus;
+use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -42,7 +43,8 @@ class MapController extends Controller
         if ($sort_field == 'downloads') $sort_field = 'stat_downloads';
         else if ($sort_field == 'name') $sort_field = 'name';
         else if ($sort_field == 'rating') $sort_field = 'stat_rating';
-        else $sort_field = 'updated_at';
+        else if ($sort_field == 'modified') $sort_field = 'updated_at';
+        else $sort_field = 'created_at';
         $maps = $maps->orderBy($sort_field, $sort_dir);
 
         $maps = $maps->paginate(12)->withQueryString();
@@ -92,7 +94,8 @@ class MapController extends Controller
 
         return view('map.view', [
             'map' => $map,
-            'posts' => $pag
+            'posts' => $pag,
+            'subscription' => UserSubscription::getSubscription(Auth::user(), UserSubscription::FORUM_THREAD, $map->thread_id, true)
         ]);
     }
 

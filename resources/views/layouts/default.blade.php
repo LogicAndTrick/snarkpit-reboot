@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <script type="text/javascript">
@@ -11,7 +11,7 @@
                 images: {
                     root: '{{ asset('/') }}',
                     no_image: '{{ asset('images/no_image.png') }}',
-                    smiley_folder: '{{ asset('images/smilies') }}'
+                    smiley_folder: '{{ '/images/smilies' }}'
                 },
                 api: {
                     format: '{{ url("api/format") }}',
