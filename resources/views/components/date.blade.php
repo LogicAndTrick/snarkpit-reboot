@@ -15,6 +15,7 @@
             'full' => $date->format("D M jS Y \a\\t g:ia"),
             'short-date' => $date->format("M jS Y"),
             'date' => $date->format("D M jS Y"),
+            'datetime' => $date->format("Y-m-d g:ia"),
             'short' => $date->diffForHumans(null, null, true),
             'nice' => $date->diffForHumans(null, null, false),
             'raw' => $raw,

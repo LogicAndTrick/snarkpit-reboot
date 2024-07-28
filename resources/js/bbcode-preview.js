@@ -197,9 +197,28 @@ function addButtons(container, textarea) {
             });
         }
     }
+
+    {
+        const ddm = el('div', 'dropdown-menu dropdown-menu-right p-1 smiley-dropdown border');
+        ddm.style.width = '300px';
+
+        const b = el('button', 'btn btn-outline-dark btn-xs dropdown-toggle');
+        b.setAttribute('data-bs-toggle', 'dropdown');
+        b.setAttribute('title', 'Smilies');
+        b.append(el('span', 'fa fa-face-smile'));
+
+        const group = el('div', 'btn-group btn-group-xs mr-2 d-lg-none');
+        group.append(b);
+        group.append(ddm);
+        toolbar.append(group);
+
+        const dd = new Dropdown(b);
+
+        addSmilies(ddm, textarea, false);
+    }
 }
 
-function addSmilies(container, textarea) {
+function addSmilies(container, textarea, more = true) {
     const wrap = el('div', 'editor-smilies');
     container.append(wrap);
     wrap.append(el('h2', 'text-center mb-2', 'Smilies'));
@@ -228,6 +247,8 @@ function addSmilies(container, textarea) {
             insertIntoInput(textarea, ' ' + event.currentTarget.getAttribute('title') + ' CUR1', '', '');
         });
     }
+
+    if (!more) return;
 
     const moreLink = el('a', '', 'Show more', x => x.href = '#');
     const moreLinkCon = el('div', 'more-link text-center', moreLink);
@@ -275,8 +296,8 @@ window.addEventListener('DOMContentLoaded', () => {
             help = el('a', 'float-end btn btn-outline-secondary mb-1', 'Formatting help', x => { x.target = '_blank'; x.href = window.urls.formatting_help; }),
             btnCon = el('div', 'mb-1'),
             row = el('div', 'row'),
-            colLeft = el('div', 'col-9'),
-            colRight = el('div', 'col-3'),
+            colLeft = el('div', 'col-12 col-lg-9'),
+            colRight = el('div', 'd-none d-lg-block col-lg-3'),
             livePreviewInput = el('input', 'form-check-input', undefined, x => { x.type = 'checkbox'; }),
             livePreviewLabel = el('label', 'form-check w-auto', 'Live preview');
 

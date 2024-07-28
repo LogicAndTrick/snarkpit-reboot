@@ -86,6 +86,9 @@ button[type="submit"]:not(.not-submit) {
   .btn-group {
     margin-right: 0.25rem;
   }
+  .btn-group-xs .btn, .btn-group .btn-xs {
+    padding: 0 0.4rem;
+  }
 }
 
 .btn-group {

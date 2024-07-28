@@ -63,7 +63,7 @@
                         <div class="d-flex flex-row">
                             <div class="text-nowrap">
                                 @foreach($thread->getIcons() as $icon)
-                                    <img src="{{ asset('/images/topic/'.$icon.'.gif') }}" alt="{{$icon}}" class="me-2" title="{{ $icon }}" />
+                                    <img src="{{ asset('/images/topic/'.$icon.'.gif') }}" alt="{{$icon}}" class="me-2 d-block d-lg-inline-block" title="{{ $icon }}" />
                                 @endforeach
                             </div>
                             <div>

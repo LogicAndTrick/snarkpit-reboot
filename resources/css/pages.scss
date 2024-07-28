@@ -32,8 +32,11 @@
     margin: 0 0.5rem 0.5rem;
     padding: 0.25rem 0;
     border-bottom: 1px solid rgba(#ccc, 0.125);
-    small {
+    & > small {
       display: block;
+    }
+    & > img {
+      max-height: 2.6rem;
     }
   }
 
@@ -61,6 +64,8 @@
   }
   > * {
     display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

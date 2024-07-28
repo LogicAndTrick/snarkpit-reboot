@@ -10,6 +10,10 @@
         background: rgb(183,183,183);
         background: linear-gradient(218deg, rgba(183,183,183,1) 0%, rgba(194,194,194,1) 100%);
         margin: 0 1.5rem;
+
+        @media (max-width: breakpoint-max('xl')) {
+          margin: 0 0.1rem;
+        }
     }
     .quick-links {
         border-radius: 0 0 1rem 1rem;
@@ -44,9 +48,9 @@
         flex-direction: row;
         justify-content: space-around;
         text-transform: uppercase;
-        font-weight: bold;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         position: relative;
+        font-family: Impact, var(--bs-body-font-family);
 
         &::before {
             content: '';
@@ -54,6 +58,7 @@
             z-index: 1;
             position: absolute;
             background-image: url("/images/header_logo_tail.png");
+            background-repeat: no-repeat;
             height: 100%;
             width: 80px;
             left: 0;
@@ -84,6 +89,8 @@
   a, button.nav-link {
     color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    font-family: Impact, var(--bs-body-font-family);
+    text-transform: uppercase;
   }
 }

@@ -48,3 +48,17 @@
 dd {
   word-break: break-word;
 }
+@media (max-width: breakpoint-max('lg')) {
+  nav > .pagination {
+    .page-item {
+      display: none;
+
+      &.active,
+      &:first-child, &:last-child,
+      &:has(+ .active), &.active + *,
+      &:has(+ * + .active), &.active + * + * {
+        display: initial;
+      }
+    }
+  }
+}

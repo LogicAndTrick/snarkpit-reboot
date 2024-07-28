@@ -7,19 +7,28 @@
 ?>
 
 @section('content')
+
     <h1>
         {{$map->name}}
         by <a href="{{ url('user/view', [ $map->user->id ]) }}">{{$map->user->name}}</a>
-        @if ($map->isEditable())
-            <small>
-                <a href="{{url('map/edit', [$map->id])}}" class="btn btn-outline-primary">Edit</a>
-                <a href="{{url('map/delete', [$map->id])}}" class="btn btn-outline-danger">Delete</a>
-            </small>
-        @endif
     </h1>
 
+    <nav class="nav-header">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url('map/index') }}">Maps</a></li>
+            <li class="breadcrumb-item"><a href="{{ url('map/index') }}?game={{ $map->game_id }}">{{$map->game->name}}</a></li>
+            <li class="breadcrumb-item active">{{ $map->name }}</li>
+        </ol>
+        @if ($map->isEditable())
+            <div class="btn-group">
+                <a href="{{url('map/edit', [$map->id])}}" class="btn btn-outline-primary btn-sm"><span class="fa fa-pencil"></span> <span class="d-none d-md-inline">Edit</span></a>
+                <a href="{{url('map/delete', [$map->id])}}" class="btn btn-outline-danger btn-sm"><span class="fa fa-times"></span> <span class="d-none d-md-inline">Delete</span></a>
+            </div>
+        @endif
+    </nav>
+
     <div class="row">
-        <div class="col-md-6 image-cycler image-cycler-clickable">
+        <div class="col-lg-6 image-cycler image-cycler-clickable">
             @forelse($map->images->sortBy('order_index') as $img)
                 <img class="img-fluid {{ $loop->first ? '' : 'd-none' }}" src="{{ asset($img->image_file) }}" />
             @empty
@@ -27,27 +36,12 @@
             @endforelse
             <span class="controls"></span>
         </div>
-        <div class="col-md-6">
+        <div class="col-lg-6">
             <div class="row gx-1">
-                <div class="col-4 d-flex flex-column">
-                    <h1>Map Download</h1>
-                    <section class="flex-fill">
-                        <ul class="list-unstyled text-center">
-                            @foreach($map->getMirrors() as $mirror)
-                                <li class="mb-1">
-                                    <a target="_blank" href="{{$mirror['url']}}" class="btn btn-primary">{{$mirror['text']}}</a>
-                                </li>
-                            @endforeach
-                            @if ($map->download_file)
-                                <li>Size: {{$map->getFileSize()}}</li>
-                            @endif
-                        </ul>
-                    </section>
-                </div>
                 <div class="col-4 d-flex flex-column">
                     <h1>Map Rating</h1>
                     <section class="flex-fill">
-                        <ul class="list-unstyled text-center">
+                        <ul class="list-unstyled text-center mb-2">
                             <li><img src="{{rating_image($map->stat_rating)}}" alt="{{$map->stat_rating}}" ></li>
                             <li>{{rating_summary($map->stat_rating, $map->stat_ratings)}}</li>
                         </ul>
@@ -82,8 +76,21 @@
                             </script>
                         @endif
                     </section>
+                    <h1>Map Download</h1>
+                    <section class="flex-fill">
+                        <ul class="list-unstyled text-center">
+                            @foreach($map->getMirrors() as $mirror)
+                                <li class="mb-1">
+                                    <a target="_blank" href="{{$mirror['url']}}" class="btn btn-primary">{{$mirror['text']}}</a>
+                                </li>
+                            @endforeach
+                            @if ($map->download_file)
+                                <li>Size: {{$map->getFileSize()}}</li>
+                            @endif
+                        </ul>
+                    </section>
                 </div>
-                <div class="col-4 d-flex flex-column">
+                <div class="col-8 d-flex flex-column">
                     <h1>Map Info</h1>
                     <section class="flex-fill">
                         <ul class="list-unstyled">

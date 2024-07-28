@@ -56,7 +56,7 @@ function init_image_cycler(element) {
         element.addEventListener('click', event => {
             if (event.target && (''+event.target.tagName).toUpperCase() == 'IMG') {
                 containers.forEach(c => {
-                    c.classList.toggle('col-md-12');
+                    c.classList.toggle('col-lg-12');
                     c.classList.toggle('enlarged');
                 });
             }

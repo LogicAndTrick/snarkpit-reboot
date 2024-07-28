@@ -128,9 +128,23 @@
     @foreach ($posts as $post)
         <section class="forum-post" id="post-{{$post->id}}">
             <header>
+                @if($post->user->avatar_custom)
+                    <img src="{{ asset('uploads/avatars/'.$post->user->avatar_file) }}" class="d-md-none me-2" />
+                @elseif($post->user->avatar_file)
+                    <img src="{{ asset('images/avatars/'.$post->user->avatar_file) }}" class="d-md-none me-2" />
+                @endif
                 <div class="me-auto">
-                    <small>Re: {{$thread->title}}</small>
-                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
+                    <div class="d-none d-md-block">
+                        <small class="d-block">Re: {{$thread->title}}</small>
+                        <small class="d-block">Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
+                    </div>
+                    <div class="d-md-none">
+                        <div class="d-flex flex-row align-items-baseline gap-3">
+                            <h5 class="mb-0"><a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a></h5>
+                            <small class="text-muted">{{$post->user->stat_forum_posts}} post{{ $post->user->stat_forum_posts === 1 ? '' : 's' }}</small>
+                        </div>
+                        <small>Posted <x-date :date="$post->created_at" format="datetime" /></small>
+                    </div>
                 </div>
                 <div class="mt-1">
                     <span class="post-id">
@@ -146,7 +160,7 @@
                 </div>
             </header>
             <div class="d-flex flex-row pb-2">
-                <x-user-avatar-details :user="$post->user" />
+                <x-user-avatar-details :user="$post->user" class="d-none d-md-block" />
                 <div class="flex-fill m-2 my-0 bbcode">
                         {!! $post->content_html !!}
                     @if ($post->add_signature && $post->user->info_signature_html)
