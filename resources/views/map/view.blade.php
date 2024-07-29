@@ -100,9 +100,12 @@
                             <li>{{ $map->stat_ratings }} rating{{ $map->stat_ratings == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_views }} view{{ $map->stat_views == 1 ? '' : 's' }}</li>
                             <li>{{ $map->stat_downloads }} download{{ $map->stat_downloads == 1 ? '' : 's' }}</li>
-                            <li>game: <a href="{{ url('map') }}?game={{$map->game_id}}">{{$map->game->name}}</a></li>
                             <li>added <x-date :date="$map->created_at" format="date" /></li>
                             <li>updated <x-date :date="$map->updated_at" format="date" /></li>
+                            <li>more content for: <a href="{{ url('map') }}?game={{$map->game_id}}">{{$map->game->name}}</a></li>
+                            @if ($map->game->url)
+                                <li>get game: <a href="{{$map->game->url}}">{{preg_replace('%[a-z]+://([^/]+).*%ix', '\1', $map->game->url)}}</a></li>
+                            @endif
                         </ul>
                     </section>
                     @can('admin')
