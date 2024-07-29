@@ -178,7 +178,9 @@
                                             <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
                                         @endif
                                     </a>
-                                    @if ($map->status_id == \App\Models\MapStatus::STATUS_BETA)
+                                    @if ($map->is_featured)
+                                        <img class="overlay d-none d-md-block" src="{{asset('images/maps/star.gif')}}" alt="Star map!" />
+                                    @elseif ($map->status_id == \App\Models\MapStatus::STATUS_BETA)
                                         <img class="overlay d-none d-md-block" src="{{asset('images/maps/beta.gif')}}" alt="Beta" />
                                     @elseif ($map->status_id == \App\Models\MapStatus::STATUS_ABANDONED)
                                         <img class="overlay d-none d-md-block" src="{{asset('images/maps/abandoned.gif')}}" alt="Abandoned" />

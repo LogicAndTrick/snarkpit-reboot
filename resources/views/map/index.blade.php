@@ -35,6 +35,7 @@
                 @foreach($statuses as $status)
                     <option value="{{$status->id}}" {{request()->get('status') == $status->id ? 'selected' : ''}}>{{$status->name}} ({{$status->count}})</option>
                 @endforeach
+                <option value="star" {{request()->get('status') == 'star' ? 'selected' : ''}}>Star maps ({{$stars->count}})</option>
             </select>
             <select name="sort">
                 <option value="created.desc" {{request()->get('sort') == 'created.desc' ? 'selected' : ''}}>Newest first</option>
@@ -92,7 +93,9 @@
                                 <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
                             @endif
                         </a>
-                        @if ($map->status_id == \App\Models\MapStatus::STATUS_BETA)
+                        @if ($map->is_featured)
+                            <img class="overlay" src="{{asset('images/maps/star.gif')}}" alt="Star map!" />
+                        @elseif ($map->status_id == \App\Models\MapStatus::STATUS_BETA)
                             <img class="overlay" src="{{asset('images/maps/beta.gif')}}" alt="Beta" />
                         @elseif ($map->status_id == \App\Models\MapStatus::STATUS_ABANDONED)
                             <img class="overlay" src="{{asset('images/maps/abandoned.gif')}}" alt="Abandoned" />

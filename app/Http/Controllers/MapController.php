@@ -31,6 +31,7 @@ class MapController extends Controller
         if ($game > 0) $maps = $maps->where('game_id', '=', $game);
         $status = intval($request->get('status'));
         if ($status > 0) $maps = $maps->where('status_id', '=', $status);
+        else if ($request->get('status') == 'star') $maps = $maps->where('is_featured', '=', 1);
         $user = intval($request->get('user'));
         if ($user > 0) $maps = $maps->where('user_id', '=', $user);
 
@@ -56,6 +57,12 @@ class MapController extends Controller
             group by c.id, c.name
             order by c.name
         ');
+        $stars = DB::selectOne('
+            select count(d.id) as count
+            from maps d
+            where d.is_featured = 1
+            ' . ($game > 0 ? "and d.game_id = $game" : '') . '
+        ');
         $games = DB::select('
             select g.id, g.name, count(d.id) as count
             from maps d
@@ -67,7 +74,8 @@ class MapController extends Controller
         return view('map.index', [
             'maps' => $maps,
             'statuses' => $statuses,
-            'games' => $games
+            'games' => $games,
+            'stars' => $stars
         ]);
     }
 
@@ -364,5 +372,18 @@ class MapController extends Controller
         RecalculateSnarkmarksEvent::dispatch($map->user_id);
 
         return redirect('map');
+    }
+
+    public function postToggleFeature(Request $request) {
+        $this->admin();
+        $id = $request->input('id');
+
+        $map = Map::findOrFail($id);
+        if (!$map->isEditable()) abort(403);
+
+        $map->is_featured = !$map->is_featured;
+        $map->save();
+
+        return redirect('map/view/'.$map->id);
     }
 }

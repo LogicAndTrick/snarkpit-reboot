@@ -42,6 +42,9 @@
                     <h1>Map Rating</h1>
                     <section class="flex-fill">
                         <ul class="list-unstyled text-center mb-2">
+                            @if ($map->is_featured)
+                                <li><img src="{{asset('/images/ratings/star_map.png')}}" alt="Star map!" ></li>
+                            @endif
                             <li><img src="{{rating_image($map->stat_rating)}}" alt="{{$map->stat_rating}}" ></li>
                             <li>{{rating_summary($map->stat_rating, $map->stat_ratings)}}</li>
                         </ul>
@@ -102,6 +105,18 @@
                             <li>updated <x-date :date="$map->updated_at" format="date" /></li>
                         </ul>
                     </section>
+                    @can('admin')
+                        <section>
+                            <form method="POST" action="{{ url('map/toggle-feature') }}" enctype="multipart/form-data">
+                                @csrf
+                                <x-hidden name="id" :value="$map->id" required />
+                                <button class="btn" type="submit">
+                                    <span class="fas fa-star"></span>
+                                    {{ $map->is_featured ? 'Remove from star maps' : 'Add to star maps' }}
+                                </button>
+                            </form>
+                        </section>
+                    @endcan
                 </div>
             </div>
             <h1>Map Description</h1>
