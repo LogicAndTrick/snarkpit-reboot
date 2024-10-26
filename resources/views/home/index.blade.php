@@ -35,7 +35,7 @@
                                                 <img class="img-fluid" src="{{ asset('images/no_image.png') }}" />
                                             @endforelse
                                             </a>
-                                            <span class="controls"></span>
+                                            <span class="controls small"></span>
                                         </div>
                                     @elseif ($spot->item_type == \App\Models\Spotlight::TYPE_DOWNLOAD)
                                         <div class="bbcode mb-0">
@@ -88,6 +88,24 @@
                                     </span>
                                 </small>
                             </div>
+                        </div>
+                    </section>
+                @endforeach
+            </div>
+            <div class="order-4 order-md-4">
+                <h1>Active Users</h1>
+                @foreach($active_users as $user)
+                    <section class="py-1">
+                        <div class="d-flex flex-row">
+                            <div class="flex-fill">
+                                @if($user->avatar_custom)
+                                    <img src="{{ asset('uploads/avatars/'.$user->avatar_file) }}" style="max-height: 1.4em;" />
+                                @elseif($user->avatar_file)
+                                    <img src="{{ asset('images/avatars/'.$user->avatar_file) }}" style="max-height: 1.4em;" />
+                                @endif
+                                <a href="{{ url('user/view', [ $user->id ]) }}">{{$user->name}}</a>
+                            </div>
+                            <x-date :date="$user->last_access_time" format="nice" />
                         </div>
                     </section>
                 @endforeach

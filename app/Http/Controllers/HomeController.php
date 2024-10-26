@@ -9,6 +9,7 @@ use App\Models\Journal;
 use App\Models\Map;
 use App\Models\News;
 use App\Models\Spotlight;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class HomeController extends Controller
@@ -25,6 +26,10 @@ class HomeController extends Controller
             ->get();
         $threads = ForumThread::with(['last_post', 'last_post.user', 'forum'])
             ->orderBy('last_post_at', 'desc')
+            ->limit(10)
+            ->get();
+        $active_users = User::query()
+            ->orderBy('last_access_time', 'desc')
             ->limit(10)
             ->get();
         $updates = CombinedUpdate::with(['user', 'game', 'article_category', 'download_category'])
@@ -49,6 +54,7 @@ class HomeController extends Controller
             'news' => $news,
             'maps' => $maps,
             'threads' => $threads,
+            'active_users' => $active_users,
             'updates' => $updates,
             'spotlights' => $spotlights,
             'journals' => $journals,
