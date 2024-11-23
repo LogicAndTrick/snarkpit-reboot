@@ -151,25 +151,7 @@
             @endforeach
         </div>
         <div class="col-md-3 order-5 order-md-5 d-flex flex-column">
-            <div class="order-3 order-md-1">
-                <h1>
-                    <a href="{{ url('journal') }}">Latest Journals</a>
-                </h1>
-                @foreach($journals as $journal)
-                    <section class="px-1 py-0">
-                        <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
-                            <a href="{{ url('journal/view', [ $journal->id ]) }}">{{ $journal->title }}</a>
-                        </span>
-                        <div>
-                            <small>
-                                <x-date :date="$journal->updated_at" format="short" />
-                                by <a href="{{ url('user/view', [ $journal->user_id ]) }}">{{$journal->user->name}}</a>
-                            </small>
-                        </div>
-                    </section>
-                @endforeach
-            </div>
-            <div class="order-1 order-md-3">
+            <div>
                 <h1>
                     <a href="{{ url('map') }}">Latest Maps</a>
                 </h1>
@@ -213,6 +195,24 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+            <div>
+                <h1>
+                    <a href="{{ url('journal') }}">Latest Journals</a>
+                </h1>
+                @foreach($journals as $journal)
+                    <section class="px-1 py-0">
+                        <span class="d-block text-nowrap overflow-hidden" style="text-overflow: ellipsis">
+                            <a href="{{ url('journal/view', [ $journal->id ]) }}">{{ $journal->title }}</a>
+                        </span>
+                        <div>
+                            <small>
+                                <x-date :date="$journal->updated_at" format="short" />
+                                by <a href="{{ url('user/view', [ $journal->user_id ]) }}">{{$journal->user->name}}</a>
+                            </small>
+                        </div>
+                    </section>
+                @endforeach
             </div>
         </div>
     </div>

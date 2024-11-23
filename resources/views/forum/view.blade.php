@@ -44,8 +44,8 @@
             <tr class="text-center">
                 <th class="col-title">Topic</th>
                 <th class="col-created-by">Posted by</th>
-                <th class="col-stat">Posts</th>
-                <th class="col-stat">Views</th>
+                <th class="col-stat col-posts">Posts</th>
+                <th class="col-stat col-views">Views</th>
                 <th class="col-last-post">Last post</th>
             </tr>
             </thead>
@@ -77,8 +77,8 @@
                     <td class="col-created-by">
                         <a href="{{ url('user/view', [ $thread->user->id ]) }}">{{ $thread->user->name }}</a>
                     </td>
-                    <td class="col-stat text-muted">{{ $thread->stat_posts }}</td>
-                    <td class="col-stat text-muted">{{ $thread->stat_views }}</td>
+                    <td class="col-stat col-posts text-muted">{{ $thread->stat_posts }}</td>
+                    <td class="col-stat col-views text-muted">{{ $thread->stat_views }}</td>
                     <td class="col-last-post">
                         @if ($thread->last_post)
                             <span class="d-block"><x-date :date="$thread->last_post->created_at" format="full" /></span>

@@ -21,6 +21,28 @@
   table td {
     vertical-align: middle;
   }
+
+  @media (max-width: breakpoint-max('md')) {
+    .col-views, .col-last-post {
+      display: none;
+    }
+    tr {
+      max-height: 3rem;
+    }
+  }
+  @media (max-width: breakpoint-max('lg')) {
+    &.thread-index .col-created-by {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    .col-title {
+      max-width: 200px;
+      word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .forum-post {
@@ -37,6 +59,18 @@
     }
     & > img {
       max-height: 2.6rem;
+    }
+
+    .post-meta {
+      margin-top: 0.25rem;
+      .btn {
+        min-width: 1.6rem;
+      }
+    }
+    @media (max-width: breakpoint-max('sm')) {
+      .post-meta {
+        margin-top: -0.5rem;
+      }
     }
   }
 

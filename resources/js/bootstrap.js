@@ -3,6 +3,7 @@ require('./bbcode-preview');
 require('./image-cycler');
 require('./images-form');
 require('./embed');
+require('./snowsnarks');
 
 const hljs = require('highlight.js/lib/core');
 hljs.registerLanguage('php', require('highlight.js/lib/languages/php'));

@@ -2,7 +2,9 @@
     <nav class="navbar navbar-dark bg-dark p-0">
         <div class="container-fluid p-0 m-0">
             <span class="navbar-brand p-0">
-                <img src="{{ asset('images/header_logo.png') }}" alt="The Snarkpit" />
+                <a href="{{ url('/') }}" class="home-link">
+                    <img src="{{ asset('images/header_logo.png') }}" alt="The Snarkpit" />
+                </a>
             </span>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobile-menu">
                 <span class="navbar-toggler-icon"></span>

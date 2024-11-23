@@ -1,0 +1,16 @@
+
+.snowfield {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: hidden;
+
+  pointer-events: none;
+  filter: drop-shadow(0 0 5px white);
+
+  .snowflake {
+    position: absolute;
+    pointer-events: initial;
+    cursor: crosshair;
+  }
+}

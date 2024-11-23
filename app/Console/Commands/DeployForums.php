@@ -70,8 +70,6 @@ class DeployForums extends Command
         });
         $this->output->writeln("\nForums done.");
 
-        // todo forum_polls
-
         // topics
         $topics = DB::select('
             select t.*

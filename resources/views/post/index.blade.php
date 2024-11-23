@@ -21,15 +21,33 @@
 
     @foreach ($posts as $post)
         <section class="forum-post" id="post-{{$post->id}}">
+            <div class="d-md-none px-2">
+                <small>Re: <a href="{{ url('thread/view', [$post->thread_id]) }}">{{$post->thread->title}}</a></small>
+            </div>
             <header>
+                @if($post->user->avatar_custom)
+                    <img src="{{ asset('uploads/avatars/'.$post->user->avatar_file) }}" class="d-md-none me-2" />
+                @elseif($post->user->avatar_file)
+                    <img src="{{ asset('images/avatars/'.$post->user->avatar_file) }}" class="d-md-none me-2" />
+                @endif
                 <div class="me-auto">
-                    <small>Re: <a href="{{ url('thread/view', [$post->thread_id]) }}">{{$post->thread->title}}</a></small>
-                    <small>Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
+                    <div class="d-none d-md-block">
+                        <small>Re: <a href="{{ url('thread/view', [$post->thread_id]) }}">{{$post->thread->title}}</a></small>
+                        <small class="d-block">Posted by <a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a> on <x-date :date="$post->created_at" format="full" /></small>
+                    </div>
+                    <div class="d-md-none">
+                        <div class="d-flex flex-row align-items-baseline gap-3">
+                            <h5 class="mb-0"><a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a></h5>
+                            <small class="text-muted d-none d-sm-inline">{{$post->user->stat_forum_posts}} post{{ $post->user->stat_forum_posts === 1 ? '' : 's' }}</small>
+                        </div>
+                        <small>Posted <x-date :date="$post->created_at" format="datetime" /></small>
+                    </div>
                 </div>
-                <div class="mt-1">
+                <div class="post-meta">
                     <span class="post-id">
                         <a href="{{ url('thread/locate-post', [$post->id]) }}">Post #{{$post->id}}</a>
                     </span>
+                    <br class="d-block d-sm-none" />
                     @can('edit-post', $post, $post->thread)
                         <a href="{{ url('post/edit', $post->id) }}" class="btn btn-outline-primary" title="Edit post"><span class="fas fa-pencil"></span></a>
                     @endcan
@@ -39,7 +57,7 @@
                 </div>
             </header>
             <div class="d-flex flex-row pb-2">
-                <x-user-avatar-details :user="$post->user" />
+                <x-user-avatar-details :user="$post->user" class="d-none d-md-block" />
                 <div class="flex-fill m-2 my-0 bbcode">
                     {!! $post->content_html !!}
                     @if ($post->add_signature && $post->user->info_signature_html)

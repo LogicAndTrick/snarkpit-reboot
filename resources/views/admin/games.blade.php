@@ -9,21 +9,21 @@
         <table class="table table-bordered table-sm">
             <tr>
                 <th>Name</th>
-                <th>Description</th>
-                <th>URL</th>
-                <th>Abbreviation</th>
+                <th class="d-none d-sm-table-cell">Description</th>
+                <th class="d-none d-xxl-table-cell">URL</th>
+                <th class="d-none d-lg-table-cell">Abbreviation</th>
                 <th>Order</th>
                 <th></th>
             </tr>
             @foreach($games as $game)
                 <tr>
-                    <td class="text-nowrap">
+                    <td>
                         <img src="{{asset('images/games/' . $game->id . '.png')}}" alt="{{$game->name}}" />
                         {{$game->name}}
                     </td>
-                    <td><div class="bbcode">{!! bbcode($game->description) !!}</div></td>
-                    <td>{{$game->url}}</td>
-                    <td>{{$game->abbreviation}}</td>
+                    <td class="d-none d-sm-table-cell"><div class="bbcode">{!! bbcode($game->description) !!}</div></td>
+                    <td class="d-none d-xxl-table-cell">{{$game->url}}</td>
+                    <td class="d-none d-lg-table-cell">{{$game->abbreviation}}</td>
                     <td>{{$game->order_index}}</td>
                     <td>
                         <a href="{{ url('admin/edit-game', [$game->id]) }}" class="btn btn-outline-primary"><span class="fa fa-pencil"></span></a>

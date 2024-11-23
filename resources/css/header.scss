@@ -93,4 +93,10 @@
     font-family: Impact, var(--bs-body-font-family);
     text-transform: uppercase;
   }
+
+  @media (max-width: 400px) {
+    .navbar-brand img {
+      margin-left: -71px;
+    }
+  }
 }

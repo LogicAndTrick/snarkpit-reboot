@@ -9,7 +9,7 @@
         <table class="table table-bordered table-sm">
             <tr>
                 <th>Item</th>
-                <th>By</th>
+                <th class="d-none d-md-table-cell">By</th>
                 <th>Position</th>
                 <th></th>
             </tr>
@@ -27,7 +27,7 @@
                             <a href="{{ url('article/view', [ $spot->item->current_version->slug ]) }}">{{$spot->item->current_version->title}}</a>
                         @endif
                     </td>
-                    <td>
+                    <td class="d-none d-md-table-cell">
                         <a href="{{ url('user/view', [ $spot->item->user->id ]) }}">{{$spot->item->user->name}}</a>
                     </td>
                     <td>
@@ -51,7 +51,7 @@
             @csrf
             <div class="form-group">
                 <label for="item_type">Item type:</label>
-                <select class="form-control" id="item_type" name="item_type">
+                <select class="form-control form-select" id="item_type" name="item_type">
                     <option value="{{ \App\Models\Spotlight::TYPE_MAP }}">Map</option>
                     <option value="{{ \App\Models\Spotlight::TYPE_ARTICLE }}">Article</option>
                     <option value="{{ \App\Models\Spotlight::TYPE_DOWNLOAD }}">Download</option>

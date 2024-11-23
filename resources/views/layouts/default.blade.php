@@ -66,7 +66,11 @@
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
         <link rel="search" type="application/opensearchdescription+xml" href="{{ url('/opensearch.xml') }}" title="The SnarkPit">
     </head>
-    <body>
+<?php
+    $body_classes = '';
+    if (isset($_GET['snow']) || date('m') == '12') $body_classes = 'snow';
+?>
+    <body class="{{$body_classes}}">
         @include('layouts.header')
         <main class="container px-0">
             @yield('content')

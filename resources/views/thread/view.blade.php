@@ -141,15 +141,16 @@
                     <div class="d-md-none">
                         <div class="d-flex flex-row align-items-baseline gap-3">
                             <h5 class="mb-0"><a href="{{ url('user/view', [ $post->user->id ]) }}">{{ $post->user->name }}</a></h5>
-                            <small class="text-muted">{{$post->user->stat_forum_posts}} post{{ $post->user->stat_forum_posts === 1 ? '' : 's' }}</small>
+                            <small class="text-muted d-none d-sm-inline">{{$post->user->stat_forum_posts}} post{{ $post->user->stat_forum_posts === 1 ? '' : 's' }}</small>
                         </div>
                         <small>Posted <x-date :date="$post->created_at" format="datetime" /></small>
                     </div>
                 </div>
-                <div class="mt-1">
+                <div class="post-meta">
                     <span class="post-id">
                         <a href="{{ url('thread/locate-post', [$post->id]) }}">Post #{{$post->id}}</a>
                     </span>
+                    <br class="d-block d-sm-none" />
                     <a href="#reply" class="btn quote-post" data-post-id="{{ $post->id }}" title="Quote post"><span class="fas fa-quote-left"></span></a>
                     @can('edit-post', $post, $thread)
                         <a href="{{ url('post/edit', $post->id) }}" class="btn btn-outline-primary" title="Edit post"><span class="fas fa-pencil"></span></a>

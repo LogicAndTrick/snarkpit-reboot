@@ -13,15 +13,15 @@
         {{ $threads->render() }}
     </nav>
 
-    <section class="p-0 thread-listing">
+    <section class="p-0 thread-listing thread-index">
         <table class="table table-striped table-hover m-0">
             <thead>
             <tr class="text-center">
                 <th class="col-title">Topic</th>
                 <th class="col-created-by">Posted by</th>
                 <th class="col-forum">Forum</th>
-                <th class="col-stat">Posts</th>
-                <th class="col-stat">Views</th>
+                <th class="col-stat col-posts">Posts</th>
+                <th class="col-stat col-views">Views</th>
                 <th class="col-last-post">Last post</th>
             </tr>
             </thead>
@@ -39,7 +39,7 @@
                         <div class="d-flex flex-row">
                             <div class="text-nowrap">
                                 @foreach($thread->getIcons() as $icon)
-                                    <img src="{{ asset('/images/topic/'.$icon.'.gif') }}" alt="{{$icon}}" class="me-2" title="{{ $icon }}" />
+                                    <img src="{{ asset('/images/topic/'.$icon.'.gif') }}" alt="{{$icon}}" class="me-2 d-block d-lg-inline-block" title="{{ $icon }}" />
                                 @endforeach
                             </div>
                             <div>
@@ -56,8 +56,8 @@
                     <td class="col-forum">
                         <a href="{{ url('forum/view', [ $thread->forum_id ]) }}">{{ $thread->forum->name }}</a>
                     </td>
-                    <td class="col-stat text-muted">{{ $thread->stat_posts }}</td>
-                    <td class="col-stat text-muted">{{ $thread->stat_views }}</td>
+                    <td class="col-stat col-posts text-muted">{{ $thread->stat_posts }}</td>
+                    <td class="col-stat col-views text-muted">{{ $thread->stat_views }}</td>
                     <td class="col-last-post">
                         @if ($thread->last_post)
                             <span class="d-block"><x-date :date="$thread->last_post->created_at" format="full" /></span>
