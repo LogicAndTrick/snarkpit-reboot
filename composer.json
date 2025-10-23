@@ -4,19 +4,19 @@
     "keywords": [],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-gd": "*",
-        "biscolab/laravel-recaptcha": "^6.1",
+        "logicandtrick/laravel-recaptcha": "^6.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/breeze": "^2.0",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
-        "logicandtrick/wikicodeparser": "^0.9.3"
+        "logicandtrick/wikicodeparser": "^0.9.7"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^2.0",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^11.0"
     },
     "autoload": {
         "files": [
@@ -65,15 +65,19 @@
             "type": "package",
             "package": {
                 "name": "logicandtrick/wikicodeparser",
-                "version": "0.9.3",
+                "version": "0.9.7",
                 "dist": {
-                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.3/wikicodeparser-php.zip",
+                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.7/wikicodeparser-php.zip",
                     "type": "zip"
                 },
                 "autoload": {
                     "classmap": ["src/"]
                 }
             }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/LogicAndTrick/laravel-recaptcha"
         }
     ]
 }
