@@ -1,3 +1,4 @@
+@use "sass:color";
 @import "variables";
 
 input, textarea, select {
@@ -7,7 +8,7 @@ input, textarea, select {
 
   &:disabled {
     background: #565656;
-    border-color: lighten($red-border, 20%);
+    border-color: color.adjust($red-border, $lightness: 20%);
   }
 }
 

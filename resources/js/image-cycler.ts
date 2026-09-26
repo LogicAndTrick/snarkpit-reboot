@@ -1,14 +1,10 @@
-document.addEventListener('DOMContentLoaded', () => {
-    init_all_image_cyclers(document);
-});
-
-window.init_all_image_cyclers = function(element) {
+export function init_all_image_cyclers(element: ParentNode) {
     element.querySelectorAll('.image-cycler').forEach(x => {
         init_image_cycler(x);
     });
 }
 
-function init_image_cycler(element) {
+function init_image_cycler(element: Element) {
     if (element.getAttribute('data-stop')) return;
     element.setAttribute('data-stop', 'true');
 
@@ -30,7 +26,7 @@ function init_image_cycler(element) {
     const label = document.createElement('span');
     label.textContent = `${curImage + 1} / ${numImages}`;
 
-    const cycle = (num) => {
+    const cycle = (num: number) => {
         images[curImage].classList.add('d-none');
         curImage += num;
         while (curImage < 0) curImage += numImages;
@@ -52,9 +48,9 @@ function init_image_cycler(element) {
     controls.append(prev, label, next);
 
     if (element.classList.contains('image-cycler-clickable')) {
-        const containers = Array.from(element.parentElement.children);
+        const containers = Array.from(element.parentElement?.children || []);
         element.addEventListener('click', event => {
-            if (event.target && (''+event.target.tagName).toUpperCase() == 'IMG') {
+            if (event.target && ('' + (event.target as Element).tagName).toUpperCase() == 'IMG') {
                 containers.forEach(c => {
                     c.classList.toggle('col-lg-12');
                     c.classList.toggle('enlarged');

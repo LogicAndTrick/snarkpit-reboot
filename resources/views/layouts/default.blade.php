@@ -4,7 +4,6 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <script type="text/javascript">
             window.urls = {
                 formatting_help: '{{ url('page/formatting-help') }}',
@@ -37,7 +36,7 @@
                 }
             };
         </script>
-        <script src="{{ asset('js/app.js') }}" defer></script>
+        @vite(['resources/css/app.scss', 'resources/js/app.ts'])
         <?php $page_title = htmlspecialchars_decode(\Illuminate\Support\Facades\View::yieldContent('title')); ?>
         <title>{{$page_title ? $page_title.' - ' : ''}}The SnarkPit - Half-Life maps, downloads, tutorials</title>
         <meta content="The SnarkPit" property="og:site_name">

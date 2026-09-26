@@ -11,7 +11,7 @@
         "laravel/breeze": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
-        "logicandtrick/wikicodeparser": "^0.9.7"
+        "logicandtrick/wikicodeparser": "^0.9.9"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^2.0",
@@ -65,9 +65,9 @@
             "type": "package",
             "package": {
                 "name": "logicandtrick/wikicodeparser",
-                "version": "0.9.7",
+                "version": "0.9.9",
                 "dist": {
-                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.7/wikicodeparser-php.zip",
+                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.9/wikicodeparser-php.zip",
                     "type": "zip"
                 },
                 "autoload": {

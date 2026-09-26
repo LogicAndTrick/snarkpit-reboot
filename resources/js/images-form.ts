@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = form.querySelector('button');
         if (!btn) return;
 
-        const max_images = parseInt(form.getAttribute('data-max-images'), 10) || 9;
+        const max_images = parseInt(form.getAttribute('data-max-images')!, 10) || 9;
 
-        const before = btn.closest('.text-center');
+        const before = btn.closest('.text-center')!;
 
         // Set the event listeners for any existing remove buttons
         form.querySelectorAll('a').forEach(remove => {
-            const div = remove.parentElement;
+            const div = remove.parentElement!;
             remove.addEventListener('click', e => {
                 e.preventDefault();
                 div.remove();

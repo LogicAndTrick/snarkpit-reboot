@@ -1,30 +1,19 @@
-const parser = window.parser;
+import parser from './parser';
+import { Dropdown } from 'bootstrap';
+import hljs from './highlight';
 
 /**
  * Cheap jquery replacement
- * @param type String
- * @param cls String | undefined
- * @param contents HTMLElement | undefined
- * @param cback function
- * @returns HTMLElement
  */
-function el(type, cls, contents = undefined, cback = undefined) {
-    const element = document.createElement(type);
+function el<T extends HTMLElement>(type: string, cls?: string, contents?: HTMLElement | string, cback?: ((el: T) => void)) {
+    const element = document.createElement(type) as T;
     if (cls) element.className = cls;
     if (contents) element.append(contents);
     if (cback) cback(element);
     return element;
 }
 
-/**
- *
- * @param textarea HTMLTextAreaElement
- * @param template String
- * @param cursor String
- * @param cursor2 String
- * @param force_newline Boolean
- */
-function insertIntoInput(textarea, template, cursor, cursor2, force_newline) {
+function insertIntoInput(textarea: HTMLTextAreaElement, template: string, cursor: string, cursor2: string, force_newline?: boolean) {
     let val = textarea.value || '',
         st = textarea.selectionStart || 0,
         end = textarea.selectionEnd || 0,
@@ -54,7 +43,21 @@ function insertIntoInput(textarea, template, cursor, cursor2, force_newline) {
     textarea.dispatchEvent(new Event('change', { bubbles: true }))
 }
 
-var buttons = [
+type ButtonDefinition = {
+    icon: string;
+    text?: string;
+    title: string;
+    template: string;
+    cur1: string;
+    cur2: string;
+    force_newline?: boolean;
+};
+type SmileyDefinition = {
+    img: string;
+    code: string;
+};
+
+const buttons: Array<ButtonDefinition[]> = [
     [
         { icon: 'bold', title: 'Bold text', template: '*CUR1*', cur1: 'bold text', cur2: '' },
         { icon: 'italic', title: 'Italic text', template: '/CUR1/', cur1: 'italic text', cur2: '' },
@@ -76,7 +79,7 @@ var buttons = [
         { icon: 'list-ol', title: 'Sorted List', template: '# CUR1', cur1: 'Item 1', cur2: '', force_newline: true },
     ]
 ];
-const smilies = [
+const smilies: SmileyDefinition[] = [
     { img: 'icon_biggrin', code: ':D' },
     { img: 'icon_smile', code: ':)' },
     { img: 'dorky', code: ':geek:' },
@@ -118,7 +121,7 @@ const smilies = [
     { img: 'thumbs_up', code: ':thumbsup:' },
     { img: 'happy_open', code: ':happy:' },
 ];
-const more_smilies = [
+const more_smilies: SmileyDefinition[] = [
     { img: 'sailor', code: ':sailor:' },
     { img: 'grenade', code: ':grenade:' },
     { img: 'popcorn', code: ':popcorn:' },
@@ -175,7 +178,7 @@ const more_smilies = [
     { img: 'snark_topic_icon', code: ':snark:' },
 ];
 
-function addButtons(container, textarea) {
+function addButtons(container: HTMLElement, textarea: HTMLTextAreaElement) {
 
     const toolbar = el('div', 'btn-toolbar d-none d-md-flex');
     container.append(toolbar);
@@ -189,7 +192,7 @@ function addButtons(container, textarea) {
             const b = el('button', 'btn btn-outline-dark btn-xs');
             b.setAttribute('title', btn.title);
             if (btn.icon) b.append(el('span', 'fa fa-' + btn.icon));
-            if (btn.text) b.append(el('span', '',' ' + btn.text));
+            if (btn.text) b.append(el('span', '', ' ' + btn.text));
             group.append(b);
             b.addEventListener('click', event => {
                 insertIntoInput(textarea, btn.template, btn.cur1, btn.cur2, btn.force_newline);
@@ -218,7 +221,7 @@ function addButtons(container, textarea) {
     }
 }
 
-function addSmilies(container, textarea, more = true) {
+function addSmilies(container: HTMLElement, textarea: HTMLTextAreaElement, more = true) {
     const wrap = el('div', 'editor-smilies');
     container.append(wrap);
     wrap.append(el('h2', 'text-center mb-2', 'Smilies'));
@@ -242,15 +245,15 @@ function addSmilies(container, textarea, more = true) {
         sma.append(img);
         visDiv.append(sma);
 
-        sma.addEventListener('click', function(event) {
+        sma.addEventListener('click', function (event) {
             event.preventDefault();
-            insertIntoInput(textarea, ' ' + event.currentTarget.getAttribute('title') + ' CUR1', '', '');
+            insertIntoInput(textarea, ' ' + (event.currentTarget as HTMLElement).getAttribute('title') + ' CUR1', '', '');
         });
     }
 
     if (!more) return;
 
-    const moreLink = el('a', '', 'Show more', x => x.href = '#');
+    const moreLink = el<HTMLAnchorElement>('a', '', 'Show more', x => x.href = '#');
     const moreLinkCon = el('div', 'more-link text-center', moreLink);
     sec.append(moreLinkCon);
     const moreDiv = el('div', 'd-none');
@@ -270,9 +273,9 @@ function addSmilies(container, textarea, more = true) {
         sma.append(img);
         moreDiv.append(sma);
 
-        sma.addEventListener('click', function(event) {
+        sma.addEventListener('click', function (event) {
             event.preventDefault();
-            insertIntoInput(textarea, ' ' + event.currentTarget.getAttribute('title') + ' CUR1', '', '');
+            insertIntoInput(textarea, ' ' + (event.currentTarget as HTMLElement).getAttribute('title') + ' CUR1', '', '');
         });
     }
 
@@ -287,18 +290,18 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.bbcode-input').forEach(input => {
         let group = el('div', 'form-group'),
             heading = el('div', 'mb-1 d-flex align-items-center', el('h4', 'me-auto', 'Message preview')),
-            btn = el('button', 'btn btn-info btn-xs ms-2', 'Update Preview', x => x.type = 'button'),
+            btn = el<HTMLButtonElement>('button', 'btn btn-info btn-xs ms-2', 'Update Preview', x => x.type = 'button'),
             card = el('div', 'card'),
             panel = el('div', 'card-body bbcode'),
-            form = input.closest('form'),
-            ta = input.querySelector('textarea'),
-            name = ta.getAttribute('name'),
-            help = el('a', 'float-end btn btn-outline-secondary mb-1', 'Formatting help', x => { x.target = '_blank'; x.href = window.urls.formatting_help; }),
+            form = input.closest('form')!,
+            ta = input.querySelector('textarea')!,
+            name = ta.getAttribute('name')!,
+            help = el<HTMLAnchorElement>('a', 'float-end btn btn-outline-secondary mb-1', 'Formatting help', x => { x.target = '_blank'; x.href = window.urls.formatting_help; }),
             btnCon = el('div', 'mb-1'),
             row = el('div', 'row'),
             colLeft = el('div', 'col-12 col-lg-9'),
             colRight = el('div', 'd-none d-lg-block col-lg-3'),
-            livePreviewInput = el('input', 'form-check-input', undefined, x => { x.type = 'checkbox'; }),
+            livePreviewInput = el<HTMLInputElement>('input', 'form-check-input', undefined, x => { x.type = 'checkbox'; }),
             livePreviewLabel = el('label', 'form-check w-auto', 'Live preview');
 
         row.append(colLeft);
@@ -315,15 +318,15 @@ window.addEventListener('DOMContentLoaded', () => {
         card.append(panel);
         group.append(heading, card);
         colLeft.append(group);
-        ta.parentElement.prepend(help);
+        ta.parentElement!.prepend(help);
 
         ta.before(btnCon);
         addButtons(btnCon, ta);
         addSmilies(colRight, ta);
 
-        const refresh = async function() {
+        const refresh = async function () {
             const formData = new FormData(form);
-            const result = parser.ParseResult(formData.get(name));
+            const result = parser.ParseResult(formData.get(name) as string);
             const data = result.ToHtml();
 
             // panel.innerText = 'Loading...';
@@ -338,7 +341,7 @@ window.addEventListener('DOMContentLoaded', () => {
             ta.dispatchEvent(event);
             panel.innerHTML = await Promise.resolve(event.detail.html);
             panel.querySelectorAll('pre code').forEach(x => {
-                hljs.highlightElement(x);
+                hljs.highlightElement(x as HTMLElement);
             });
             ta.dispatchEvent(new CustomEvent('bbcode-preview-updated', {
                 detail: { element: panel }
@@ -347,8 +350,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
         btn.addEventListener('click', refresh);
 
-        let timeout = undefined;
-        const liveRefresh = function() {
+        let timeout: number | undefined = undefined;
+        const liveRefresh = function () {
             clearTimeout(timeout);
             if (!livePreviewInput.checked) return;
 
@@ -360,7 +363,7 @@ window.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('change', liveRefresh);
         livePreviewInput.addEventListener('change', () => {
             btn.classList.toggle('d-none', livePreviewInput.checked);
-            document.cookie = `live_preview=${livePreviewInput.checked?'yes':'no'}; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+            document.cookie = `live_preview=${livePreviewInput.checked ? 'yes' : 'no'}; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             liveRefresh();
         });
 
@@ -369,11 +372,11 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('paste', async event => {
-        const active = document.activeElement;
-        if (!active || !active.closest('.bbcode-input')) return;
+        const active = document.activeElement as HTMLTextAreaElement;
+        if (!active || !active.closest('.bbcode-input') || active.tagName !== 'TEXTAREA') return;
 
         const data = event.clipboardData;
-        if (!data.getData || data.items.length !== 1) return;
+        if (!data || !data.getData || data.items.length !== 1) return;
 
         const item = data.items[0];
 
@@ -399,7 +402,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const form = new FormData();
         form.append('image', fileData, fileName);
-        form.append('_token', document.head.querySelector('meta[name="csrf-token"]').content);
+        form.append('_token', (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).content);
 
         const id = Date.now();
 
@@ -425,17 +428,17 @@ window.addEventListener('DOMContentLoaded', () => {
         active.value = text;
     });
 
-    const replybox = document.querySelector('#reply textarea');
+    const replybox = document.querySelector('#reply textarea') as HTMLTextAreaElement | null;
     if (replybox) {
         document.querySelectorAll('.quote-post').forEach(qp => {
-            const id = parseInt(qp.getAttribute('data-post-id'), 10);
+            const id = parseInt(qp.getAttribute('data-post-id')!, 10);
             if (!id) return;
 
             qp.addEventListener('click', async () => {
                 const resp = await fetch(window.urls.api.get_post, {
                     method: 'post',
-                    body: JSON.stringify({id, _token: document.head.querySelector('meta[name="csrf-token"]').content}),
-                    headers: {'Content-Type': 'application/json'}
+                    body: JSON.stringify({ id, _token: (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).content }),
+                    headers: { 'Content-Type': 'application/json' }
                 });
                 if (!resp.ok) return;
 

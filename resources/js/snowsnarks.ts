@@ -1,3 +1,15 @@
+type Flake = {
+    element: HTMLImageElement;
+    top: number;
+    left: number;
+    drift: number;
+    hspeed: number;
+    vspeed: number;
+    direction: number;
+    exploding: boolean;
+    explodeTimeout: number;
+};
+
 window.addEventListener('DOMContentLoaded', function () {
     const isChristmas = document.body.classList.contains('snow');
     if (!isChristmas) return;
@@ -23,9 +35,9 @@ window.addEventListener('DOMContentLoaded', function () {
     const snowContainer = document.createElement('div');
     snowContainer.classList.add('snowfield');
 
-    const flakes = [];
+    const flakes: Flake[] = [];
 
-    function repositionSnowflake(flake, initial) {
+    function repositionSnowflake(flake: Flake, initial: boolean) {
         if (initial) flake.top = -60 - (Math.random() * window.innerHeight * 0.5);
         else flake.top = -60;
         flake.left = (horizontalPaddingPx / 2) + Math.random() * (window.innerWidth - horizontalPaddingPx);
@@ -33,24 +45,24 @@ window.addEventListener('DOMContentLoaded', function () {
         flake.vspeed = averageVspeed + Math.random() * averageVspeed;
         flake.hspeed = averageHspeed + Math.random() * averageHspeed;
         flake.direction = Math.random() < 0.5 ? -1 : 1;
-        flake.element.opacity = '' + Math.random();
-        flake.element.style.transform = 'scale(' + (Math.random() * (maxScale-minScale) + minScale) + ')';
+        flake.element.style.opacity = '' + (0.5 + Math.random() * 0.5);
+        flake.element.style.transform = 'scale(' + (Math.random() * (maxScale - minScale) + minScale) + ')';
     }
 
     let last = 0;
-    function animateSnowflakes(timestamp) {
+    function animateSnowflakes(timestamp: number) {
         const elapsed = (timestamp - last) / 1000;
         last = timestamp;
 
         for (let i = 0; i < flakes.length; i++) {
-            const flake = flakes[i];
+            const flake: Flake = flakes[i];
 
             if (flake.exploding) {
                 if (flake.explodeTimeout <= 0) {
                     flake.exploding = false;
                     flake.explodeTimeout = 0;
                     flake.element.src = imgSnark;
-                    repositionSnowflake(flake);
+                    repositionSnowflake(flake, false);
                 } else {
                     flake.explodeTimeout -= elapsed;
                 }
@@ -62,7 +74,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 // If the tab is in the background or hasn't got animation frames for a while,
                 // all the snowflakes will get reset to the top of the container, and it looks
                 // bad. So retain the top value so flakes respawn in a nice random position.
-                repositionSnowflake(flake);
+                repositionSnowflake(flake, false);
             } else {
                 const distance = flake.hspeed * elapsed;
                 flake.left += distance * flake.direction;
@@ -80,7 +92,7 @@ window.addEventListener('DOMContentLoaded', function () {
         window.requestAnimationFrame(animateSnowflakes);
     }
 
-    function explodeSnark(flake) {
+    function explodeSnark(flake: Flake) {
         if (flake.exploding) return;
         flake.exploding = true;
         flake.explodeTimeout = 1.7;
@@ -112,3 +124,5 @@ window.addEventListener('DOMContentLoaded', function () {
     document.body.prepend(snowContainer);
     window.requestAnimationFrame(animateSnowflakes);
 });
+
+export { };

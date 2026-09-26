@@ -1,9 +1,11 @@
+import { init_all_image_cyclers } from "./image-cycler";
+
 // Youtube
 document.addEventListener('click', event => {
-    const target = event.target;
+    const target = event.target as HTMLElement;
     if (!target) return;
 
-    const uninit = event.target.matches('.uninitialised') ? event.target : target.closest('.uninitialised');
+    const uninit = target.matches('.uninitialised') ? target : target.closest('.uninitialised');
     if (!uninit) return;
 
     const yt = uninit.closest('.video-content');
@@ -22,13 +24,13 @@ document.addEventListener('click', event => {
 });
 
 // Articles & Maps
-function esc(text) {
+function esc(text: string) {
     const e = document.createElement('div');
     e.textContent = text;
     return e.innerHTML;
 }
 
-function attr_esc(text) {
+function attr_esc(text: string) {
     text = (text || '').toString();
     return text.replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -37,8 +39,10 @@ function attr_esc(text) {
         .replace(/'/g, '&#39;');
 }
 
-const embed_callbacks = {
-    error: function(element, json) {
+type EmbedCallback = (element: HTMLElement, json: any) => void;
+
+const embed_callbacks: Record<string, EmbedCallback> = {
+    error: function (element, json) {
         const template = `<div class="text-center">
             <h2><span class="fa fa-warning"></span> Error: Unable to load ${json.type}.</h2>
         </div>`;
@@ -47,7 +51,7 @@ const embed_callbacks = {
         embed.innerHTML = template;
         element.replaceWith(embed.children[0]);
     },
-    article: function(element, json) {
+    article: function (element, json) {
         const thread_link = json.forum_thread_id ?
             `<li><a href="${attr_esc(window.urls.view.thread.replace('{id}', json.forum_thread_id))}">Discussion topic &raquo;</a></li>`
             : '';
@@ -77,8 +81,8 @@ const embed_callbacks = {
         embed.innerHTML = template;
         element.replaceWith(embed.children[0]);
     },
-    download: function(element, json) {
-        const mirrors = json.mirror_list.map(x => `<li class="mb-1"><a target="_blank" href="${attr_esc(x.url)}" class="btn btn-primary">${esc(x.text)}</a></li>`).join('');
+    download: function (element, json) {
+        const mirrors = json.mirror_list.map((x: any) => `<li class="mb-1"><a target="_blank" href="${attr_esc(x.url)}" class="btn btn-primary">${esc(x.text)}</a></li>`).join('');
         const size = json.file_size_readable ? `<li>Size: ${json.file_size_readable}</li>` : '';
         const template = `
             <div class="row">
@@ -108,9 +112,9 @@ const embed_callbacks = {
         embed.innerHTML = template;
         element.replaceWith(embed.children[0]);
     },
-    map: function(element, json) {
+    map: function (element, json) {
         const images = json.images.length
-            ? json.images.map((x, i) => `<img class="img-fluid ${i==0?'':'d-none'}" src="${attr_esc(window.urls.images.root+x.image_file)}" />`).join('')
+            ? json.images.map((x: any, i: number) => `<img class="img-fluid ${i == 0 ? '' : 'd-none'}" src="${attr_esc(window.urls.images.root + x.image_file)}" />`).join('')
             : `<img class="img-fluid" src="${attr_esc(window.urls.images.no_image)}" />`;
         const template = `
             <div>
@@ -141,14 +145,14 @@ const embed_callbacks = {
     }
 };
 
-const embed_cache = {};
+const embed_cache: Record<string, any> = {};
 
-async function load_embed(el) {
+async function load_embed(el: HTMLElement) {
     el.textContent = 'Loading...';
     const par = el.parentElement;
-    let typ = el.getAttribute('data-embed-type');
-    const id = el.getAttribute('data-' + typ + '-id');
-    const url = window.urls.embed[typ];
+    let typ = el.getAttribute('data-embed-type') as (keyof typeof window.urls.embed | 'error');
+    const id = el.getAttribute('data-' + typ + '-id')!;
+    const url = typ == 'error' ? '' : window.urls.embed[typ];
 
     if (el.getAttribute('data-stop')) return;
     el.setAttribute('data-stop', 'true');
@@ -156,7 +160,9 @@ async function load_embed(el) {
 
     let json;
     const cacheKey = `${typ}:${id}`;
-    if (embed_cache[cacheKey]) {
+    if (url === '') {
+        json = { type: 'error' };
+    } else if (embed_cache[cacheKey]) {
         json = embed_cache[cacheKey];
     } else {
         const resp = await fetch(url, {
@@ -180,13 +186,13 @@ async function load_embed(el) {
 const observer = new IntersectionObserver((entries, options) => {
     entries.forEach(x => {
         if (!x.isIntersecting) return;
-        load_embed(x.target);
+        load_embed(x.target as HTMLElement);
     });
 }, {
     threshold: 0.1
 });
 
-function addEmbedInit(el) {
+function addEmbedInit(el: ParentNode) {
     el.querySelectorAll('.embed-content .uninitialised').forEach(x => {
         observer.observe(x);
     });
@@ -194,7 +200,7 @@ function addEmbedInit(el) {
 
 document.querySelectorAll('.bbcode-input textarea').forEach(x => {
     x.addEventListener('bbcode-preview-updated', event => {
-        addEmbedInit(event.detail.element);
+        addEmbedInit((event as any).detail.element);
     });
 });
 

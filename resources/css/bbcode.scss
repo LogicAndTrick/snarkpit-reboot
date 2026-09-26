@@ -1,3 +1,6 @@
+@use "sass:color";
+@use "sass:map";
+
 audio[controls] {
   min-height: 38px;
   width: 500px;
@@ -157,11 +160,11 @@ pre {
     border-left: 5px solid #eee;
 
     margin: 15px 0;
-    color: darken($body-color, 20%);
+    color: color.adjust($body-color, $lightness: -20%);
 
     .quote-name {
       display: block;
-      color: lighten($body-color, 10%);
+      color: color.adjust($body-color, $lightness: 10%);
     }
   }
 
@@ -187,7 +190,7 @@ pre {
     &.left { float: left; clear: left; margin-right: 20px; }
     &.right { float: right; clear: right; margin-left: 20px; }
 
-    &.large {  }
+    // &.large {  }
     &.medium { max-width: 400px;  }
     &.small { max-width: 200px; }
     &.thumb { max-width: 100px; }
@@ -208,35 +211,35 @@ pre {
     @extend .card-body;
   }
 
-  .card-primary {
-    //background-color: lighten($card-border-color, 10%);
-  }
+  //.card-primary {
+  //  //background-color: lighten($card-border-color, 10%);
+  //}
   .card-success {
-    background-color: lighten($success, 40%);
+    background-color: color.adjust($success, $lightness: 40%);
 
     .card-header {
-      background-color: lighten($success, 35%);
+      background-color: color.adjust($success, $lightness: 35%);
     }
   }
   .card-info {
-    background-color: lighten($info, 50%);
+    background-color: color.adjust($info, $lightness: 50%);
 
     .card-header {
-      background-color: lighten($info, 45%);
+      background-color: color.adjust($info, $lightness: 45%);
     }
   }
   .card-warning {
-    background-color: lighten($warning, 35%);
+    background-color: color.adjust($warning, $lightness: 35%);
 
     .card-header {
-      background-color: lighten($warning, 30%);
+      background-color: color.adjust($warning, $lightness: 30%);
     }
   }
   .card-danger {
-    background-color: lighten($danger, 35%);
+    background-color: color.adjust($danger, $lightness: 35%);
 
     .card-header {
-      background-color: lighten($danger, 30%);
+      background-color: color.adjust($danger, $lightness: 30%);
     }
   }
 
@@ -283,7 +286,7 @@ pre {
     @extend .card;
     @extend .card-body;
 
-    background: lighten($section-background, 10%);
+    background: color.adjust($section-background, $lightness: 10%);
 
     padding: 1rem;
 
@@ -320,17 +323,17 @@ pre {
      .slider, &.slider { height: 340px; }
      .slides { height: 250px; }
 
-     @media (min-width: map_get($grid-breakpoints, 'md')) {
+     @media (min-width: map.get($grid-breakpoints, 'md')) {
        .slider, &.slider { height: 440px; }
        .slides { height: 350px; }
      }
 
-    @media (min-width: map_get($grid-breakpoints, 'lg')) {
+    @media (min-width: map.get($grid-breakpoints, 'lg')) {
       .slider, &.slider { height: 540px; }
       .slides { height: 450px; }
     }
 
-    @media (min-width: map_get($grid-breakpoints, 'xl')) {
+    @media (min-width: map.get($grid-breakpoints, 'xl')) {
       .slider, &.slider { height: 640px; }
       .slides { height: 550px; }
     }

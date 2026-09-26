@@ -1,8 +1,13 @@
 @import "variables";
-@import "~bootstrap/scss/bootstrap";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/solid";
-@import "~highlight.js/scss/agate";
+
+@import 'bootstrap/scss/bootstrap';
+
+$fa-font-path: '/webfonts';
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
+
+@import "highlight.js/scss/agate";
+
 @import "layout";
 @import "bbcode";
 @import "customisations";
