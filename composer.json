@@ -65,9 +65,9 @@
             "type": "package",
             "package": {
                 "name": "logicandtrick/wikicodeparser",
-                "version": "0.9.9",
+                "version": "0.9.10",
                 "dist": {
-                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.9/wikicodeparser-php.zip",
+                    "url": "https://github.com/LogicAndTrick/WikiCodeParser/releases/download/v0.9.10/wikicodeparser-php.zip",
                     "type": "zip"
                 },
                 "autoload": {

@@ -5565,9 +5565,6 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		"yellow",
 		"yellowgreen"
 	];
-	function escapeEmoji(str) {
-		return str.replace(/\p{Emoji_Presentation}/gmu, (s) => "&#" + s.codePointAt(0) + ";");
-	}
 	var ALLOWED_URL_SCHEMES = [
 		"http",
 		"https",
@@ -5577,14 +5574,13 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	var HtmlHelper = class HtmlHelper {
 		static Encode(text) {
 			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-			return escapeEmoji(text);
+			return text;
 		}
 		static UrlEncode(text) {
 			return encodeURI(text);
 		}
 		static AttributeEncode(text) {
-			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-			return escapeEmoji(text);
+			return HtmlHelper.Encode(text);
 		}
 		static StripControlCharacters(text) {
 			return text == null ? text : text.replace(/[\x00-\x1F\x7F]/g, "");
@@ -5717,7 +5713,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			throw new Error("Invalid operation");
 		}
 		HasContent() {
-			return this.Text && this.Text.trim() != "";
+			return !!this.Text && this.Text.trim() != "";
 		}
 	};
 	var UnprocessablePlainTextNode = class UnprocessablePlainTextNode {
@@ -5743,7 +5739,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			throw new Error("Invalid operation");
 		}
 		HasContent() {
-			return this.Text && this.Text.trim() != "";
+			return !!this.Text && this.Text.trim() != "";
 		}
 	};
 	var MetadataNode = class {
@@ -5801,7 +5797,17 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			this.Index = 0;
 		}
 		ScanTo(find, ignoreCase = false) {
-			let pos = ignoreCase ? this.Text.toLowerCase().indexOf(find.toLowerCase(), this.Index) : this.Text.indexOf(find, this.Index);
+			let pos;
+			if (ignoreCase) {
+				const escaped = find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+				const regex = new RegExp(escaped, "gi");
+				regex.lastIndex = this.Index;
+				const match = regex.exec(this.Text);
+				pos = match ? match.index : this.Length;
+			} else {
+				pos = this.Text.indexOf(find, this.Index);
+				if (pos < 0) pos = this.Length;
+			}
 			if (pos < 0) pos = this.Length;
 			const ret = this.Text.substring(this.Index, pos);
 			this.Index = pos;
@@ -5871,12 +5877,32 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return obj[name] || "";
 		});
 	}
+	var TrimStartRegex = /^[ \t\r\n\0\x0B]+/g;
+	var TrimEndRegex = /[ \t\r\n\0\x0B]+$/g;
+	function TrimStart(str) {
+		return str.replace(TrimStartRegex, "");
+	}
+	function TrimEnd(str) {
+		return str.replace(TrimEndRegex, "");
+	}
+	function Trim(str) {
+		return str.replace(TrimStartRegex, "").replace(TrimEndRegex, "");
+	}
+	function ParseIntStrict(str) {
+		if (!/^-?[0-9]+$/.exec(str)) return null;
+		const num = parseInt(str, 10);
+		return isNaN(num) ? null : num;
+	}
 	var Util = /*#__PURE__*/ Object.freeze({
 		__proto__: null,
 		IndexOfAny,
 		OrderBy,
 		OrderByDescending,
-		Template
+		ParseIntStrict,
+		Template,
+		Trim,
+		TrimEnd,
+		TrimStart
 	});
 	var Parser = class Parser {
 		constructor(configuration) {
@@ -5884,7 +5910,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		ParseResult(text, scope = "") {
 			const data = new ParseData();
-			text = text.trim();
+			text = Trim(text);
 			let node = this.ParseElements(data, text, scope);
 			node = this.RunProcessors(node, data, scope);
 			const res = new ParseResult();
@@ -5893,7 +5919,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		ParseElements(data, text, scope) {
 			const root = new NodeCollection();
-			text = text.replace("\r", "");
+			text = text.replace(/\r/g, "");
 			const lines = new Lines(text);
 			const inscope = OrderByDescending(this.Configuration.Elements.filter((x) => x.InScope(scope)), (x) => x.Priority);
 			const plain = [];
@@ -5904,7 +5930,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 					const con = e.Consume(this, data, lines, scope);
 					if (con == null) continue;
 					if (plain.length > 0) {
-						root.Nodes.push(Parser.TrimWhitespace(this.ParseTags(data, plain.join("\n").trim(), scope, exports.TagParseContext.Block)));
+						root.Nodes.push(Parser.TrimWhitespace(this.ParseTags(data, Trim(plain.join("\n")), scope, exports.TagParseContext.Block)));
 						root.Nodes.push(UnprocessablePlainTextNode.NewLine());
 					}
 					plain.splice(0, plain.length);
@@ -5915,7 +5941,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				}
 				if (!matched) plain.push(lines.Value());
 			}
-			if (plain.length > 0) root.Nodes.push(Parser.TrimWhitespace(this.ParseTags(data, plain.join("\n").trim(), scope, exports.TagParseContext.Block)));
+			if (plain.length > 0) root.Nodes.push(Parser.TrimWhitespace(this.ParseTags(data, Trim(plain.join("\n")), scope, exports.TagParseContext.Block)));
 			const shouldTrim = () => {
 				if (root.Nodes.length === 0) return false;
 				const last = root.Nodes[root.Nodes.length - 1];
@@ -6028,6 +6054,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	var Element = class {
 		constructor() {
+			this.Scopes = [];
 			this.Priority = 0;
 		}
 		InScope(scope) {
@@ -6040,7 +6067,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			this.Token = "pre";
 		}
 		Matches(lines) {
-			const value = lines.Value().trim();
+			const value = Trim(lines.Value());
 			return value.length > this.Token.length + 1 && value.startsWith("[" + this.Token) && value.match(this.getTokenRegex()) != null;
 		}
 		getTokenRegex() {
@@ -6051,7 +6078,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			var _a;
 			const current = lines.Current();
 			let arr = [];
-			let line = lines.Value().trim();
+			let line = Trim(lines.Value());
 			const res = line.match(this.getTokenRegex());
 			if (!res) {
 				lines.SetCurrent(current);
@@ -6064,14 +6091,14 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				const spl = res[1].split(" ");
 				hl = spl.includes("highlight");
 				lang = (_a = spl.find((x) => x != "highlight")) === null || _a === void 0 ? void 0 : _a.toLowerCase();
-				if (!PreElement.AllowedLanguages.includes(lang)) lang = void 0;
+				if (lang && !PreElement.AllowedLanguages.includes(lang)) lang = void 0;
 			}
 			if (line.endsWith("[/" + this.Token + "]")) arr.push(line.substring(0, line.length - (this.Token.length + 3)));
 			else {
 				if (line.length > 0) arr.push(line);
 				let found = false;
 				while (lines.Next()) {
-					const value = lines.Value().trimEnd();
+					const value = TrimEnd(lines.Value());
 					if (value.endsWith("[/" + this.Token + "]")) {
 						const lastLine = value.substring(0, value.length - (this.Token.length + 3));
 						arr.push(lastLine);
@@ -6085,7 +6112,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				}
 			}
 			for (let i = 0; i < 2; i++) {
-				while (arr.length > 0 && arr[0].trim() == "") arr.splice(0, 1);
+				while (arr.length > 0 && Trim(arr[0]) == "") arr.splice(0, 1);
 				arr.reverse();
 			}
 			let highlight = [];
@@ -6139,8 +6166,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		static FixCodeIndentation(arr) {
 			arr = arr.map((x) => x.replace(/\t/g, "    "));
 			const longestWhitespace = arr.reduce((c, i) => {
-				if (i.trim().length == 0) return c;
-				const wht = i.length - i.trimStart().length;
+				if (Trim(i).length == 0) return c;
+				const wht = i.length - TrimStart(i).length;
 				return Math.min(wht, c);
 			}, 9999);
 			return arr.map((a) => a.substring(Math.min(longestWhitespace, a.length)));
@@ -6175,7 +6202,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		Consume(parser, data, lines, _scope) {
 			const current = lines.Current();
-			let firstLine = lines.Value().substring(3).trimEnd();
+			let firstLine = TrimEnd(lines.Value().substring(3));
 			let lang = null;
 			if (PreElement.AllowedLanguages.includes(firstLine.toLowerCase())) {
 				lang = firstLine;
@@ -6184,7 +6211,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let arr = [firstLine];
 			let found = false;
 			while (lines.Next()) {
-				const value = lines.Value().trimEnd();
+				const value = TrimEnd(lines.Value());
 				if (value.endsWith("```")) {
 					const lastLine = value.substring(0, value.length - 3);
 					arr.push(lastLine);
@@ -6197,13 +6224,13 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				return null;
 			}
 			for (let i = 0; i < 2; i++) {
-				while (arr.length > 0 && arr[0].trim() == "") arr.splice(0, 1);
+				while (arr.length > 0 && Trim(arr[0]) == "") arr.splice(0, 1);
 				arr.reverse();
 			}
 			arr = arr.map((x) => x.replace(/\t/g, "    "));
 			const longestWhitespace = arr.reduce((c, i) => {
-				if (i.trim().length == 0) return c;
-				const wht = i.length - i.trimStart().length;
+				if (Trim(i).length == 0) return c;
+				const wht = i.length - TrimStart(i).length;
 				return Math.min(wht, c);
 			}, 9999);
 			arr = arr.map((a) => a.substring(Math.min(longestWhitespace, a.length)));
@@ -6241,7 +6268,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			const current = lines.Current();
 			const colDefs = lines.Value().substring(10).split(":").map((x) => {
 				var _a;
-				return (_a = parseInt(x, 10)) !== null && _a !== void 0 ? _a : 0;
+				return (_a = ParseIntStrict(x)) !== null && _a !== void 0 ? _a : 0;
 			});
 			let total = 0;
 			for (const d of colDefs) if (d > 0) total += d;
@@ -6257,7 +6284,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let arr = [];
 			const cols = [];
 			while (lines.Next() && i < colDefs.length) {
-				const value = lines.Value().trimEnd();
+				const value = TrimEnd(lines.Value());
 				if (value == "%%") {
 					cols.push(new ColumnNode(colDefs[i], parser.ParseElements(data, arr.join("\n"), scope)));
 					arr = [];
@@ -6279,7 +6306,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			this.Text = text;
 		}
 		ToHtml() {
-			return `<h${this.Level} id="${this.ID}">${this.Text.ToHtml()}</h${this.Level}>`;
+			const escaped = HtmlHelper.AttributeEncode(this.ID);
+			return `<h${this.Level} id="${escaped}">${this.Text.ToHtml()}</h${this.Level}>`;
 		}
 		ToPlainText() {
 			const plain = this.Text.ToPlainText().replace(/\n/g, " ");
@@ -6302,18 +6330,18 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return value.length > 0 && value.startsWith("=");
 		}
 		Consume(parser, data, lines, scope) {
-			const value = lines.Value().trim();
+			const value = Trim(lines.Value());
 			const res = /^(=+)(.*?)=*$/i.exec(value);
 			const level = Math.min(6, res[1].length);
-			const text = res[2].trim();
-			let contents = parser.ParseTags(data, text, scope, exports.TagParseContext.Inline);
-			contents = parser.RunProcessors(contents, data, scope);
-			return new HeadingNode(level, MdHeadingElement.GetUniqueAnchor(data, contents.ToPlainText()), contents);
+			const text = Trim(res[2]);
+			const contents = parser.ParseTags(data, text, scope, exports.TagParseContext.Inline);
+			const contentsPlainText = parser.RunProcessors(contents, data, scope).ToPlainText();
+			return new HeadingNode(level, MdHeadingElement.GetUniqueAnchor(data, contentsPlainText), contents);
 		}
 		static GetUniqueAnchor(data, text) {
 			const key = MdHeadingElement.name + ".IdList";
 			const anchors = data.Get(key, () => /* @__PURE__ */ new Set());
-			const id = text.replace(/[^\da-z?/:@\-._~!$&'()*+,;=]/gi, "_");
+			const id = text.replace(/[^0-9A-Za-z?/:@\-._~!$&'()*+,;=]+/gu, "_");
 			let anchor = id;
 			let inc = 1;
 			do {
@@ -6327,7 +6355,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	var MdLineElement = class extends Element {
 		Matches(lines) {
-			const value = lines.Value().trimEnd();
+			const value = TrimEnd(lines.Value());
 			return value.length >= 3 && value == "-".repeat(value.length);
 		}
 		Consume(_parser, _data, _lines, _scope) {
@@ -6342,7 +6370,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			this.Name = name;
 		}
 		GetNode() {
-			return this.Data.Get(`Ref::${this.Name}`, UnprocessablePlainTextNode.Empty);
+			return this.Data.Get(`Ref::${this.Name}`, () => UnprocessablePlainTextNode.Empty());
 		}
 		ToHtml() {
 			return this.GetNode().ToHtml();
@@ -6455,7 +6483,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return 0;
 		}
 		Matches(lines) {
-			const value = lines.Value().trim();
+			const value = Trim(lines.Value());
 			return MdListElement.IsValidListItem(value, 0) > 0;
 		}
 		Consume(parser, data, lines, scope) {
@@ -6472,20 +6500,20 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		CreateListItems(lastItemNode, prefix, parser, data, lines, scope) {
 			const ret = [];
 			do {
-				let value = lines.Value().trimEnd();
+				let value = TrimEnd(lines.Value());
 				if (!value.startsWith(prefix)) {
 					lines.Back();
 					break;
 				}
 				value = value.substring(prefix.length);
 				if (value.length > 1 && value[0] == " " && prefix.length > 0) {
-					value = value.trimStart();
+					value = TrimStart(value);
 					while (value.endsWith("^")) if (value.endsWith("\\^")) {
 						value = value.substring(0, value.length - 2) + "^";
 						break;
-					} else if (lines.Next()) value = value.substring(0, value.length - 1).trim() + "\n" + lines.Value().trimStart();
+					} else if (lines.Next()) value = Trim(value.substring(0, value.length - 1)) + "\n" + TrimStart(lines.Value());
 					else break;
-					value = value.trim();
+					value = Trim(value);
 					let pt;
 					const res = /^:ref=([a-z0-9 ]+)$/i.exec(value);
 					if (res) {
@@ -6513,17 +6541,17 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		Consume(parser, data, lines, scope) {
 			const current = lines.Current();
-			const meta = lines.Value().substring(3).trim();
+			const meta = Trim(lines.Value().substring(3));
 			let title = "";
 			let found = false;
 			const arr = [];
 			while (lines.Next()) {
-				const value = lines.Value().trimEnd();
+				const value = TrimEnd(lines.Value());
 				if (value == "~~~") {
 					found = true;
 					break;
 				}
-				if (value.length > 1 && value[0] == ":") title = value.substring(1).trim();
+				if (value.length > 1 && value[0] == ":") title = Trim(value.substring(1));
 				else arr.push(value);
 			}
 			if (!found) {
@@ -6548,16 +6576,16 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		Consume(parser, data, lines, scope) {
 			let value = lines.Value();
-			const arr = [value.substring(1).trim()];
+			const arr = [Trim(value.substring(1))];
 			while (lines.Next()) {
-				value = lines.Value().trim();
+				value = Trim(lines.Value());
 				if (value.length == 0 || value[0] != ">") {
 					lines.Back();
 					break;
 				}
-				arr.push(value.substring(1).trim());
+				arr.push(Trim(value.substring(1)));
 			}
-			const text = arr.join("\n").trim();
+			const text = Trim(arr.join("\n"));
 			const ret = new HtmlNode("<blockquote>", parser.ParseElements(data, text, scope), "</blockquote>");
 			ret.PlainBefore = "[quote]\n";
 			ret.PlainAfter = "\n[/quote]";
@@ -6598,13 +6626,13 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	var MdTableElement = class MdTableElement extends Element {
 		Matches(lines) {
-			const value = lines.Value().trimEnd();
+			const value = TrimEnd(lines.Value());
 			return value.length >= 2 && value[0] == "|" && (value[1] == "=" || value[1] == "-");
 		}
 		Consume(parser, data, lines, scope) {
 			const arr = [];
 			do {
-				const value = lines.Value().trimEnd();
+				const value = TrimEnd(lines.Value());
 				if (value.length < 2 || value[0] != "|" || value[1] != "=" && value[1] != "-") {
 					lines.Back();
 					break;
@@ -6618,23 +6646,24 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			const ret = [];
 			let level = 0;
 			let last = 0;
-			text = text.trim();
+			text = Trim(text);
 			const len = text.length;
 			let i = 0;
 			for (; i < len; i++) {
 				const c = text[i];
 				if (c == "[") level++;
-				else if (c == "]") level--;
-				else if (c == "|" && level == 0 || i == len - 1) {
-					ret.push(text.substring(last, i + (i == len - 1 ? 1 : 0)).trim());
+				else if (c == "]") {
+					if (level > 0) level--;
+				} else if (c == "|" && level == 0 || i == len - 1) {
+					ret.push(Trim(text.substring(last, i + (i == len - 1 ? 1 : 0))));
 					last = i + 1;
 				}
 			}
-			if (last < len) ret.push(text.substring(last, i + (i == len - 1 ? 1 : 0)).trim());
+			if (last < len) ret.push(Trim(text.substring(last, i + (i == len - 1 ? 1 : 0))));
 			return ret;
 		}
 		static ResolveCell(text, parser, data, scope) {
-			const res = /^:ref=([a-z0-9 ]+)$/i.exec(text.trim());
+			const res = /^:ref=([a-z0-9 ]+)$/i.exec(Trim(text));
 			if (res) {
 				const name = res[1];
 				return new RefNode(data, name);
@@ -6644,25 +6673,25 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	var QuoteElement = class QuoteElement extends Element {
 		Matches(lines) {
-			const value = lines.Value().trim();
+			const value = Trim(lines.Value());
 			return value.length > 6 && value.toLowerCase().startsWith("[quote") && QuoteElement.OpenQuote.test(value);
 		}
 		Consume(parser, data, lines, scope) {
 			const current = lines.Current();
-			let line = lines.Value().trim();
+			const line = Trim(lines.Value());
 			if (!QuoteElement.OpenQuote.exec(line)) {
 				lines.SetCurrent(current);
 				return null;
 			}
 			const { text, author, postfix } = QuoteElement.BalanceQuotes(lines);
-			if (!text) {
+			if (!text || text.trim().length == 0) {
 				lines.SetCurrent(current);
 				return null;
 			}
 			let before = "<blockquote>";
 			let plainBefore = "[quote]\n";
 			if (author) {
-				before += `<strong class="quote-name">${author} said:</strong><br/>`;
+				before += `<strong class="quote-name">${HtmlHelper.Encode(author)} said:</strong><br/>`;
 				plainBefore = `${author} said: ${plainBefore}`;
 			}
 			const node = new HtmlNode(before, parser.ParseElements(data, text, scope), "</blockquote>");
@@ -6676,7 +6705,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let name = null;
 			let postfix = null;
 			const openQuote = new RegExp(QuoteElement.OpenQuote, "iy");
-			let line = lines.Value().trimStart();
+			let line = TrimStart(lines.Value());
 			let openMat = openQuote.exec(line);
 			if (!openMat) return {
 				text: null,
@@ -6728,13 +6757,13 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 	QuoteElement.CloseQuoteLength = 8;
 	var RefElement = class extends Element {
 		Matches(lines) {
-			const value = lines.Value().trim();
+			const value = Trim(lines.Value());
 			return value.length > 4 && value.startsWith("[ref=") && value.match(/\[ref=[a-z0-9 ]+\]/i) != null;
 		}
 		Consume(parser, data, lines, scope) {
 			const current = lines.Current();
 			const arr = [];
-			let line = lines.Value().trim();
+			let line = Trim(lines.Value());
 			const res = line.match(/\[ref=([a-z0-9 ]+)\]/i);
 			if (!res) {
 				lines.SetCurrent(current);
@@ -6747,7 +6776,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				if (line.length > 0) arr.push(line);
 				let found = false;
 				while (lines.Next()) {
-					const value = lines.Value().trimEnd();
+					const value = TrimEnd(lines.Value());
 					if (value.endsWith("[/ref]")) {
 						const lastLine = value.substring(0, value.length - 6);
 						arr.push(lastLine);
@@ -6760,7 +6789,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 					return null;
 				}
 			}
-			const node = parser.ParseElements(data, arr.join("\n").trim(), scope);
+			const node = parser.ParseElements(data, Trim(arr.join("\n")), scope);
 			data.Set(`Ref::${name}`, node);
 			return PlainTextNode.Empty();
 		}
@@ -6793,10 +6822,10 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			for (const urlMatch of allMatches) {
 				if (urlMatch.index < start) continue;
 				if (urlMatch.index > start) ret.push(new PlainTextNode(text.substring(start, urlMatch.index)));
-				if (urlMatch.groups["url"]) {
+				if (urlMatch.groups && urlMatch.groups["url"]) {
 					const url = urlMatch.groups["url"];
 					ret.push(new HtmlNode(`<a href="${HtmlHelper.AttributeEncode(url)}">`, new PlainTextNode(url), "</a>"));
-				} else if (urlMatch.groups["email"]) {
+				} else if (urlMatch.groups && urlMatch.groups["email"]) {
 					const email = urlMatch.groups["email"];
 					ret.push(new HtmlNode(`<a href="mailto:${HtmlHelper.AttributeEncode(email)}">`, new PlainTextNode(email), "</a>"));
 				}
@@ -6830,7 +6859,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			const endToken = text.indexOf(token, position + 1);
 			if (endToken <= position + 1) return null;
 			if (text.substring(position, endToken).indexOf("\n") >= 0) return null;
-			if (!((endToken + 1 == text.length || MarkdownTextProcessor.IsEndBreakChar(text[endToken + 1])) && text[endToken - 1].trim() != "")) return null;
+			if (!((endToken + 1 == text.length || MarkdownTextProcessor.IsEndBreakChar(text[endToken + 1])) && Trim(text[endToken - 1]) != "")) return null;
 			const str = text.substring(position + 1, endToken);
 			tracker[tokenIndex] = 1;
 			let contents;
@@ -6853,7 +6882,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			while (true) {
 				const nextIndex = IndexOfAny(text, MarkdownTextProcessor.Tokens, index);
 				if (nextIndex < 0) break;
-				if (!((nextIndex == 0 || MarkdownTextProcessor.IsStartBreakChar(text[nextIndex - 1])) && nextIndex + 1 < text.length && text[nextIndex + 1].trim() != "")) {
+				if (!((nextIndex == 0 || MarkdownTextProcessor.IsStartBreakChar(text[nextIndex - 1])) && nextIndex + 1 < text.length && Trim(text[nextIndex + 1]) != "")) {
 					index = nextIndex + 1;
 					continue;
 				}
@@ -6925,7 +6954,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		GetMatchingToken(text, startIndex) {
 			for (const token of this.Tokens) if (text.indexOf(token, startIndex) == startIndex) {
-				if (startIndex + token.length < text.length - 1 && text[startIndex + token.length].trim() != "") continue;
+				if (startIndex + token.length < text.length && text[startIndex + token.length].trim() != "") continue;
 				return token;
 			}
 			return null;
@@ -6952,7 +6981,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let index = -1;
 			let numSmilies = 0;
 			while (index + 1 < text.length && (index = IndexOfAny(text, this._tokenStarts, index + 1)) >= 0) {
-				if (numSmilies > SmiliesProcessor.MaxSmilies) {
+				if (numSmilies >= SmiliesProcessor.MaxSmilies) {
 					ret.push(new HtmlNode("<em class=\"text-danger\">", new UnprocessablePlainTextNode(" [warning: too many smilies in post] "), "</em>"));
 					break;
 				}
@@ -6965,8 +6994,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 					definition = def;
 					break;
 				}
-				if (definition == null) continue;
-				if (index + token.length < text.length - 1 && text[index + token.length].trim() != "") continue;
+				if (definition == null || token == null) continue;
+				if (index + token.length < text.length && text[index + token.length].trim() != "") continue;
 				if (start < index) ret.push(new PlainTextNode(text.substring(start, index)));
 				const node = new HtmlNode(`<img class="smiley" src="${HtmlHelper.AttributeEncode(Template(this.UrlFormatString, { 0: definition.Name }))}" alt="${HtmlHelper.AttributeEncode(token)}" />`, PlainTextNode.Empty(), "");
 				node.PlainBefore = token;
@@ -7151,8 +7180,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				const next = i < coll.Nodes.length - 1 ? coll.Nodes[i + 1] : null;
 				if (child instanceof PlainTextNode) {
 					let text = child.Text;
-					if (trimStart) text = text.trimStart();
-					if (next instanceof HtmlNode && next.IsBlockNode) text = text.trimEnd();
+					if (trimStart) text = TrimStart(text);
+					if (next instanceof HtmlNode && next.IsBlockNode) text = TrimEnd(text);
 					child.Text = text;
 				}
 				child = parser.RunProcessor(child, this, data, scope);
@@ -7187,11 +7216,12 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		Matches(state, token, context) {
 			return (token === null || token === void 0 ? void 0 : token.toLowerCase()) == this.Token && (context == exports.TagParseContext.Block || !this.IsBlock);
 		}
-		Parse(parser, data, state, scope, context) {
+		Parse(parser, data, state, scope, _context) {
+			if (!this.Token) return null;
 			const index = state.Index;
 			const tokenLength = this.Token.length;
 			state.Seek(tokenLength + 1, false);
-			let optionsString = state.ScanTo("]").trim();
+			let optionsString = Trim(state.ScanTo("]"));
 			if (state.Next() != "]") {
 				state.Seek(index, true);
 				return null;
@@ -7204,8 +7234,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 					const myregexp = /(?=\s|^)\s*([^ ]+?)=([^\s]*)(?=\s|$)(?!=)/gim;
 					let m = myregexp.exec(optionsString);
 					while (m != null) {
-						const name = m[1].trim();
-						options[name] = m[2].trim();
+						const name = Trim(m[1]);
+						options[name] = Trim(m[2]);
 						m = myregexp.exec(optionsString);
 					}
 				}
@@ -7216,8 +7246,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				while (!state.Done) {
 					text += state.ScanTo("[");
 					const tok = state.GetToken();
-					if (tok.toLowerCase() == this.Token.toLowerCase()) stack++;
-					if (tok.toLowerCase() == "/" + this.Token.toLowerCase() && state.Peek(tokenLength + 3).trim() == "[/" + this.Token.toLowerCase() + "]") stack--;
+					if (tok && tok.toLowerCase() == this.Token.toLowerCase()) stack++;
+					if (tok && tok.toLowerCase() == "/" + this.Token.toLowerCase() && state.Peek(tokenLength + 3).trim() == "[/" + this.Token.toLowerCase() + "]") stack--;
 					if (stack == 0) {
 						state.Seek(this.Token.length + 3, false);
 						if (!this.Validate(options, text)) break;
@@ -7229,7 +7259,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				return null;
 			} else {
 				const text = state.ScanTo("[/" + this.Token + "]", true);
-				if (state.Peek(tokenLength + 3).trim() == "[/" + this.Token.toLowerCase() + "]" && this.Validate(options, text)) {
+				if (state.Peek(tokenLength + 3).toLowerCase() == "[/" + this.Token.toLowerCase() + "]" && this.Validate(options, text)) {
 					state.Seek(this.Token.length + 3, false);
 					return this.FormatResult(parser, data, state, scope, options, text);
 				} else {
@@ -7248,7 +7278,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			const after = "</" + this.Element + ">";
 			const content = parser.ParseTags(data, text, scope, this.TagContext());
 			const ret = new HtmlNode(before, content, after);
-			ret.IsBlockNode = this.IsBlock;
+			ret.IsBlockNode = this.IsBlock === true;
 			return ret;
 		}
 		WithScopes(...scopes) {
@@ -7286,7 +7316,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let before = "<" + this.Element;
 			let cls = (this.ElementClass || "") + " ";
 			if (options["align"] && AlignTag.IsValidAlign(options["align"])) cls += "text-" + AlignTag.ConvertAlign(options["align"]);
-			before += " class=\"" + cls.trim() + "\">";
+			before += " class=\"" + Trim(cls) + "\">";
 			const content = parser.ParseTags(data, text, scope, this.TagContext());
 			const after = "</" + this.Element + ">";
 			const ret = new HtmlNode(before, content, after);
@@ -7364,9 +7394,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return new HtmlNode(before, content, after);
 		}
 		static IsValidSize(text) {
-			var _a;
-			const num = (_a = parseInt(text, 10)) !== null && _a !== void 0 ? _a : 0;
-			return num >= 6 && num <= 40;
+			const num = ParseIntStrict(text);
+			return num !== null && num >= 6 && num <= 40;
 		}
 	};
 	var ImageTag = class ImageTag extends Tag {
@@ -7424,6 +7453,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			return new HtmlNode(before, options["url"] ? parser.ParseTags(data, text, scope, this.TagContext()) : new UnprocessablePlainTextNode(text), after);
 		}
 		Validate(options, text) {
+			var _a;
+			if (options["url"] !== void 0 && Trim((_a = options["url"]) !== null && _a !== void 0 ? _a : "").length == 0) return false;
 			const url = this.BuildUrl(options, text);
 			return HtmlHelper.ValidateUrl(url) && url.match(/^[^\]"\n ]+$/i) != null;
 		}
@@ -7444,7 +7475,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			this.IsBlock = true;
 		}
 		Validate(options, text) {
-			const items = text.split("[*]").map((x) => x.trim()).filter((x) => (x === null || x === void 0 ? void 0 : x.length) > 0);
+			const items = text.split("[*]").map((x) => Trim(x)).filter((x) => (x === null || x === void 0 ? void 0 : x.length) > 0);
 			return super.Validate(options, text) && items.length > 0;
 		}
 		FormatResult(parser, data, state, scope, options, text) {
@@ -7452,7 +7483,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			if (this.ElementClass != null) before += " class=\"" + this.ElementClass + "\"";
 			before += ">\n";
 			const content = new NodeCollection();
-			const items = text.split("[*]").map((x) => x.trim()).filter((x) => (x === null || x === void 0 ? void 0 : x.length) > 0);
+			const items = text.split("[*]").map((x) => Trim(x)).filter((x) => (x === null || x === void 0 ? void 0 : x.length) > 0);
 			for (const item of items) {
 				const node = new HtmlNode("<li>", parser.ParseTags(data, item, scope, this.TagContext()), "</li>\n");
 				node.PlainBefore = "* ";
@@ -7479,7 +7510,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			const after = "</code></" + this.Element + ">";
 			let arr = text.split("\n");
 			for (let i = 0; i < 2; i++) {
-				while (arr.length > 0 && arr[0].trim() == "") arr.splice(0, 1);
+				while (arr.length > 0 && Trim(arr[0]) == "") arr.splice(0, 1);
 				arr.reverse();
 			}
 			arr = PreElement.FixCodeIndentation(arr);
@@ -7501,7 +7532,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let pt = state.PeekTo("]");
 			if (!pt || pt == "") return false;
 			pt = pt.substring(1);
-			return pt.length > 0 && !pt.includes("\n") && pt.match(/^([a-z]{2,10}:\/\/[^\]]*?)(?:\|([^\]]*?))?/i) != null;
+			return pt.length > 0 && !pt.includes("\n") && pt.match(/^([a-z]{2,10}:\/\/[^\]]+?)(?:\|([^\]]+?))?/i) != null;
 		}
 		Parse(_parser, _data, state, _scope, _context) {
 			var _a, _b;
@@ -7553,11 +7584,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		FormatResult(parser, data, state, scope, options, text) {
 			let before = "<" + this.Element;
 			if (this.ElementClass != null) before += " class=\"" + this.ElementClass + "\"";
-			if (options["size"]) {
-				before += " style=\"";
-				if (options["size"] && FontTag.IsValidSize(options["size"])) before += "font-size: " + options["size"] + "px; ";
-				before = before.trimEnd() + "\"";
-			}
+			if (options["size"] && FontTag.IsValidSize(options["size"])) before += " style=\"font-size: " + options["size"] + "px;\"";
 			before += ">";
 			const content = parser.ParseTags(data, text, scope, this.TagContext());
 			const after = "</" + this.Element + ">";
@@ -7601,7 +7628,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			if (options["text"] && options["text"].length > 0) visibleText = options["text"];
 			let before = `<${this.Element}`;
 			if (this.ElementClass != null) before += " class=\"" + this.ElementClass + "\"";
-			before += ` title="${visibleText}">`;
+			before += ` title="${HtmlHelper.Encode(visibleText)}">`;
 			const after = `</${this.Element}>`;
 			return new HtmlNode(before, new SpoilerNode(visibleText, parser.ParseTags(data, text, scope, this.TagContext())), after);
 		}
@@ -7616,7 +7643,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		Matches(state, _token, context) {
 			const peekTag = state.Peek(7);
 			const pt = state.PeekTo("]");
-			return context == exports.TagParseContext.Block && peekTag == "[vault:" && (pt === null || pt === void 0 ? void 0 : pt.length) > 7 && !pt.includes("\n");
+			return context == exports.TagParseContext.Block && peekTag == "[vault:" && pt != null && pt.length > 7 && !pt.includes("\n");
 		}
 		Parse(_parser, _data, state, _scope, _context) {
 			const index = state.Index;
@@ -7629,8 +7656,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				state.Seek(index, true);
 				return null;
 			}
-			const id = parseInt(str, 10);
-			if (!id) {
+			const id = ParseIntStrict(str);
+			if (id === null || id <= 0) {
 				state.Seek(index, true);
 				return null;
 			}
@@ -7735,9 +7762,20 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 						book.ChapterName = val;
 						break;
 					case "chapternumber":
-						book.ChapterNumber = parseInt(val, 10) || null;
+						const cn = ParseIntStrict(val);
+						if (cn !== null && cn > 0) book.ChapterNumber = cn;
+						else {
+							state.Seek(index, true);
+							return null;
+						}
 						break;
-					case "pagenumber": book.PageNumber = parseInt(val, 10) || null;
+					case "pagenumber":
+						const pn = ParseIntStrict(val);
+						if (pn !== null && pn > 0) book.PageNumber = pn;
+						else {
+							state.Seek(index, true);
+							return null;
+						}
 				}
 			}
 			state.SkipWhitespace();
@@ -7767,7 +7805,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				return null;
 			}
 			state.SkipWhitespace();
-			return new MetadataNode("WikiCategory", str.trim());
+			return new MetadataNode("WikiCategory", Trim(str));
 		}
 	};
 	var WikiCreditTag = class extends Tag {
@@ -7804,7 +7842,12 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 						credit.Description = val;
 						break;
 					case "user":
-						credit.UserID = parseInt(val, 10) || null;
+						const userId = ParseIntStrict(val);
+						if (userId !== null && userId > 0) credit.UserID = userId;
+						else {
+							state.Seek(index, true);
+							return null;
+						}
 						break;
 					case "name":
 						credit.Name = val;
@@ -7830,7 +7873,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		static GetTag(state) {
 			const peekTag = state.Peek(6);
 			const pt = state.PeekTo("]");
-			if (peekTag == "[file:" && (pt === null || pt === void 0 ? void 0 : pt.length) > 6 && !pt.includes("\n")) return "file";
+			if (peekTag == "[file:" && pt != null && pt.length > 6 && !pt.includes("\n")) return "file";
 			return null;
 		}
 		Matches(state, _token, _context) {
@@ -7877,7 +7920,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			for (const tag of this.Tags) {
 				const peekTag = state.Peek(2 + tag.length);
 				const pt = state.PeekTo("]");
-				if (peekTag == `[${tag}:` && (pt === null || pt === void 0 ? void 0 : pt.length) > 2 + tag.length && !pt.includes("\n")) return tag;
+				if (peekTag == `[${tag}:` && pt && pt.length > 2 + tag.length && !pt.includes("\n")) return tag;
 			}
 			return null;
 		}
@@ -7887,7 +7930,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		Parse(_parser, _data, state, _scope, context) {
 			const index = state.Index;
 			const tag = WikiImageTag.GetTag(state);
-			if (state.ScanTo(":") != `[${tag}` || state.Next() != ":") {
+			if (!tag || state.ScanTo(":") != `[${tag}` || state.Next() != ":") {
 				state.Seek(index, true);
 				return null;
 			}
@@ -7903,7 +7946,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			}
 			const content = new NodeCollection();
 			const image = match[1];
-			const params = match[2] ? match[2].trim().split("|") : [];
+			const params = match[2] ? Trim(match[2]).split("|") : [];
 			let src = image;
 			if (!image.includes("/")) {
 				if (this.TwhlBehaviour) {
@@ -7929,8 +7972,8 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				const l = p.toLowerCase();
 				if (WikiImageTag.IsClass(l)) classes.push(l);
 				else if (l == "loop") loop = true;
-				else if (l.length > 4 && l.substring(0, 4) == "url:") url = p.substring(4).trim();
-				else caption = p.trim();
+				else if (l.length > 4 && l.substring(0, 4) == "url:") url = Trim(p.substring(4));
+				else caption = Trim(p);
 			}
 			if (!caption || caption.trim() == "") caption = null;
 			if (url != null) url = HtmlHelper.StripControlCharacters(url);
@@ -7953,7 +7996,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				cn.PlainBefore = " ";
 				content.Nodes.push(cn);
 			}
-			const ret = new HtmlNode(`<${el} class="${classes.join(" ")}"` + ((caption === null || caption === void 0 ? void 0 : caption.length) > 0 ? ` title="${HtmlHelper.AttributeEncode(caption)}"` : "") + ">" + (url.length > 0 ? "<a href=\"" + HtmlHelper.AttributeEncode(url) + "\">" : "") + "<span class=\"caption-panel\">", content, "</span>" + (url.length > 0 ? "</a>" : "") + `</${el}>`);
+			const ret = new HtmlNode(`<${el} class="${classes.join(" ")}"` + (caption && caption.length > 0 ? ` title="${HtmlHelper.AttributeEncode(caption)}"` : "") + ">" + (url.length > 0 ? "<a href=\"" + HtmlHelper.AttributeEncode(url) + "\">" : "") + "<span class=\"caption-panel\">", content, "</span>" + (url.length > 0 ? "</a>" : "") + `</${el}>`);
 			ret.IsBlockNode = el == "div";
 			return ret;
 		}
@@ -8004,7 +8047,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		}
 		Matches(state, _token, _context) {
 			const pt = state.PeekTo("]]");
-			return (pt === null || pt === void 0 ? void 0 : pt.length) > 1 && pt[1] == "[" && !pt.includes("\n") && pt.substring(2).match(/([^\]]*?)(?:\|([^\]]*?))?/i) != null;
+			return pt != null && pt.length > 1 && pt[1] == "[" && !pt.includes("\n") && pt.substring(2).match(/([^\]]*?)(?:\|([^\]]*?))?/i) != null;
 		}
 		Parse(_parser, _data, state, _scope, _context) {
 			const index = state.Index;
@@ -8069,7 +8112,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 				return null;
 			}
 			const id = regs[1];
-			const params = (_b = (_a = regs[2]) === null || _a === void 0 ? void 0 : _a.trim().split("|")) !== null && _b !== void 0 ? _b : [];
+			const params = (_b = Trim((_a = regs[2]) !== null && _a !== void 0 ? _a : "").split("|")) !== null && _b !== void 0 ? _b : [];
 			if (!WikiYoutubeTag.ValidateID(id)) {
 				state.Seek(index, true);
 				return null;
@@ -8081,7 +8124,7 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			for (const p of params) {
 				const l = p.toLowerCase();
 				if (WikiYoutubeTag.IsClass(l)) classes.push(l);
-				else caption = p.trim();
+				else caption = Trim(p);
 			}
 			if (!caption || caption.trim() == "") caption = null;
 			const captionNode = new HtmlNode(caption != null ? "<span class=\"caption\">" : "", new PlainTextNode(caption !== null && caption !== void 0 ? caption : ""), caption != null ? "</span>" : "");
@@ -8246,13 +8289,13 @@ var import_build = (/* @__PURE__ */ __commonJSMin(((exports) => {
 			let before = "<" + this.Element;
 			if (this.ElementClass != null) before += " class=\"" + this.ElementClass + "\"";
 			before += ">";
-			if (options["name"]) before += "<strong class=\"quote-name\">" + options["name"] + " said:</strong><br/>";
+			if (options["name"]) before += "<strong class=\"quote-name\">" + HtmlHelper.Encode(options["name"]) + " said:</strong><br/>";
 			const after = "</" + this.Element + ">";
-			const content = parser.ParseTags(data, text === null || text === void 0 ? void 0 : text.trim(), scope, this.TagContext());
+			const content = parser.ParseTags(data, Trim(text), scope, this.TagContext());
 			const ret = new HtmlNode(before, content, after);
 			ret.PlainBefore = (options["name"] ? options["name"] + " said: " : "") + "[quote]\n";
 			ret.PlainAfter = "\n[/quote]";
-			ret.IsBlockNode = this.IsBlock;
+			ret.IsBlockNode = this.IsBlock === true;
 			return ret;
 		}
 	};
